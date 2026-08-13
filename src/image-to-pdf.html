@@ -1,0 +1,267 @@
+---
+layout: layout.njk
+title: "Free Image to PDF Compiler"
+---
+
+<!-- jsPDF Library via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<main class="max-w-6xl mx-auto px-4 py-12">
+    
+    <header class="text-center mb-10">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Compile Images to PDF <span class="text-blue-600">Instantly</span></h2>
+        <p class="text-gray-600 max-w-xl mx-auto text-sm">Merge JPGs, PNGs, and WEBPs into a single document. 100% private and processed in your browser.</p>
+    </header>
+
+    <div id="toolZone" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
+        
+        <!-- Step 1: Upload Zone -->
+        <div id="uploadZone" class="text-center py-20 border-4 border-dashed border-gray-200 rounded-xl bg-gray-50 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all">
+            <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp" multiple class="hidden">
+            <label for="fileInput" class="cursor-pointer">
+                <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <p class="mt-4 text-lg font-semibold text-gray-700">Drag & Drop Images or Click to Upload</p>
+                <p class="text-sm text-gray-500 mt-1">Select single or multiple PNG, JPG, or WEBP images</p>
+            </label>
+        </div>
+
+        <!-- Step 2: Editor & Reorder Zone -->
+        <div id="editorZone" class="hidden">
+            
+            <!-- PDF Options Bar -->
+            <div class="bg-gray-100 p-4 rounded-xl mb-6 grid sm:grid-cols-2 md:grid-cols-4 gap-4 border border-gray-200 text-sm">
+                
+                <!-- Page Size -->
+                <div>
+                    <label for="pageSize" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Page Size:</label>
+                    <select id="pageSize" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="a4" selected>A4 Standard</option>
+                        <option value="letter">US Letter</option>
+                        <option value="fit">Fit to Image Size</option>
+                    </select>
+                </div>
+
+                <!-- Orientation -->
+                <div>
+                    <label for="pageOrientation" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Orientation:</label>
+                    <select id="pageOrientation" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="portrait" selected>Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+
+                <!-- Margin -->
+                <div>
+                    <label for="pageMargin" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Page Margin:</label>
+                    <select id="pageMargin" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="0" selected>No Margin (Full Bleed)</option>
+                        <option value="10">Small Margin (10mm)</option>
+                        <option value="20">Large Margin (20mm)</option>
+                    </select>
+                </div>
+
+                <!-- Add More Button -->
+                <div class="flex items-end">
+                    <label for="fileInputMore" class="w-full bg-white hover:bg-gray-50 text-gray-700 font-bold py-2 px-3 rounded-lg border border-gray-300 transition-all text-center cursor-pointer shadow-sm">
+                        + Add More Images
+                        <input type="file" id="fileInputMore" accept="image/png, image/jpeg, image/webp" multiple class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Image List Gallery -->
+            <div id="imageGrid" class="grid sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <!-- Dynamically populated cards -->
+            </div>
+
+            <!-- Action Bar -->
+            <div class="text-center flex flex-col items-center gap-3">
+                <button id="generatePdfBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md transition-all flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    Download Compiled PDF
+                </button>
+                <button id="resetBtn" class="text-sm text-gray-500 hover:text-blue-600 underline">Start Over</button>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    const { jsPDF } = window.jspdf;
+
+    const fileInput = document.getElementById('fileInput');
+    const fileInputMore = document.getElementById('fileInputMore');
+    const uploadZone = document.getElementById('uploadZone');
+    const editorZone = document.getElementById('editorZone');
+    const imageGrid = document.getElementById('imageGrid');
+    const pageSize = document.getElementById('pageSize');
+    const pageOrientation = document.getElementById('pageOrientation');
+    const pageMargin = document.getElementById('pageMargin');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let loadedImages = []; // Stores { id, file, src, width, height }
+
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+    fileInputMore.addEventListener('change', (e) => handleFiles(e.target.files));
+
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+    });
+
+    function handleFiles(files) {
+        if (!files || files.length === 0) return;
+
+        Array.from(files).forEach(file => {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedImages.push({
+                            id: 'img_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                            file: file,
+                            src: e.target.result,
+                            width: img.width,
+                            height: img.height
+                        });
+                        renderGallery();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        uploadZone.classList.add('hidden');
+        editorZone.classList.remove('hidden');
+    }
+
+    function renderGallery() {
+        imageGrid.innerHTML = '';
+
+        loadedImages.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = "relative bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center shadow-sm group";
+            
+            card.innerHTML = `
+                <span class="absolute top-2 left-2 bg-blue-600 text-white font-bold text-xs px-2 py-0.5 rounded-full shadow">Page ${index + 1}</span>
+                <button onclick="removeImage('${item.id}')" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow transition-all">✕</button>
+                <img src="${item.src}" class="max-h-40 w-auto object-contain rounded border border-gray-200 my-2">
+                <div class="flex gap-2 mt-auto w-full pt-2">
+                    <button onclick="moveImage(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 cursor-not-allowed w-1/2 bg-gray-200 text-gray-600 text-xs py-1 rounded"' : 'class="w-1/2 bg-white hover:bg-gray-100 text-gray-700 font-bold text-xs py-1 rounded border border-gray-300 shadow-sm"'}>← Move Left</button>
+                    <button onclick="moveImage(${index}, 1)" ${index === loadedImages.length - 1 ? 'disabled class="opacity-30 cursor-not-allowed w-1/2 bg-gray-200 text-gray-600 text-xs py-1 rounded"' : 'class="w-1/2 bg-white hover:bg-gray-100 text-gray-700 font-bold text-xs py-1 rounded border border-gray-300 shadow-sm"'}>Move Right →</button>
+                </div>
+            `;
+            imageGrid.appendChild(card);
+        });
+    }
+
+    window.removeImage = function(id) {
+        loadedImages = loadedImages.filter(item => item.id !== id);
+        if (loadedImages.length === 0) {
+            resetUI();
+        } else {
+            renderGallery();
+        }
+    };
+
+    window.moveImage = function(index, direction) {
+        const newIndex = index + direction;
+        if (newIndex >= 0 && newIndex < loadedImages.length) {
+            const temp = loadedImages[index];
+            loadedImages[index] = loadedImages[newIndex];
+            loadedImages[newIndex] = temp;
+            renderGallery();
+        }
+    };
+
+    // Generate PDF Logic
+    generatePdfBtn.addEventListener('click', () => {
+        if (loadedImages.length === 0) return;
+
+        generatePdfBtn.disabled = true;
+        generatePdfBtn.textContent = "Compiling PDF...";
+
+        setTimeout(() => {
+            try {
+                const sizeFormat = pageSize.value;
+                const orientation = pageOrientation.value;
+                const margin = parseInt(pageMargin.value, 10);
+
+                let pdf = null;
+
+                loadedImages.forEach((imgItem, index) => {
+                    let pageW, pageH;
+
+                    if (sizeFormat === 'fit') {
+                        // Fit page directly to image resolution
+                        pageW = imgItem.width * 0.264583; // px to mm
+                        pageH = imgItem.height * 0.264583;
+                        const pageOrientationCustom = pageW > pageH ? 'landscape' : 'portrait';
+
+                        if (index === 0) {
+                            pdf = new jsPDF({ orientation: pageOrientationCustom, unit: 'mm', format: [pageW, pageH] });
+                        } else {
+                            pdf.addPage([pageW, pageH], pageOrientationCustom);
+                        }
+                        pdf.addImage(imgItem.src, 'JPEG', 0, 0, pageW, pageH);
+                    } else {
+                        // Standard Page (A4 or Letter)
+                        if (index === 0) {
+                            pdf = new jsPDF({ orientation: orientation, unit: 'mm', format: sizeFormat });
+                        } else {
+                            pdf.addPage(sizeFormat, orientation);
+                        }
+
+                        pageW = pdf.internal.pageSize.getWidth();
+                        pageH = pdf.internal.pageSize.getHeight();
+
+                        const availW = pageW - (margin * 2);
+                        const availH = pageH - (margin * 2);
+
+                        // Calculate scale ratio to fit image within available margin bounds
+                        const scaleRatio = Math.min(availW / imgItem.width, availH / imgItem.height);
+                        const finalW = imgItem.width * scaleRatio;
+                        const finalH = imgItem.height * scaleRatio;
+
+                        // Center image on page
+                        const xPos = margin + (availW - finalW) / 2;
+                        const yPos = margin + (availH - finalH) / 2;
+
+                        pdf.addImage(imgItem.src, 'JPEG', xPos, yPos, finalW, finalH);
+                    }
+                });
+
+                pdf.save(`compiled_images_${Date.now()}.pdf`);
+
+            } catch (err) {
+                console.error("PDF Compilation Error:", err);
+                alert("An error occurred while compiling the PDF. Try reducing the number or size of images.");
+            } finally {
+                generatePdfBtn.disabled = false;
+                generatePdfBtn.innerHTML = `
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    Download Compiled PDF
+                `;
+            }
+        }, 100);
+    });
+
+    resetBtn.addEventListener('click', resetUI);
+
+    function resetUI() {
+        uploadZone.classList.remove('hidden');
+        editorZone.classList.add('hidden');
+        fileInput.value = '';
+        fileInputMore.value = '';
+        loadedImages = [];
+        imageGrid.innerHTML = '';
+    }
+</script>
