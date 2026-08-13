@@ -9,13 +9,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans select-none">
+<body class="bg-gray-50 text-gray-900 font-sans select-none flex flex-col min-h-screen">
 
     {% include "nav.njk" %}
 
-    {{ content | safe }}
+    <div class="flex-grow">
+        {{ content | safe }}
+    </div>
 
-    <footer class="bg-white mt-20 border-t border-gray-100 py-8 text-center text-gray-500 text-sm">
+    <!-- Ad Unit above Footer -->
+    {% include "ad-banner.njk" %}
+
+    <footer class="bg-white mt-12 border-t border-gray-100 py-8 text-center text-gray-500 text-sm">
+        <p class="font-medium text-gray-700 mb-1">Saved you time or money? ☕ <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" class="text-blue-600 hover:underline">Consider buying me a coffee!</a></p>
         <p>&copy; 2026 FreeBG.ai - Fast, 100% Private Client-Side Tools.</p>
         <p class="text-xs text-gray-400 mt-1">All processing happens directly in your web browser. No files are uploaded to any server.</p>
     </footer>
