@@ -1,0 +1,242 @@
+---
+layout: layout.njk
+title: "Free PDF to JPG / PNG Converter"
+---
+
+<!-- Mozilla PDF.js & JSZip CDNs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<main class="max-w-6xl mx-auto px-4 py-12">
+    
+    <header class="text-center mb-10">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Convert PDF to JPG / PNG <span class="text-blue-600">Instantly</span></h2>
+        <p class="text-gray-600 max-w-xl mx-auto text-sm">Extract PDF pages into high-resolution images. 100% private & processed locally in your browser.</p>
+    </header>
+
+    <div id="toolZone" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
+        
+        <!-- Step 1: Upload Zone -->
+        <div id="uploadZone" class="text-center py-20 border-4 border-dashed border-gray-200 rounded-xl bg-gray-50 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all">
+            <input type="file" id="fileInput" accept="application/pdf" class="hidden">
+            <label for="fileInput" class="cursor-pointer">
+                <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                <p class="mt-4 text-lg font-semibold text-gray-700">Drag & Drop PDF or Click to Upload</p>
+                <p class="text-sm text-gray-500 mt-1">Supports multi-page PDF documents</p>
+            </label>
+        </div>
+
+        <!-- Step 2: Processing Spinner -->
+        <div id="processingZone" class="hidden text-center py-20">
+            <div class="flex flex-col items-center gap-4">
+                <div class="loading-spinner"></div>
+                <p id="statusMessage" class="text-lg font-medium text-gray-700">Reading PDF document...</p>
+                <p class="text-sm text-gray-500">Rendering pages directly in browser memory...</p>
+            </div>
+        </div>
+
+        <!-- Step 3: Editor & Page Gallery -->
+        <div id="editorZone" class="hidden">
+            
+            <!-- Controls Bar -->
+            <div class="bg-gray-100 p-4 rounded-xl mb-8 grid sm:grid-cols-2 md:grid-cols-3 gap-4 border border-gray-200 text-sm">
+                
+                <!-- Format Choice -->
+                <div>
+                    <label for="formatSelect" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Output Format:</label>
+                    <select id="formatSelect" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="image/jpeg" selected>JPG (Smaller File Size)</option>
+                        <option value="image/png">PNG (High Clarity)</option>
+                    </select>
+                </div>
+
+                <!-- Quality / Resolution Scale -->
+                <div>
+                    <label for="scaleSelect" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Image Quality / DPI:</label>
+                    <select id="scaleSelect" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="1.5">Standard Quality (150 DPI)</option>
+                        <option value="2.0" selected>High Quality (200 DPI)</option>
+                        <option value="3.0">Ultra HD (300 DPI)</option>
+                    </select>
+                </div>
+
+                <!-- Global Action Button -->
+                <div class="flex items-end sm:col-span-2 md:col-span-1">
+                    <button id="downloadZipBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Download All Pages (.ZIP)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pages Grid -->
+            <div id="pagesGrid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+                <!-- Dynamically populated page cards will go here -->
+            </div>
+
+            <div class="text-center">
+                <button id="resetBtn" class="text-sm text-gray-500 hover:text-blue-600 underline">Convert Another PDF</button>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    // Initialize PDF.js Worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const fileInput = document.getElementById('fileInput');
+    const uploadZone = document.getElementById('uploadZone');
+    const processingZone = document.getElementById('processingZone');
+    const editorZone = document.getElementById('editorZone');
+    const statusMessage = document.getElementById('statusMessage');
+    const pagesGrid = document.getElementById('pagesGrid');
+    const formatSelect = document.getElementById('formatSelect');
+    const scaleSelect = document.getElementById('scaleSelect');
+    const downloadZipBtn = document.getElementById('downloadZipBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let pdfDoc = null;
+    let pageBlobs = []; // Stores { pageNum, blob, filename }
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) loadPDF(e.target.files[0]);
+    });
+
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files[0] && e.dataTransfer.files[0].type === 'application/pdf') {
+            loadPDF(e.dataTransfer.files[0]);
+        }
+    });
+
+    async function loadPDF(file) {
+        uploadZone.classList.add('hidden');
+        processingZone.classList.remove('hidden');
+        editorZone.classList.add('hidden');
+        pagesGrid.innerHTML = '';
+        pageBlobs = [];
+
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            
+            await renderAllPages();
+
+            processingZone.classList.add('hidden');
+            editorZone.classList.remove('hidden');
+        } catch (error) {
+            console.error("PDF Load Error:", error);
+            alert("Unable to process PDF. The file may be password protected or corrupted.");
+            resetUI();
+        }
+    }
+
+    formatSelect.addEventListener('change', renderAllPages);
+    scaleSelect.addEventListener('change', renderAllPages);
+
+    async function renderAllPages() {
+        if (!pdfDoc) return;
+
+        pagesGrid.innerHTML = '';
+        pageBlobs = [];
+        const scale = parseFloat(scaleSelect.value);
+        const mimeType = formatSelect.value;
+        const ext = mimeType === 'image/png' ? 'png' : 'jpg';
+
+        for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+            statusMessage.textContent = `Rendering page ${pageNum} of ${pdfDoc.numPages}...`;
+            
+            const page = await pdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const ctx = canvas.getContext('2d');
+
+            // Fill white background for JPGs
+            if (mimeType === 'image/jpeg') {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            await page.render({ canvasContext: ctx, viewport }).promise;
+
+            // Convert Canvas to Blob
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, 0.92));
+            const fileName = `page_${pageNum}.${ext}`;
+            pageBlobs.push({ pageNum, blob, fileName });
+
+            // Create UI Card for Page
+            const card = document.createElement('div');
+            card.className = "bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col items-center shadow-sm hover:shadow-md transition-all";
+            
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(blob);
+            img.className = "max-h-64 w-auto object-contain rounded border border-gray-200 mb-3";
+
+            const info = document.createElement('div');
+            info.className = "flex justify-between items-center w-full mt-auto pt-2 border-t border-gray-200 text-xs text-gray-500 font-medium";
+            info.innerHTML = `<span>Page ${pageNum}</span>`;
+
+            const dlBtn = document.createElement('button');
+            dlBtn.className = "bg-white hover:bg-gray-100 text-blue-600 font-bold py-1 px-3 rounded border border-gray-300 transition-all shadow-sm";
+            dlBtn.textContent = "Download";
+            dlBtn.onclick = () => downloadSingleBlob(blob, fileName);
+
+            info.appendChild(dlBtn);
+            card.appendChild(img);
+            card.appendChild(info);
+            pagesGrid.appendChild(card);
+        }
+    }
+
+    function downloadSingleBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // JSZip Export
+    downloadZipBtn.addEventListener('click', async () => {
+        if (pageBlobs.length === 0) return;
+
+        downloadZipBtn.disabled = true;
+        downloadZipBtn.textContent = "Creating ZIP...";
+
+        const zip = new JSZip();
+        pageBlobs.forEach(item => {
+            zip.file(item.fileName, item.blob);
+        });
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        downloadSingleBlob(zipBlob, `pdf_pages_${Date.now()}.zip`);
+
+        downloadZipBtn.disabled = false;
+        downloadZipBtn.innerHTML = `
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            Download All Pages (.ZIP)
+        `;
+    });
+
+    resetBtn.addEventListener('click', resetUI);
+    function resetUI() {
+        uploadZone.classList.remove('hidden');
+        processingZone.classList.add('hidden');
+        editorZone.classList.add('hidden');
+        fileInput.value = '';
+        pdfDoc = null;
+        pageBlobs = [];
+    }
+</script>
