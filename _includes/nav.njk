@@ -1,37 +1,43 @@
 <nav class="bg-white shadow-sm border-b border-gray-100 relative z-50">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center">
         
-        <!-- Logo Only (Bigger height) -->
+        <!-- Logo -->
         <a href="/" class="flex items-center group">
-            <img src="/assets/logo.png" alt="BWTools.uk" class="h-12 md:h-16 w-auto object-contain transition-transform group-hover:scale-105">
+            <img src="/assets/logo.png" alt="BWTools.uk" class="h-16 md:h-20 w-auto object-contain transition-transform group-hover:scale-105">
         </a>
 
         <!-- Navigation Links -->
         <div class="flex items-center gap-6 text-sm font-medium">
             
             <!-- Image Tools Dropdown -->
-            <div class="relative group">
-                <button class="flex items-center gap-1 text-gray-700 hover:text-blue-600 py-2 transition-colors">
+            <div class="relative group py-2">
+                <button class="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors">
                     🖼️ Image Tools
                     <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div class="absolute left-0 top-full hidden group-hover:block w-56 bg-white shadow-lg rounded-xl border border-gray-100 py-2 mt-1">
-                    <a href="/bg-remover" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">AI Background Remover</a>
-                    <a href="/compressor" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image Compressor</a>
-                    <a href="/cropper" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image Cropper</a>
+                <!-- Invisible hover bridge wrapper (pt-2) -->
+                <div class="absolute left-0 top-full hidden group-hover:block w-56 pt-2">
+                    <div class="bg-white shadow-lg rounded-xl border border-gray-100 py-2">
+                        <a href="/bg-remover" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">AI Background Remover</a>
+                        <a href="/compressor" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image Compressor</a>
+                        <a href="/cropper" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image Cropper</a>
+                    </div>
                 </div>
             </div>
 
             <!-- PDF Tools Dropdown -->
-            <div class="relative group">
-                <button class="flex items-center gap-1 text-gray-700 hover:text-blue-600 py-2 transition-colors">
+            <div class="relative group py-2">
+                <button class="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors">
                     📄 PDF & Converters
                     <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div class="absolute right-0 top-full hidden group-hover:block w-56 bg-white shadow-lg rounded-xl border border-gray-100 py-2 mt-1">
-                    <a href="/pdf-to-image" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">PDF to JPG / PNG</a>
-                    <a href="/image-to-pdf" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image to PDF Compiler</a>
-                    <a href="/pdf-merge" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">PDF Merger & Splitter</a>
+                <!-- Invisible hover bridge wrapper (pt-2) -->
+                <div class="absolute right-0 top-full hidden group-hover:block w-56 pt-2">
+                    <div class="bg-white shadow-lg rounded-xl border border-gray-100 py-2">
+                        <a href="/pdf-to-image" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">PDF to JPG / PNG</a>
+                        <a href="/image-to-pdf" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image to PDF Compiler</a>
+                        <a href="/pdf-merge" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">PDF Merger & Splitter</a>
+                    </div>
                 </div>
             </div>
 
