@@ -1,7 +1,8 @@
 module.exports = function(eleventyConfig) {
-    // Copy CSS and Assets directly to the output folder
+    // Copy static folders & files straight to the build output
     eleventyConfig.addPassthroughCopy("src/css");
     eleventyConfig.addPassthroughCopy("src/assets");
+    eleventyConfig.addPassthroughCopy("src/robots.txt");
 
     return {
         dir: {
