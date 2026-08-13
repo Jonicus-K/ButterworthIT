@@ -1,0 +1,258 @@
+---
+layout: layout.njk
+title: "Free PDF Merger & Splitter"
+---
+
+<!-- pdf-lib CDN -->
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+<main class="max-w-6xl mx-auto px-4 py-12">
+    
+    <header class="text-center mb-10">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3 tracking-tight">Merge & Combine PDFs <span class="text-blue-600">Instantly</span></h2>
+        <p class="text-gray-600 max-w-xl mx-auto text-sm">Combine multiple PDF files or extract page ranges into a single document. 100% private & client-side.</p>
+    </header>
+
+    <div id="toolZone" class="bg-white p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100">
+        
+        <!-- Step 1: Upload Zone -->
+        <div id="uploadZone" class="text-center py-20 border-4 border-dashed border-gray-200 rounded-xl bg-gray-50 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all">
+            <input type="file" id="fileInput" accept="application/pdf" multiple class="hidden">
+            <label for="fileInput" class="cursor-pointer">
+                <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                <p class="mt-4 text-lg font-semibold text-gray-700">Drag & Drop PDFs or Click to Upload</p>
+                <p class="text-sm text-gray-500 mt-1">Select two or more PDF files to combine</p>
+            </label>
+        </div>
+
+        <!-- Step 2: Editor Zone -->
+        <div id="editorZone" class="hidden">
+            
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-gray-800">Files to Merge</h3>
+                <label for="fileInputMore" class="bg-white hover:bg-gray-50 text-blue-600 font-bold py-1.5 px-4 rounded-lg border border-gray-300 transition-all text-xs cursor-pointer shadow-sm">
+                    + Add More PDFs
+                    <input type="file" id="fileInputMore" accept="application/pdf" multiple class="hidden">
+                </label>
+            </div>
+
+            <!-- PDF File List -->
+            <div id="fileList" class="space-y-3 mb-8">
+                <!-- Dynamically populated PDF file cards -->
+            </div>
+
+            <!-- Action Bar -->
+            <div class="text-center flex flex-col items-center gap-3">
+                <button id="mergeBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md transition-all flex items-center gap-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    Merge PDFs into One File
+                </button>
+                <button id="resetBtn" class="text-sm text-gray-500 hover:text-blue-600 underline">Start Over</button>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    const { PDFDocument } = PDFLib;
+
+    const fileInput = document.getElementById('fileInput');
+    const fileInputMore = document.getElementById('fileInputMore');
+    const uploadZone = document.getElementById('uploadZone');
+    const editorZone = document.getElementById('editorZone');
+    const fileList = document.getElementById('fileList');
+    const mergeBtn = document.getElementById('mergeBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let pdfFiles = []; // Stores { id, file, arrayBuffer, pageCount, rangeInput }
+
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+    fileInputMore.addEventListener('change', (e) => handleFiles(e.target.files));
+
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+    });
+
+    async function handleFiles(files) {
+        if (!files || files.length === 0) return;
+
+        for (const file of Array.from(files)) {
+            if (file.type === 'application/pdf') {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+                    const pageCount = pdf.getPageCount();
+
+                    pdfFiles.push({
+                        id: 'pdf_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                        file: file,
+                        arrayBuffer: arrayBuffer,
+                        pageCount: pageCount,
+                        pageRange: `1-${pageCount}`
+                    });
+                } catch (err) {
+                    console.error("Error reading PDF:", err);
+                    alert(`Failed to read "${file.name}". It may be encrypted or password-protected.`);
+                }
+            }
+        }
+
+        if (pdfFiles.length > 0) {
+            uploadZone.classList.add('hidden');
+            editorZone.classList.remove('hidden');
+            renderFileList();
+        }
+    }
+
+    function renderFileList() {
+        fileList.innerHTML = '';
+
+        pdfFiles.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = "bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm";
+            
+            card.innerHTML = `
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <span class="bg-blue-100 text-blue-700 font-bold text-xs px-2.5 py-1 rounded-lg">${index + 1}</span>
+                    <div class="overflow-hidden">
+                        <p class="font-bold text-sm text-gray-800 truncate max-w-xs">${item.file.name}</p>
+                        <p class="text-xs text-gray-500">${formatBytes(item.file.size)} • ${item.pageCount} page(s)</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="flex items-center gap-1.5 text-xs">
+                        <label class="font-semibold text-gray-600">Pages:</label>
+                        <input type="text" value="${item.pageRange}" onchange="updatePageRange('${item.id}', this.value)" class="bg-white border border-gray-300 rounded px-2 py-1 w-24 font-mono text-center focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                    </div>
+
+                    <div class="flex gap-1">
+                        <button onclick="moveFile(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 cursor-not-allowed bg-gray-200 text-gray-600 text-xs p-1.5 rounded"' : 'class="bg-white hover:bg-gray-100 text-gray-700 font-bold text-xs p-1.5 rounded border border-gray-300 shadow-sm"'}>↑</button>
+                        <button onclick="moveFile(${index}, 1)" ${index === pdfFiles.length - 1 ? 'disabled class="opacity-30 cursor-not-allowed bg-gray-200 text-gray-600 text-xs p-1.5 rounded"' : 'class="bg-white hover:bg-gray-100 text-gray-700 font-bold text-xs p-1.5 rounded border border-gray-300 shadow-sm"'}>↓</button>
+                        <button onclick="removeFile('${item.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs px-2 py-1.5 rounded border border-red-200 ml-1">Remove</button>
+                    </div>
+                </div>
+            `;
+            fileList.appendChild(card);
+        });
+    }
+
+    window.updatePageRange = function(id, value) {
+        const item = pdfFiles.find(f => f.id === id);
+        if (item) item.pageRange = value;
+    };
+
+    window.removeFile = function(id) {
+        pdfFiles = pdfFiles.filter(item => item.id !== id);
+        if (pdfFiles.length === 0) {
+            resetUI();
+        } else {
+            renderFileList();
+        }
+    };
+
+    window.moveFile = function(index, direction) {
+        const newIndex = index + direction;
+        if (newIndex >= 0 && newIndex < pdfFiles.length) {
+            const temp = pdfFiles[index];
+            pdfFiles[index] = pdfFiles[newIndex];
+            pdfFiles[newIndex] = temp;
+            renderFileList();
+        }
+    };
+
+    // Helper to parse page range strings like "1-3, 5, 7-10"
+    function parsePageRange(rangeStr, maxPages) {
+        const pages = new Set();
+        const parts = rangeStr.split(',');
+
+        for (let part of parts) {
+            part = part.trim();
+            if (part.includes('-')) {
+                const [start, end] = part.split('-').map(num => parseInt(num.trim(), 10));
+                if (!isNaN(start) && !isNaN(end)) {
+                    for (let i = Math.max(1, start); i <= Math.min(maxPages, end); i++) {
+                        pages.add(i - 1); // 0-indexed for pdf-lib
+                    }
+                }
+            } else {
+                const num = parseInt(part, 10);
+                if (!isNaN(num) && num >= 1 && num <= maxPages) {
+                    pages.add(num - 1);
+                }
+            }
+        }
+        return Array.from(pages).sort((a, b) => a - b);
+    }
+
+    // Merge Logic
+    mergeBtn.addEventListener('click', async () => {
+        if (pdfFiles.length === 0) return;
+
+        mergeBtn.disabled = true;
+        mergeBtn.textContent = "Merging Documents...";
+
+        setTimeout(async () => {
+            try {
+                const mergedPdf = await PDFDocument.create();
+
+                for (const item of pdfFiles) {
+                    const srcPdf = await PDFDocument.load(item.arrayBuffer, { ignoreEncryption: true });
+                    const selectedPageIndices = parsePageRange(item.pageRange, item.pageCount);
+
+                    if (selectedPageIndices.length > 0) {
+                        const copiedPages = await mergedPdf.copyPages(srcPdf, selectedPageIndices);
+                        copiedPages.forEach(page => mergedPdf.addPage(page));
+                    }
+                }
+
+                const mergedBytes = await mergedPdf.save();
+                const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `merged_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+            } catch (err) {
+                console.error("Merge Error:", err);
+                alert("An error occurred while merging PDFs.");
+            } finally {
+                mergeBtn.disabled = false;
+                mergeBtn.innerHTML = `
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 01-2-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    Merge PDFs into One File
+                `;
+            }
+        }, 100);
+    });
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    resetBtn.addEventListener('click', resetUI);
+
+    function resetUI() {
+        uploadZone.classList.remove('hidden');
+        editorZone.classList.add('hidden');
+        fileInput.value = '';
+        fileInputMore.value = '';
+        pdfFiles = [];
+        fileList.innerHTML = '';
+    }
+</script>
