@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} | FreeBG.ai</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans select-none">
+
+    {% include "nav.njk" %}
+
+    {{ content | safe }}
+
+    <footer class="bg-white mt-20 border-t border-gray-100 py-8 text-center text-gray-500 text-sm">
+        <p>&copy; 2026 FreeBG.ai - Fast, 100% Private Client-Side Tools.</p>
+        <p class="text-xs text-gray-400 mt-1">All processing happens directly in your web browser. No files are uploaded to any server.</p>
+    </footer>
+
+</body>
+</html>
