@@ -1,6 +1,7 @@
 module.exports = function(eleventyConfig) {
-    // Copy the CSS folder straight through to the final build
+    // Copy CSS and Assets directly to the output folder
     eleventyConfig.addPassthroughCopy("src/css");
+    eleventyConfig.addPassthroughCopy("src/assets");
 
     return {
         dir: {
