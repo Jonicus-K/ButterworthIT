@@ -1,0 +1,327 @@
+---
+layout: layout.njk
+title: "Free SVG to PNG & Favicon Converter"
+---
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+    
+    <header class="text-center mb-6">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">SVG to <span class="text-blue-600 dark:text-blue-400">PNG & Favicon</span> Converter</h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Convert vector SVGs into high-res PNG, WebP, or a full multi-size favicon package.</p>
+    </header>
+
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+        
+        <!-- Upload Zone -->
+        <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
+            <input type="file" id="svgInput" accept=".svg,image/svg+xml" class="hidden">
+            <label for="svgInput" class="cursor-pointer">
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop SVG File or Click to Upload</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports vector .svg files</p>
+            </label>
+        </div>
+
+        <!-- Editor Zone -->
+        <div id="editorZone" class="hidden">
+            
+            <div class="grid md:grid-cols-12 gap-8">
+                
+                <!-- Left: Controls & Presets -->
+                <div class="md:col-span-7 space-y-6">
+                    
+                    <!-- Preset Resolutions -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Preset Resolutions</label>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                            <button type="button" data-w="16" data-h="16" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">16x16 (Favicon)</button>
+                            <button type="button" data-w="32" data-h="32" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">32x32 (Browser)</button>
+                            <button type="button" data-w="180" data-h="180" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">180x180 (Apple)</button>
+                            <button type="button" data-w="512" data-h="512" class="size-btn bg-blue-600 text-white font-bold py-1.5 px-2 rounded-lg text-xs shadow-sm transition-all text-center">512x512 (App)</button>
+                            <button type="button" data-w="1024" data-h="1024" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">1024x1024 (HD)</button>
+                            <button type="button" data-w="2048" data-h="2048" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">2048x2048 (4K)</button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Dimensions -->
+                    <div class="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Custom Dimensions</h3>
+                            <label class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 cursor-pointer">
+                                <input type="checkbox" id="lockAspect" checked class="accent-blue-600 rounded">
+                                Lock Aspect Ratio
+                            </label>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="customWidth" class="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-semibold">Width (px)</label>
+                                <input type="number" id="customWidth" value="512" min="1" max="8192" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label for="customHeight" class="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-semibold">Height (px)</label>
+                                <input type="number" id="customHeight" value="512" min="1" max="8192" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Format & Background -->
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="exportFormat" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Export Format</label>
+                            <select id="exportFormat" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <option value="image/png" selected>PNG (Transparent)</option>
+                                <option value="image/webp">WebP (Compressed)</option>
+                                <option value="image/jpeg">JPEG (Solid)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="bgColor" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Fill Background</label>
+                            <div class="flex items-center gap-2">
+                                <button id="bgNoneBtn" class="bg-blue-600 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition-all">Transparent</button>
+                                <div class="flex items-center bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 gap-2 flex-grow">
+                                    <input type="color" id="bgColor" value="#ffffff" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent">
+                                    <span id="bgColorVal" class="text-xs font-mono text-gray-600 dark:text-gray-300">Custom</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right: Preview & Download Actions -->
+                <div class="md:col-span-5 flex flex-col items-center justify-between border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 pt-6 md:pt-0 md:pl-8">
+                    
+                    <div class="flex flex-col items-center w-full">
+                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Vector Preview</span>
+                        
+                        <div class="p-4 bg-gray-100 dark:bg-gray-900/80 rounded-2xl border border-gray-200 dark:border-gray-700 flex items-center justify-center min-h-[220px] max-h-[260px] w-full checkerboard overflow-hidden">
+                            <img id="svgPreview" class="max-h-48 max-w-full object-contain" src="" alt="SVG Preview">
+                        </div>
+                        <p id="aspectInfo" class="text-xs text-gray-400 dark:text-gray-500 mt-2 font-mono">-</p>
+                    </div>
+
+                    <div class="w-full space-y-2.5 mt-6">
+                        <button id="downloadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-all text-sm flex items-center justify-center gap-2">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            Download Converted Image
+                        </button>
+                        
+                        <button id="downloadFaviconPackBtn" class="w-full bg-gray-800 dark:bg-gray-700 hover:bg-gray-900 dark:hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-xs flex items-center justify-center gap-1.5">
+                            📦 Download Complete Favicon Pack (.ZIP)
+                        </button>
+                        
+                        <button id="resetBtn" class="w-full text-center text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline pt-1">
+                            Choose Another File
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    const svgInput = document.getElementById('svgInput');
+    const uploadZone = document.getElementById('uploadZone');
+    const editorZone = document.getElementById('editorZone');
+    const svgPreview = document.getElementById('svgPreview');
+    const aspectInfo = document.getElementById('aspectInfo');
+    const sizeBtns = document.querySelectorAll('.size-btn');
+    const customWidth = document.getElementById('customWidth');
+    const customHeight = document.getElementById('customHeight');
+    const lockAspect = document.getElementById('lockAspect');
+    const exportFormat = document.getElementById('exportFormat');
+    const bgNoneBtn = document.getElementById('bgNoneBtn');
+    const bgColor = document.getElementById('bgColor');
+    const bgColorVal = document.getElementById('bgColorVal');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const downloadFaviconPackBtn = document.getElementById('downloadFaviconPackBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let currentSvgDataUrl = null;
+    let originalSvgWidth = 512;
+    let originalSvgHeight = 512;
+    let activeBg = 'transparent';
+
+    svgInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) loadSvgFile(e.target.files[0]);
+    });
+
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files[0]) loadSvgFile(e.dataTransfer.files[0]);
+    });
+
+    function loadSvgFile(file) {
+        if (!file.name.toLowerCase().endsWith('.svg') && file.type !== 'image/svg+xml') {
+            alert("Please select a valid .svg file.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            currentSvgDataUrl = e.target.result;
+            const img = new Image();
+            img.onload = () => {
+                originalSvgWidth = img.naturalWidth || 512;
+                originalSvgHeight = img.naturalHeight || 512;
+
+                customWidth.value = originalSvgWidth;
+                customHeight.value = originalSvgHeight;
+                aspectInfo.textContent = `Original: ${originalSvgWidth} × ${originalSvgHeight} px`;
+
+                svgPreview.src = currentSvgDataUrl;
+                uploadZone.classList.add('hidden');
+                editorZone.classList.remove('hidden');
+            };
+            img.src = currentSvgDataUrl;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Size Preset Buttons
+    sizeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            sizeBtns.forEach(b => {
+                b.className = "size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center";
+            });
+            btn.className = "size-btn bg-blue-600 text-white font-bold py-1.5 px-2 rounded-lg text-xs shadow-sm transition-all text-center";
+
+            const w = parseInt(btn.getAttribute('data-w'), 10);
+            const h = parseInt(btn.getAttribute('data-h'), 10);
+            customWidth.value = w;
+            customHeight.value = h;
+        });
+    });
+
+    customWidth.addEventListener('input', () => {
+        if (lockAspect.checked && originalSvgWidth > 0) {
+            const aspect = originalSvgHeight / originalSvgWidth;
+            customHeight.value = Math.round(parseInt(customWidth.value || 0, 10) * aspect);
+        }
+    });
+
+    customHeight.addEventListener('input', () => {
+        if (lockAspect.checked && originalSvgHeight > 0) {
+            const aspect = originalSvgWidth / originalSvgHeight;
+            customWidth.value = Math.round(parseInt(customHeight.value || 0, 10) * aspect);
+        }
+    });
+
+    // Background selection
+    bgNoneBtn.addEventListener('click', () => {
+        activeBg = 'transparent';
+        bgNoneBtn.className = "bg-blue-600 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition-all";
+        bgColorVal.textContent = "Custom";
+    });
+
+    bgColor.addEventListener('input', () => {
+        activeBg = bgColor.value;
+        bgNoneBtn.className = "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2 px-3 rounded-lg text-xs transition-all";
+        bgColorVal.textContent = bgColor.value;
+    });
+
+    // Canvas Renderer Helper
+    function renderRaster(width, height) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+
+                if (activeBg !== 'transparent' || exportFormat.value === 'image/jpeg') {
+                    ctx.fillStyle = activeBg === 'transparent' ? '#ffffff' : activeBg;
+                    ctx.fillRect(0, 0, width, height);
+                }
+
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas);
+            };
+            img.src = currentSvgDataUrl;
+        });
+    }
+
+    // Single Converted Image Download
+    downloadBtn.addEventListener('click', async () => {
+        const w = parseInt(customWidth.value, 10) || 512;
+        const h = parseInt(customHeight.value, 10) || 512;
+        const format = exportFormat.value;
+        const ext = format === 'image/png' ? 'png' : (format === 'image/webp' ? 'webp' : 'jpg');
+
+        downloadBtn.disabled = true;
+        downloadBtn.textContent = "Rendering...";
+
+        const canvas = await renderRaster(w, h);
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bwtools_${w}x${h}_${Date.now()}.${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            downloadBtn.disabled = false;
+            downloadBtn.innerHTML = `
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                Download Converted Image
+            `;
+        }, format, 0.95);
+    });
+
+    // Complete Favicon Pack (.ZIP)
+    downloadFaviconPackBtn.addEventListener('click', async () => {
+        downloadFaviconPackBtn.disabled = true;
+        downloadFaviconPackBtn.textContent = "Generating Pack (.ZIP)...";
+
+        const zip = new JSZip();
+        const sizes = [
+            { name: 'favicon-16x16.png', size: 16 },
+            { name: 'favicon-32x32.png', size: 32 },
+            { name: 'apple-touch-icon.png', size: 180 },
+            { name: 'android-chrome-192x192.png', size: 192 },
+            { name: 'android-chrome-512x512.png', size: 512 }
+        ];
+
+        for (const item of sizes) {
+            const canvas = await renderRaster(item.size, item.size);
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            zip.file(item.name, blob);
+        }
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `favicon_package_${Date.now()}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        downloadFaviconPackBtn.disabled = false;
+        downloadFaviconPackBtn.textContent = "📦 Download Complete Favicon Pack (.ZIP)";
+    });
+
+    resetBtn.addEventListener('click', () => {
+        uploadZone.classList.remove('hidden');
+        editorZone.classList.add('hidden');
+        svgInput.value = '';
+        currentSvgDataUrl = null;
+    });
+</script>
