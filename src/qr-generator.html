@@ -3,21 +3,21 @@ layout: layout.njk
 title: "Free Custom QR Code Generator"
 ---
 
-<!-- Rock-solid synchronous QRious Canvas Library -->
+<!-- QRious Canvas Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
     <header class="text-center mb-6">
         <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Custom QR Code <span class="text-blue-600 dark:text-blue-400">Generator</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Generate customizable QR codes for links, Wi-Fi networks, and text with zero tracking.</p>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Generate customizable QR codes for links, Wi-Fi networks, and branding with zero server uploads.</p>
     </header>
 
     <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
         <div class="grid md:grid-cols-12 gap-8">
             
-            <!-- Left Column: Input Settings -->
+            <!-- Left Column: Input & Customization -->
             <div class="md:col-span-7 space-y-6">
                 
                 <!-- Data Type Selection Tabs -->
@@ -62,6 +62,30 @@ title: "Free Custom QR Code Generator"
                     </div>
                 </div>
 
+                <!-- Center Logo Branding Option -->
+                <div class="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-700 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Center Logo (Optional)</h3>
+                        <button id="removeLogoBtn" class="hidden text-xs text-red-500 hover:underline font-semibold">Remove Logo</button>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <label for="logoInput" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 font-bold py-2 px-3 rounded-lg text-xs cursor-pointer shadow-sm">
+                            Choose Logo / Icon
+                            <input type="file" id="logoInput" accept="image/png, image/jpeg, image/svg+xml, image/webp" class="hidden">
+                        </label>
+                        <span id="logoFileName" class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">No logo selected</span>
+                    </div>
+
+                    <div id="logoSizeContainer" class="hidden pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <div class="flex justify-between items-center mb-1">
+                            <label for="logoSizeSlider" class="text-xs text-gray-500 dark:text-gray-400 font-semibold">Logo Size:</label>
+                            <span id="logoSizeVal" class="text-xs font-bold text-blue-600 dark:text-blue-400">22%</span>
+                        </div>
+                        <input type="range" id="logoSizeSlider" min="15" max="28" value="22" class="w-full accent-blue-600 cursor-pointer">
+                    </div>
+                </div>
+
                 <!-- Styling Options -->
                 <div class="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-700 space-y-4">
                     <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Customise Appearance</h3>
@@ -91,7 +115,7 @@ title: "Free Custom QR Code Generator"
                                 <option value="L">Low (~7%)</option>
                                 <option value="M" selected>Medium (~15%)</option>
                                 <option value="Q">Quartile (~25%)</option>
-                                <option value="H">High (~30%)</option>
+                                <option value="H">High (~30% - Best for Logos)</option>
                             </select>
                         </div>
 
@@ -108,7 +132,7 @@ title: "Free Custom QR Code Generator"
 
             </div>
 
-            <!-- Right Column: Live QR Preview & Actions -->
+            <!-- Right Column: Live QR Preview & Export -->
             <div class="md:col-span-5 flex flex-col items-center justify-between border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 pt-6 md:pt-0 md:pl-8">
                 
                 <div class="flex flex-col items-center w-full">
@@ -117,10 +141,9 @@ title: "Free Custom QR Code Generator"
                     <div class="p-4 bg-white rounded-2xl shadow-md border border-gray-200 flex items-center justify-center">
                         <canvas id="qrCanvas" class="rounded"></canvas>
                     </div>
-                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-3 text-center">Point phone camera to scan</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-3 text-center">Point phone camera to test instant scanning</p>
                 </div>
 
-                <!-- Export Buttons -->
                 <div class="w-full space-y-2.5 mt-6">
                     <button id="downloadPngBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all text-sm flex items-center justify-center gap-2">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
@@ -149,28 +172,25 @@ title: "Free Custom QR Code Generator"
     const wifiPass = document.getElementById('wifiPass');
     const wifiAuth = document.getElementById('wifiAuth');
 
+    const logoInput = document.getElementById('logoInput');
+    const removeLogoBtn = document.getElementById('removeLogoBtn');
+    const logoFileName = document.getElementById('logoFileName');
+    const logoSizeContainer = document.getElementById('logoSizeContainer');
+    const logoSizeSlider = document.getElementById('logoSizeSlider');
+    const logoSizeVal = document.getElementById('logoSizeVal');
+
     const fgColor = document.getElementById('fgColor');
     const bgColor = document.getElementById('bgColor');
     const fgColorVal = document.getElementById('fgColorVal');
     const bgColorVal = document.getElementById('bgColorVal');
     const eccLevel = document.getElementById('eccLevel');
     const exportSize = document.getElementById('exportSize');
-
     const downloadPngBtn = document.getElementById('downloadPngBtn');
 
     let currentType = 'url';
+    let logoImage = null;
 
-    // Initialize QRious instance
-    const qr = new QRious({
-        element: qrCanvas,
-        size: 240,
-        value: 'https://bwtools.uk',
-        background: '#ffffff',
-        foreground: '#000000',
-        level: 'M'
-    });
-
-    // Switch Input Modes
+    // Type Switcher
     typeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             typeBtns.forEach(b => {
@@ -187,65 +207,107 @@ title: "Free Custom QR Code Generator"
             if (currentType === 'text') fieldText.classList.remove('hidden');
             if (currentType === 'wifi') fieldWifi.classList.remove('hidden');
 
-            updateQR();
+            renderQRCode();
         });
     });
 
-    // Color Pickers
-    fgColor.addEventListener('input', () => {
-        fgColorVal.textContent = fgColor.value;
-        updateQR();
+    // Logo Upload Handling (100% Client-Side)
+    logoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            logoImage = new Image();
+            logoImage.onload = () => {
+                logoFileName.textContent = file.name;
+                removeLogoBtn.classList.remove('hidden');
+                logoSizeContainer.classList.remove('hidden');
+                eccLevel.value = 'H'; // Switch to High ECC for logo durability
+                renderQRCode();
+            };
+            logoImage.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
     });
 
-    bgColor.addEventListener('input', () => {
-        bgColorVal.textContent = bgColor.value;
-        updateQR();
+    removeLogoBtn.addEventListener('click', () => {
+        logoImage = null;
+        logoInput.value = '';
+        logoFileName.textContent = 'No logo selected';
+        removeLogoBtn.classList.add('hidden');
+        logoSizeContainer.classList.add('hidden');
+        renderQRCode();
     });
 
-    eccLevel.addEventListener('change', updateQR);
-    urlInput.addEventListener('input', updateQR);
-    textInput.addEventListener('input', updateQR);
-    wifiSsid.addEventListener('input', updateQR);
-    wifiPass.addEventListener('input', updateQR);
-    wifiAuth.addEventListener('change', updateQR);
+    logoSizeSlider.addEventListener('input', () => {
+        logoSizeVal.textContent = `${logoSizeSlider.value}%`;
+        renderQRCode();
+    });
+
+    // Real-Time Controls
+    fgColor.addEventListener('input', () => { fgColorVal.textContent = fgColor.value; renderQRCode(); });
+    bgColor.addEventListener('input', () => { bgColorVal.textContent = bgColor.value; renderQRCode(); });
+    eccLevel.addEventListener('change', renderQRCode);
+    urlInput.addEventListener('input', renderQRCode);
+    textInput.addEventListener('input', renderQRCode);
+    wifiSsid.addEventListener('input', renderQRCode);
+    wifiPass.addEventListener('input', renderQRCode);
+    wifiAuth.addEventListener('change', renderQRCode);
 
     function getFormattedPayload() {
-        if (currentType === 'url') {
-            return urlInput.value.trim() || 'https://bwtools.uk';
-        } else if (currentType === 'text') {
-            return textInput.value.trim() || 'BWTools.uk';
-        } else if (currentType === 'wifi') {
+        if (currentType === 'url') return urlInput.value.trim() || 'https://bwtools.uk';
+        if (currentType === 'text') return textInput.value.trim() || 'BWTools.uk';
+        if (currentType === 'wifi') {
             const ssid = wifiSsid.value.trim() || 'WiFi_Network';
-            const pass = wifiPass.value;
-            const auth = wifiAuth.value;
-            return `WIFI:T:${auth};S:${ssid};P:${pass};;`;
+            return `WIFI:T:${wifiAuth.value};S:${ssid};P:${wifiPass.value};;`;
         }
         return 'https://bwtools.uk';
     }
 
-    function updateQR() {
-        qr.set({
+    function drawQRWithLogo(targetCanvas, size) {
+        new QRious({
+            element: targetCanvas,
+            size: size,
             value: getFormattedPayload(),
             background: bgColor.value,
             foreground: fgColor.value,
             level: eccLevel.value
         });
+
+        if (logoImage && logoImage.complete) {
+            const ctx = targetCanvas.getContext('2d');
+            const logoPercent = parseInt(logoSizeSlider.value, 10) / 100;
+            const logoBoxSize = size * logoPercent;
+            const logoBoxPadding = 6 * (size / 240); // Responsive badge padding
+            const x = (size - logoBoxSize) / 2;
+            const y = (size - logoBoxSize) / 2;
+
+            // Draw clean background badge for logo isolation
+            ctx.fillStyle = bgColor.value;
+            const radius = 8 * (size / 240);
+            
+            ctx.beginPath();
+            ctx.roundRect(x - logoBoxPadding, y - logoBoxPadding, logoBoxSize + (logoBoxPadding * 2), logoBoxSize + (logoBoxPadding * 2), radius);
+            ctx.fill();
+
+            // Draw Logo
+            ctx.drawImage(logoImage, x, y, logoBoxSize, logoBoxSize);
+        }
     }
 
-    // High-Resolution PNG Download
+    function renderQRCode() {
+        drawQRWithLogo(qrCanvas, 240);
+    }
+
+    // High-Resolution Export
     downloadPngBtn.addEventListener('click', () => {
         const targetResolution = parseInt(exportSize.value, 10);
-        
-        // Render high-res export via temporary instance
         const exportCanvas = document.createElement('canvas');
-        new QRious({
-            element: exportCanvas,
-            size: targetResolution,
-            value: getFormattedPayload(),
-            background: bgColor.value,
-            foreground: fgColor.value,
-            level: eccLevel.value
-        });
+        exportCanvas.width = targetResolution;
+        exportCanvas.height = targetResolution;
+
+        drawQRWithLogo(exportCanvas, targetResolution);
 
         exportCanvas.toBlob((blob) => {
             const url = URL.createObjectURL(blob);
@@ -259,6 +321,5 @@ title: "Free Custom QR Code Generator"
         });
     });
 
-    // Initial render
-    updateQR();
+    renderQRCode();
 </script>
