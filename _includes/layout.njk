@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }} | BWTools.uk</title>
     
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="{{ title }} | BWTools.uk">
+    <meta name="description" content="{{ description or 'Fast, free, and 100% private in-browser web utilities for images, PDFs, and daily digital workflows. Zero file uploads.' }}">
+    <link rel="canonical" href="https://bwtools.uk{{ page.url }}">
+
+    <!-- Open Graph / Facebook / Discord -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bwtools.uk{{ page.url }}">
+    <meta property="og:title" content="{{ title }} | BWTools.uk">
+    <meta property="og:description" content="{{ description or 'Fast, free, and 100% private in-browser web utilities. Zero server uploads.' }}">
+    <meta property="og:image" content="https://bwtools.uk/assets/logo.png">
+
+    <!-- Twitter Cards -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bwtools.uk{{ page.url }}">
+    <meta property="twitter:title" content="{{ title }} | BWTools.uk">
+    <meta property="twitter:description" content="{{ description or 'Fast, free, and 100% private in-browser web utilities. Zero server uploads.' }}">
+    <meta property="twitter:image" content="https://bwtools.uk/assets/logo.png">
+
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6270447149779019" crossorigin="anonymous"></script>
 
@@ -44,7 +63,6 @@
     <footer class="bg-white dark:bg-gray-800 mt-6 border-t border-gray-100 dark:border-gray-700 py-6 text-center text-gray-500 dark:text-gray-400 text-sm transition-colors">
         <p class="font-medium text-gray-700 dark:text-gray-200 mb-2">Saved you time or money? ☕ <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">Consider buying me a coffee!</a></p>
         
-        <!-- Legal & Nav Links -->
         <div class="flex justify-center items-center gap-4 text-xs font-medium text-gray-500 dark:text-gray-400 mb-3">
             <a href="/about" class="hover:text-blue-600 dark:hover:text-blue-400">About</a>
             <span>•</span>
