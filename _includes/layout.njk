@@ -20,7 +20,7 @@
         }
     </script>
 
-    <!-- Theme Initialiser (Prevents flash of light theme) -->
+    <!-- Theme Initialiser -->
     <script>
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
@@ -41,7 +41,7 @@
 
     {% include "ad-banner.njk" %}
 
-    <footer class="bg-white dark:bg-gray-800 mt-12 border-t border-gray-100 dark:border-gray-700 py-8 text-center text-gray-500 dark:text-gray-400 text-sm transition-colors">
+    <footer class="bg-white dark:bg-gray-800 mt-6 border-t border-gray-100 dark:border-gray-700 py-6 text-center text-gray-500 dark:text-gray-400 text-sm transition-colors">
         <p class="font-medium text-gray-700 dark:text-gray-200 mb-1">Saved you time or money? ☕ <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">Consider buying me a coffee!</a></p>
         <p>&copy; 2026 BWTools.uk - Fast, 100% Private Client-Side Tools.</p>
         <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">All processing happens directly in your web browser. No files are uploaded to any server.</p>
