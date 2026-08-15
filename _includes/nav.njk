@@ -1,51 +1,83 @@
-<nav class="bg-white shadow-sm border-b border-gray-100 relative z-50">
+<nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700 relative z-50 transition-colors">
     <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center">
         
         <!-- Logo -->
         <a href="/" class="flex items-center group">
-            <img src="/assets/logo.png" alt="BWTools.uk" class="h-16 md:h-20 w-auto object-contain transition-transform group-hover:scale-105">
+            <img src="/assets/logo.png" alt="BWTools.uk" class="h-12 md:h-16 w-auto object-contain transition-transform group-hover:scale-105">
         </a>
 
-        <!-- Navigation Links -->
-        <div class="flex items-center gap-6 text-sm font-medium">
+        <!-- Navigation & Action Links -->
+        <div class="flex items-center gap-4 md:gap-6 text-sm font-medium">
             
             <!-- Image Tools Dropdown -->
             <div class="relative group py-2">
-                <button class="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors">
+                <button class="flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     🖼️ Image Tools
-                    <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <!-- Invisible hover bridge wrapper (pt-2) -->
                 <div class="absolute left-0 top-full hidden group-hover:block w-56 pt-2">
-                    <div class="bg-white shadow-lg rounded-xl border border-gray-100 py-2">
-                        <a href="/bg-remover" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">AI Background Remover</a>
-                        <a href="/compressor" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image Compressor</a>
-                        <a href="/cropper" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image Cropper</a>
+                    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700 py-2">
+                        <a href="/bg-remover" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">AI Background Remover</a>
+                        <a href="/compressor" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Image Compressor</a>
+                        <a href="/cropper" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Image Cropper</a>
                     </div>
                 </div>
             </div>
 
             <!-- PDF Tools Dropdown -->
             <div class="relative group py-2">
-                <button class="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition-colors">
+                <button class="flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     📄 PDF & Converters
-                    <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <!-- Invisible hover bridge wrapper (pt-2) -->
                 <div class="absolute right-0 top-full hidden group-hover:block w-56 pt-2">
-                    <div class="bg-white shadow-lg rounded-xl border border-gray-100 py-2">
-                        <a href="/pdf-to-image" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">PDF to JPG / PNG</a>
-                        <a href="/image-to-pdf" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">Image to PDF Compiler</a>
-                        <a href="/pdf-merge" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">PDF Merger & Splitter</a>
+                    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700 py-2">
+                        <a href="/pdf-to-image" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">PDF to JPG / PNG</a>
+                        <a href="/image-to-pdf" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Image to PDF Compiler</a>
+                        <a href="/pdf-merge" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">PDF Merger & Splitter</a>
                     </div>
                 </div>
             </div>
 
             <!-- Support / Buy Me a Coffee Button -->
-            <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" rel="noopener" class="bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm text-xs">
+            <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" rel="noopener" class="hidden sm:flex bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold px-3 py-1.5 rounded-lg transition-all items-center gap-1.5 shadow-sm text-xs">
                 ☕ Buy Me a Coffee
             </a>
+
+            <!-- Dark Mode Toggle Button -->
+            <button id="themeToggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2 transition-colors" title="Toggle dark / light mode">
+                <!-- Dark Mode Icon (Moon) -->
+                <svg id="themeToggleDarkIcon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <!-- Light Mode Icon (Sun) -->
+                <svg id="themeToggleLightIcon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+            </button>
 
         </div>
     </div>
 </nav>
+
+<script>
+    const themeToggleDarkIcon = document.getElementById('themeToggleDarkIcon');
+    const themeToggleLightIcon = document.getElementById('themeToggleLightIcon');
+    const themeToggleBtn = document.getElementById('themeToggle');
+
+    // Show the correct icon depending on the active theme
+    if (document.documentElement.classList.contains('dark')) {
+        themeToggleLightIcon.classList.remove('hidden');
+    } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+        themeToggleDarkIcon.classList.toggle('hidden');
+        themeToggleLightIcon.classList.toggle('hidden');
+
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('color-theme', 'light');
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('color-theme', 'dark');
+        }
+    });
+</script>

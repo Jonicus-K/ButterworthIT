@@ -12,11 +12,26 @@
     <link rel="icon" type="image/png" href="/assets/favicon.png">
     <link rel="apple-touch-icon" href="/assets/favicon.png">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS with Dark Mode Class Strategy -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <!-- Theme Initialiser (Prevents flash of light theme) -->
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans select-none flex flex-col min-h-screen">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans select-none flex flex-col min-h-screen transition-colors duration-200">
 
     {% include "nav.njk" %}
 
@@ -26,10 +41,10 @@
 
     {% include "ad-banner.njk" %}
 
-    <footer class="bg-white mt-12 border-t border-gray-100 py-8 text-center text-gray-500 text-sm">
-        <p class="font-medium text-gray-700 mb-1">Saved you time or money? ☕ <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" class="text-blue-600 hover:underline">Consider buying me a coffee!</a></p>
+    <footer class="bg-white dark:bg-gray-800 mt-12 border-t border-gray-100 dark:border-gray-700 py-8 text-center text-gray-500 dark:text-gray-400 text-sm transition-colors">
+        <p class="font-medium text-gray-700 dark:text-gray-200 mb-1">Saved you time or money? ☕ <a href="https://www.buymeacoffee.com/YOUR_USERNAME" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">Consider buying me a coffee!</a></p>
         <p>&copy; 2026 BWTools.uk - Fast, 100% Private Client-Side Tools.</p>
-        <p class="text-xs text-gray-400 mt-1">All processing happens directly in your web browser. No files are uploaded to any server.</p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">All processing happens directly in your web browser. No files are uploaded to any server.</p>
     </footer>
 
 </body>
