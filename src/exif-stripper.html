@@ -1,0 +1,205 @@
+---
+layout: layout.njk
+title: "Free EXIF Metadata Stripper & Privacy Cleaner"
+---
+
+<!-- exifr library for fast client-side EXIF inspection -->
+<script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.js"></script>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+    
+    <header class="text-center mb-6">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">EXIF & Privacy <span class="text-blue-600 dark:text-blue-400">Cleaner</span></h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">View and scrub hidden GPS location tags, camera models, and timestamps from your photos.</p>
+    </header>
+
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+        
+        <!-- Upload Zone -->
+        <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
+            <input type="file" id="imageInput" accept="image/jpeg, image/png, image/webp, image/tiff" class="hidden">
+            <label for="imageInput" class="cursor-pointer">
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image or Click to Inspect</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports JPEG, PNG, TIFF, and WEBP photos</p>
+            </label>
+        </div>
+
+        <!-- Inspector & Action Zone -->
+        <div id="inspectorZone" class="hidden">
+            
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <!-- Preview -->
+                <div class="flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900/60 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+                    <img id="imagePreview" class="max-h-80 w-auto object-contain rounded-lg shadow-sm mb-3" src="" alt="Photo Preview">
+                    <p id="fileSummary" class="text-xs text-gray-500 dark:text-gray-400 font-mono">-</p>
+                </div>
+
+                <!-- Detected Metadata List -->
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200 uppercase tracking-wider">Detected Metadata</h3>
+                            <span id="exifBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">Tags Found</span>
+                        </div>
+
+                        <div id="metaList" class="bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-4 text-xs font-mono max-h-64 overflow-y-auto space-y-2">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Clean Action Button -->
+                    <div class="mt-6">
+                        <button id="stripBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-base shadow-md transition-all flex items-center justify-center gap-2">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            Scrub Metadata & Download Clean Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button id="resetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Inspect Another Photo</button>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const uploadZone = document.getElementById('uploadZone');
+    const inspectorZone = document.getElementById('inspectorZone');
+    const imagePreview = document.getElementById('imagePreview');
+    const fileSummary = document.getElementById('fileSummary');
+    const exifBadge = document.getElementById('exifBadge');
+    const metaList = document.getElementById('metaList');
+    const stripBtn = document.getElementById('stripBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let currentFile = null;
+    let currentImage = new Image();
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) analyzeFile(e.target.files[0]);
+    });
+
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files[0]) analyzeFile(e.dataTransfer.files[0]);
+    });
+
+    async function analyzeFile(file) {
+        currentFile = file;
+        const objectUrl = URL.createObjectURL(file);
+        imagePreview.src = objectUrl;
+        currentImage.src = objectUrl;
+
+        fileSummary.textContent = `${file.name} (${formatBytes(file.size)})`;
+
+        try {
+            const data = await exifr.parse(file, {
+                gps: true,
+                exif: true,
+                iptc: true,
+                xmp: true,
+                jfif: true
+            });
+
+            metaList.innerHTML = '';
+
+            if (data && Object.keys(data).length > 0) {
+                exifBadge.textContent = `${Object.keys(data).length} Metadata Tags Detected`;
+                exifBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300";
+
+                // Check for sensitive GPS location
+                if (data.latitude && data.longitude) {
+                    const gpsItem = document.createElement('div');
+                    gpsItem.className = "p-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-300 font-bold";
+                    gpsItem.innerHTML = `📍 GPS Location: ${data.latitude.toFixed(5)}, ${data.longitude.toFixed(5)}`;
+                    metaList.appendChild(gpsItem);
+                }
+
+                // Render common metadata keys
+                for (const [key, val] of Object.entries(data)) {
+                    if (typeof val !== 'object' || val instanceof Date) {
+                        const row = document.createElement('div');
+                        row.className = "flex justify-between border-b border-gray-200 dark:border-gray-700 py-1 text-gray-700 dark:text-gray-300";
+                        row.innerHTML = `<span class="text-gray-500 dark:text-gray-400">${key}:</span> <span class="font-semibold text-right max-w-[200px] truncate">${val.toString()}</span>`;
+                        metaList.appendChild(row);
+                    }
+                }
+            } else {
+                exifBadge.textContent = "No EXIF Tags Found";
+                exifBadge.className = "text-xs px-2.5 py-0.5 rounded-full font-bold bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300";
+                metaList.innerHTML = `<p class="text-green-600 dark:text-green-400 py-4 text-center">This image appears to already be clean of EXIF and GPS tags.</p>`;
+            }
+
+            uploadZone.classList.add('hidden');
+            inspectorZone.classList.remove('hidden');
+
+        } catch (err) {
+            console.error("EXIF Error:", err);
+            uploadZone.classList.add('hidden');
+            inspectorZone.classList.remove('hidden');
+            metaList.innerHTML = `<p class="text-gray-500 py-4 text-center">No readable EXIF tags detected.</p>`;
+        }
+    }
+
+    // Scrub metadata by rendering to clean HTML5 canvas and exporting raw blob
+    stripBtn.addEventListener('click', () => {
+        if (!currentImage.src) return;
+
+        stripBtn.disabled = true;
+        stripBtn.textContent = "Scrubbing Metadata...";
+
+        setTimeout(() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = currentImage.naturalWidth;
+            canvas.height = currentImage.naturalHeight;
+            const ctx = canvas.getContext('2d');
+
+            ctx.drawImage(currentImage, 0, 0);
+
+            const mime = currentFile.type.includes('png') ? 'image/png' : 'image/jpeg';
+            const ext = currentFile.type.includes('png') ? 'png' : 'jpg';
+
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `clean_${Date.now()}.${ext}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                stripBtn.disabled = false;
+                stripBtn.innerHTML = `
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    Scrub Metadata & Download Clean Image
+                `;
+            }, mime, 0.95);
+        }, 100);
+    });
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    resetBtn.addEventListener('click', () => {
+        uploadZone.classList.remove('hidden');
+        inspectorZone.classList.add('hidden');
+        imageInput.value = '';
+        currentFile = null;
+        metaList.innerHTML = '';
+    });
+</script>
