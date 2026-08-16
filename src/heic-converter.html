@@ -1,0 +1,263 @@
+---
+layout: layout.njk
+title: "Free HEIC to JPEG / PNG Converter"
+---
+
+<!-- heic2any & JSZip CDNs -->
+<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+    
+    <header class="text-center mb-6">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">HEIC to <span class="text-blue-600 dark:text-blue-400">JPEG & PNG</span> Converter</h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Convert Apple iPhone & iPad photos to standard formats with zero file uploads or quantity limits.</p>
+    </header>
+
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+        
+        <!-- Step 1: Upload Zone -->
+        <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
+            <input type="file" id="fileInput" accept=".heic,.HEIC,.heif,.HEIF" multiple class="hidden">
+            <label for="fileInput" class="cursor-pointer">
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop HEIC Photos or Click to Upload</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports batch conversion of multiple .heic / .heif files</p>
+            </label>
+        </div>
+
+        <!-- Step 2: Processing Progress Zone -->
+        <div id="processingZone" class="hidden text-center py-16 max-w-md mx-auto">
+            <div class="flex flex-col items-center gap-4">
+                <div class="loading-spinner"></div>
+                <div>
+                    <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Converting HEIC Photos...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Decoding Apple format locally in browser...</p>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                    <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                </div>
+                <span id="progressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+            </div>
+        </div>
+
+        <!-- Step 3: Result & Conversion Grid -->
+        <div id="resultZone" class="hidden">
+            
+            <!-- Controls Bar -->
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-6 grid sm:grid-cols-3 gap-4 border border-gray-200 dark:border-gray-700 text-sm">
+                <div>
+                    <label for="formatSelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Target Format:</label>
+                    <select id="formatSelect" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="image/jpeg" selected>JPEG (Standard Photo)</option>
+                        <option value="image/png">PNG (Lossless Quality)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="qualitySlider" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Quality:</label>
+                        <span id="qualityVal" class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/50 px-2 py-0.5 rounded">90%</span>
+                    </div>
+                    <input type="range" id="qualitySlider" min="20" max="100" value="90" class="w-full accent-blue-600 cursor-pointer mt-1">
+                </div>
+
+                <div class="flex items-end">
+                    <button id="downloadZipBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all text-xs flex items-center justify-center gap-2">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Download All (.ZIP)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Converted Cards Grid -->
+            <div id="convertedGrid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6"></div>
+
+            <div class="text-center">
+                <button id="resetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Convert More HEIC Photos</button>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadZone = document.getElementById('uploadZone');
+    const processingZone = document.getElementById('processingZone');
+    const resultZone = document.getElementById('resultZone');
+    const statusMessage = document.getElementById('statusMessage');
+    const subStatusMessage = document.getElementById('subStatusMessage');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
+    const convertedGrid = document.getElementById('convertedGrid');
+    const formatSelect = document.getElementById('formatSelect');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityVal = document.getElementById('qualityVal');
+    const downloadZipBtn = document.getElementById('downloadZipBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let uploadedFiles = [];
+    let convertedResults = [];
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) handleFiles(e.target.files);
+    });
+
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+    });
+
+    qualitySlider.addEventListener('input', () => {
+        qualityVal.textContent = `${qualitySlider.value}%`;
+    });
+
+    formatSelect.addEventListener('change', () => {
+        if (uploadedFiles.length > 0) convertAllFiles();
+    });
+
+    qualitySlider.addEventListener('change', () => {
+        if (uploadedFiles.length > 0) convertAllFiles();
+    });
+
+    function handleFiles(files) {
+        uploadedFiles = Array.from(files).filter(f => 
+            f.name.toLowerCase().endsWith('.heic') || 
+            f.name.toLowerCase().endsWith('.heif') ||
+            f.type === 'image/heic' || 
+            f.type === 'image/heif'
+        );
+
+        if (uploadedFiles.length === 0) {
+            alert("Please select valid .HEIC or .HEIF files.");
+            return;
+        }
+
+        convertAllFiles();
+    }
+
+    async function convertAllFiles() {
+        uploadZone.classList.add('hidden');
+        processingZone.classList.remove('hidden');
+        resultZone.classList.add('hidden');
+        convertedGrid.innerHTML = '';
+        convertedResults = [];
+
+        const targetFormat = formatSelect.value;
+        const targetExt = targetFormat === 'image/png' ? 'png' : 'jpg';
+        const targetQuality = parseInt(qualitySlider.value, 10) / 100;
+        const total = uploadedFiles.length;
+
+        for (let i = 0; i < total; i++) {
+            const file = uploadedFiles[i];
+            const percent = Math.round(((i + 1) / total) * 100);
+            progressBar.style.width = `${percent}%`;
+            progressPercent.textContent = `${percent}%`;
+            statusMessage.textContent = `Converting photo ${i + 1} of ${total}...`;
+            subStatusMessage.textContent = file.name;
+
+            try {
+                const outputBlob = await heic2any({
+                    blob: file,
+                    toType: targetFormat,
+                    quality: targetQuality
+                });
+
+                // heic2any can return an array if multi-frame
+                const finalBlob = Array.isArray(outputBlob) ? outputBlob[0] : outputBlob;
+                const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                const outputFileName = `${baseName}.${targetExt}`;
+
+                convertedResults.push({
+                    origName: file.name,
+                    origSize: file.size,
+                    blob: finalBlob,
+                    fileName: outputFileName
+                });
+            } catch (err) {
+                console.error("Conversion failed for:", file.name, err);
+            }
+        }
+
+        processingZone.classList.add('hidden');
+        resultZone.classList.remove('hidden');
+        renderCards();
+    }
+
+    function renderCards() {
+        convertedGrid.innerHTML = '';
+
+        convertedResults.forEach(item => {
+            const card = document.createElement('div');
+            card.className = "bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex flex-col items-center shadow-sm";
+            
+            const imgUrl = URL.createObjectURL(item.blob);
+            
+            card.innerHTML = `
+                <img src="${imgUrl}" class="max-h-48 w-auto object-contain rounded-lg border border-gray-200 dark:border-gray-700 mb-3 shadow-xs">
+                <div class="w-full text-left mb-3">
+                    <p class="font-bold text-xs text-gray-800 dark:text-gray-200 truncate" title="${item.fileName}">${item.fileName}</p>
+                    <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">${formatBytes(item.origSize)} → <span class="text-blue-600 dark:text-blue-400 font-semibold">${formatBytes(item.blob.size)}</span></p>
+                </div>
+                <button onclick="downloadBlob('${imgUrl}', '${item.fileName}')" class="w-full mt-auto bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold py-1.5 px-3 rounded-lg border border-gray-300 dark:border-gray-600 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm">
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    Download
+                </button>
+            `;
+            convertedGrid.appendChild(card);
+        });
+    }
+
+    window.downloadBlob = function(url, filename) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
+    downloadZipBtn.addEventListener('click', async () => {
+        if (convertedResults.length === 0) return;
+
+        downloadZipBtn.disabled = true;
+        downloadZipBtn.textContent = "Packing ZIP...";
+
+        const zip = new JSZip();
+        convertedResults.forEach(item => {
+            zip.file(item.fileName, item.blob);
+        });
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const zipUrl = URL.createObjectURL(zipBlob);
+        downloadBlob(zipUrl, `heic_converted_${Date.now()}.zip`);
+
+        downloadZipBtn.disabled = false;
+        downloadZipBtn.innerHTML = `
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            Download All (.ZIP)
+        `;
+    });
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    resetBtn.addEventListener('click', () => {
+        uploadZone.classList.remove('hidden');
+        processingZone.classList.add('hidden');
+        resultZone.classList.add('hidden');
+        fileInput.value = '';
+        uploadedFiles = [];
+        convertedResults = [];
+    });
+</script>
