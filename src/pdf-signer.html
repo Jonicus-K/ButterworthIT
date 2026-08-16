@@ -32,10 +32,13 @@ title: "Free PDF Signer & Document Annotator"
             <!-- Floating Toolbar -->
             <div class="bg-gray-100 dark:bg-gray-900 p-3 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-3 border border-gray-200 dark:border-gray-700 text-sm">
                 
-                <!-- Tool Selector -->
+                <!-- Tool Selector & Redraw Action -->
                 <div class="flex items-center gap-2 flex-wrap">
                     <button id="toolSign" class="tool-btn bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow-sm transition-all flex items-center gap-1.5">
                         ✍️ Sign
+                    </button>
+                    <button id="btnRedrawSig" class="hidden bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-dashed border-gray-300 dark:border-gray-600 font-semibold px-2.5 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1">
+                        ✏️ Redraw Signature
                     </button>
                     <button id="toolText" class="tool-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5">
                         🔤 Add Text
@@ -118,6 +121,7 @@ title: "Free PDF Signer & Document Annotator"
 
     // Tool Buttons
     const toolSign = document.getElementById('toolSign');
+    const btnRedrawSig = document.getElementById('btnRedrawSig');
     const toolText = document.getElementById('toolText');
     const toolDate = document.getElementById('toolDate');
     const toolCheck = document.getElementById('toolCheck');
@@ -136,10 +140,9 @@ title: "Free PDF Signer & Document Annotator"
     let currentPageNum = 1;
     let totalPages = 1;
     let currentScale = 1.3;
-    let activeTool = 'sign'; // 'sign', 'text', 'date', 'check'
+    let activeTool = 'sign';
     let currentSignatureDataUrl = null;
 
-    // Annotation state map: pageNumber -> array of elements
     let annotations = {};
 
     fileInput.addEventListener('change', (e) => {
@@ -207,29 +210,37 @@ title: "Free PDF Signer & Document Annotator"
     });
 
     // Tool Selector logic
-    toolBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            toolBtns.forEach(b => {
-                b.className = "tool-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5";
-            });
-            btn.className = "tool-btn bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow-sm transition-all flex items-center gap-1.5";
+    function setActiveButton(activeBtn) {
+        toolBtns.forEach(b => {
+            b.className = "tool-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5";
         });
-    });
+        activeBtn.className = "tool-btn bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs shadow-sm transition-all flex items-center gap-1.5";
+    }
 
     toolSign.addEventListener('click', () => {
         activeTool = 'sign';
+        setActiveButton(toolSign);
         if (!currentSignatureDataUrl) {
-            signatureModal.classList.remove('hidden');
+            openSignatureModal();
         }
     });
 
-    toolText.addEventListener('click', () => { activeTool = 'text'; });
-    toolDate.addEventListener('click', () => { activeTool = 'date'; });
-    toolCheck.addEventListener('click', () => { activeTool = 'check'; });
+    btnRedrawSig.addEventListener('click', () => {
+        openSignatureModal();
+    });
+
+    function openSignatureModal() {
+        sigCtx.clearRect(0, 0, sigPad.width, sigPad.height);
+        signatureModal.classList.remove('hidden');
+    }
+
+    toolText.addEventListener('click', () => { activeTool = 'text'; setActiveButton(toolText); });
+    toolDate.addEventListener('click', () => { activeTool = 'date'; setActiveButton(toolDate); });
+    toolCheck.addEventListener('click', () => { activeTool = 'check'; setActiveButton(toolCheck); });
 
     // Annotation Overlay Click Handler
     annotationOverlay.addEventListener('click', (e) => {
-        if (e.target !== annotationOverlay) return; // Prevent spawning when clicking child inputs
+        if (e.target !== annotationOverlay) return;
 
         const rect = annotationOverlay.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -237,7 +248,7 @@ title: "Free PDF Signer & Document Annotator"
 
         if (activeTool === 'sign') {
             if (!currentSignatureDataUrl) {
-                signatureModal.classList.remove('hidden');
+                openSignatureModal();
                 return;
             }
             createSignatureElement(x, y, currentSignatureDataUrl);
@@ -415,6 +426,9 @@ title: "Free PDF Signer & Document Annotator"
     applySigBtn.addEventListener('click', () => {
         currentSignatureDataUrl = sigPad.toDataURL('image/png');
         signatureModal.classList.add('hidden');
+        btnRedrawSig.classList.remove('hidden');
+        activeTool = 'sign';
+        setActiveButton(toolSign);
     });
 
     // Compile and Export modified PDF
@@ -433,13 +447,11 @@ title: "Free PDF Signer & Document Annotator"
                 const page = outPdfDoc.getPage(pageIdx);
                 const { width, height } = page.getSize();
                 
-                // Ratio between PDF document points and onscreen canvas pixels
                 const scaleX = width / pdfCanvas.width;
                 const scaleY = height / pdfCanvas.height;
 
                 for (const item of pageItems) {
                     if (item.type === 'text') {
-                        // PDF coordinate origin (0,0) is bottom-left
                         const pdfX = item.x * scaleX;
                         const pdfY = height - ((item.y + 14) * scaleY);
                         page.drawText(item.value, {
@@ -508,5 +520,7 @@ title: "Free PDF Signer & Document Annotator"
         pdfDoc = null;
         originalPdfBytes = null;
         annotations = {};
+        currentSignatureDataUrl = null;
+        btnRedrawSig.classList.add('hidden');
     });
 </script>
