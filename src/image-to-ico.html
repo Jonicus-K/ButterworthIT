@@ -1,0 +1,279 @@
+---
+layout: layout.njk
+title: "Free Image to .ICO & Multi-Resolution Favicon Converter"
+---
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+    
+    <header class="text-center mb-6">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Image to <span class="text-blue-600 dark:text-blue-400">.ICO</span> Converter</h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Convert PNG, JPG, or WEBP images into true multi-resolution .ico icon files for websites and Windows apps.</p>
+    </header>
+
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+        
+        <!-- Step 1: Upload Zone -->
+        <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
+            <input type="file" id="imageInput" accept="image/png, image/jpeg, image/webp, image/svg+xml" class="hidden">
+            <label for="imageInput" class="cursor-pointer">
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image or Click to Upload</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports PNG, JPG, WEBP, and SVG (Square logos work best)</p>
+            </label>
+        </div>
+
+        <!-- Step 2: Editor & Resolution Selector -->
+        <div id="editorZone" class="hidden">
+            
+            <div class="grid md:grid-cols-12 gap-8 mb-6">
+                
+                <!-- Left: Preview -->
+                <div class="md:col-span-5 flex flex-col items-center justify-between bg-gray-50 dark:bg-gray-900/60 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+                    <div class="w-full flex flex-col items-center">
+                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Original Image</span>
+                        <div class="p-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center max-h-56 checkerboard overflow-hidden">
+                            <img id="imagePreview" class="max-h-48 max-w-full object-contain" src="" alt="Source Preview">
+                        </div>
+                        <p id="imageDimens" class="text-xs text-gray-400 dark:text-gray-500 font-mono mt-2">-</p>
+                    </div>
+
+                    <button id="changeFileBtn" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline mt-4">Choose Different Image</button>
+                </div>
+
+                <!-- Right: Bundled Resolutions -->
+                <div class="md:col-span-7 space-y-4">
+                    <div class="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Include Icon Sizes (.ICO)</h3>
+                            <button id="toggleAllSizes" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">Select All</button>
+                        </div>
+                        
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">A multi-resolution .ico file adapts automatically to different screen densities and display sizes:</p>
+
+                        <div class="grid grid-cols-2 gap-2.5 text-xs font-medium text-gray-700 dark:text-gray-200">
+                            <label class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-400">
+                                <input type="checkbox" value="16" checked class="size-cb accent-blue-600 rounded">
+                                <span>16 × 16 <span class="text-gray-400 block text-[11px]">Browser Tab Favicon</span></span>
+                            </label>
+
+                            <label class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-400">
+                                <input type="checkbox" value="32" checked class="size-cb accent-blue-600 rounded">
+                                <span>32 × 32 <span class="text-gray-400 block text-[11px]">Taskbar & Bookmarks</span></span>
+                            </label>
+
+                            <label class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-400">
+                                <input type="checkbox" value="48" checked class="size-cb accent-blue-600 rounded">
+                                <span>48 × 48 <span class="text-gray-400 block text-[11px]">Windows Desktop Icon</span></span>
+                            </label>
+
+                            <label class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-400">
+                                <input type="checkbox" value="64" checked class="size-cb accent-blue-600 rounded">
+                                <span>64 × 64 <span class="text-gray-400 block text-[11px]">High-DPI Display</span></span>
+                            </label>
+
+                            <label class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-400">
+                                <input type="checkbox" value="128" checked class="size-cb accent-blue-600 rounded">
+                                <span>128 × 128 <span class="text-gray-400 block text-[11px]">Medium Icon</span></span>
+                            </label>
+
+                            <label class="flex items-center gap-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-blue-400">
+                                <input type="checkbox" value="256" checked class="size-cb accent-blue-600 rounded">
+                                <span>256 × 256 <span class="text-gray-400 block text-[11px]">Extra Large / App Icon</span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="convertIcoBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-base shadow-md transition-all flex items-center justify-center gap-2">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Generate & Download .ICO File
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SEO / Informational Section -->
+    <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">📦 True Multi-Resolution ICO Binary</h3>
+            <p>Unlike basic tools that output a single resolution disguised as an icon, this tool embeds 16x16, 32x32, 48x48, 64x64, 128x128, and 256x256 PNG layers directly into a standard Microsoft ICO format.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ 100% Client-Side Privacy</h3>
+            <p>Your brand logos and graphic assets are resized and packed directly inside your browser memory using HTML5 Canvas and typed binary arrays. Zero files are uploaded to any server.</p>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const uploadZone = document.getElementById('uploadZone');
+    const editorZone = document.getElementById('editorZone');
+    const imagePreview = document.getElementById('imagePreview');
+    const imageDimens = document.getElementById('imageDimens');
+    const changeFileBtn = document.getElementById('changeFileBtn');
+    const sizeCheckboxes = document.querySelectorAll('.size-cb');
+    const toggleAllSizes = document.getElementById('toggleAllSizes');
+    const convertIcoBtn = document.getElementById('convertIcoBtn');
+
+    let sourceImage = new Image();
+    let sourceFileName = 'favicon';
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) handleFile(e.target.files[0]);
+    });
+
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+
+    function handleFile(file) {
+        sourceFileName = file.name.substring(0, file.name.lastIndexOf('.')) || 'favicon';
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            sourceImage = new Image();
+            sourceImage.onload = () => {
+                imagePreview.src = e.target.result;
+                imageDimens.textContent = `${sourceImage.naturalWidth} × ${sourceImage.naturalHeight} px`;
+                uploadZone.classList.add('hidden');
+                editorZone.classList.remove('hidden');
+            };
+            sourceImage.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    toggleAllSizes.addEventListener('click', () => {
+        const allChecked = Array.from(sizeCheckboxes).every(cb => cb.checked);
+        sizeCheckboxes.forEach(cb => cb.checked = !allChecked);
+        toggleAllSizes.textContent = allChecked ? 'Select All' : 'Deselect All';
+    });
+
+    changeFileBtn.addEventListener('click', () => {
+        uploadZone.classList.remove('hidden');
+        editorZone.classList.add('hidden');
+        imageInput.value = '';
+    });
+
+    // Pure Client-Side ICO Binary Encoder
+    convertIcoBtn.addEventListener('click', async () => {
+        const selectedSizes = Array.from(sizeCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => parseInt(cb.value, 10))
+            .sort((a, b) => a - b);
+
+        if (selectedSizes.length === 0) {
+            alert("Please select at least one icon size.");
+            return;
+        }
+
+        convertIcoBtn.disabled = true;
+        convertIcoBtn.textContent = "Packaging .ICO File...";
+
+        setTimeout(async () => {
+            try {
+                const pngBlobs = [];
+
+                for (const size of selectedSizes) {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+
+                    // Center & square crop / scale
+                    const aspect = sourceImage.naturalWidth / sourceImage.naturalHeight;
+                    let drawW = size;
+                    let drawH = size;
+                    let offsetX = 0;
+                    let offsetY = 0;
+
+                    if (aspect > 1) {
+                        drawH = size / aspect;
+                        offsetY = (size - drawH) / 2;
+                    } else if (aspect < 1) {
+                        drawW = size * aspect;
+                        offsetX = (size - drawW) / 2;
+                    }
+
+                    ctx.drawImage(sourceImage, offsetX, offsetY, drawW, drawH);
+
+                    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                    const arrayBuffer = await blob.arrayBuffer();
+                    pngBlobs.push({ size, buffer: new Uint8Array(arrayBuffer) });
+                }
+
+                // Construct Binary ICO
+                const count = pngBlobs.length;
+                const headerSize = 6;
+                const entrySize = 16;
+                const entriesSize = count * entrySize;
+                let dataOffset = headerSize + entriesSize;
+
+                let totalFileSize = dataOffset;
+                pngBlobs.forEach(item => totalFileSize += item.buffer.length);
+
+                const icoBuffer = new ArrayBuffer(totalFileSize);
+                const view = new DataView(icoBuffer);
+
+                // 1. ICONDIR Header
+                view.setUint16(0, 0, true); // Reserved (0)
+                view.setUint16(2, 1, true); // Type (1 = ICO)
+                view.setUint16(4, count, true); // Image count
+
+                // 2. ICONDIRENTRY Records & Image Data Payload
+                let currentEntryPos = headerSize;
+                let currentDataPos = dataOffset;
+
+                for (const item of pngBlobs) {
+                    const widthByte = item.size >= 256 ? 0 : item.size;
+                    const heightByte = item.size >= 256 ? 0 : item.size;
+
+                    view.setUint8(currentEntryPos + 0, widthByte);  // Width
+                    view.setUint8(currentEntryPos + 1, heightByte); // Height
+                    view.setUint8(currentEntryPos + 2, 0);          // Color Palette (0 = No palette)
+                    view.setUint8(currentEntryPos + 3, 0);          // Reserved
+                    view.setUint16(currentEntryPos + 4, 1, true);   // Color Planes (1)
+                    view.setUint16(currentEntryPos + 6, 32, true);  // Bits per Pixel (32)
+                    view.setUint32(currentEntryPos + 8, item.buffer.length, true); // Data Size in bytes
+                    view.setUint32(currentEntryPos + 12, currentDataPos, true);    // Data Offset
+
+                    // Copy PNG bytes into output array
+                    new Uint8Array(icoBuffer, currentDataPos, item.buffer.length).set(item.buffer);
+
+                    currentEntryPos += entrySize;
+                    currentDataPos += item.buffer.length;
+                }
+
+                const finalBlob = new Blob([icoBuffer], { type: 'image/x-icon' });
+                const url = URL.createObjectURL(finalBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${sourceFileName}.ico`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+            } catch (err) {
+                console.error("ICO Generation Error:", err);
+                alert("Error creating .ICO file.");
+            } finally {
+                convertIcoBtn.disabled = false;
+                convertIcoBtn.innerHTML = `
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    Generate & Download .ICO File
+                `;
+            }
+        }, 100);
+    });
+</script>
