@@ -1,0 +1,472 @@
+---
+layout: layout.njk
+title: "Free Bulk Image Resizer & Canvas Padder"
+---
+
+<!-- JSZip CDN for Batch ZIP Export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<main class="max-w-6xl mx-auto px-4 py-8">
+    
+    <header class="text-center mb-6">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Bulk Image <span class="text-blue-600 dark:text-blue-400">Resizer & Padder</span></h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Batch resize, crop, and pad product photos to uniform dimensions for eBay, Amazon, and online stores.</p>
+    </header>
+
+    <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+        
+        <!-- Step 1: Upload Zone -->
+        <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
+            <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp,image/avif" multiple class="hidden">
+            <label for="imageInput" class="cursor-pointer">
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image Batch or Click to Upload</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select multiple JPG, PNG, or WebP photos</p>
+            </label>
+        </div>
+
+        <!-- Step 2: Settings & Batch Config -->
+        <div id="configZone" class="hidden space-y-6">
+            
+            <div class="bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h4 id="batchSummaryTitle" class="font-bold text-gray-800 dark:text-gray-200 text-sm">0 Photos Selected</h4>
+                    <p id="batchSummarySize" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Total Size: 0 MB</p>
+                </div>
+                <button id="changeFilesBtn" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">Select Different Photos</button>
+            </div>
+
+            <div class="grid md:grid-cols-12 gap-6">
+                
+                <!-- Left: Resize Mode & Dimensions (7 cols) -->
+                <div class="md:col-span-7 space-y-4">
+                    
+                    <!-- Presets -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Marketplace Presets</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" data-w="1600" data-h="1600" data-mode="pad" class="preset-btn bg-blue-600 text-white font-bold py-2 px-2.5 rounded-lg text-xs shadow-sm transition-all text-center">1600×1600 (eBay/Amazon)</button>
+                            <button type="button" data-w="2000" data-h="2000" data-mode="pad" class="preset-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2 px-2.5 rounded-lg text-xs transition-all text-center">2000×2000 (Etsy/Shopify)</button>
+                            <button type="button" data-w="1080" data-h="1080" data-mode="pad" class="preset-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2 px-2.5 rounded-lg text-xs transition-all text-center">1080×1080 (Square Post)</button>
+                        </div>
+                    </div>
+
+                    <!-- Mode Select -->
+                    <div>
+                        <label for="fitMode" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Fitting Method</label>
+                        <select id="fitMode" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="pad" selected>Fit & Pad Canvas (Preserves full photo with borders)</option>
+                            <option value="crop">Cover & Crop (Fills exact box, trims excess edges)</option>
+                            <option value="stretch">Exact Stretch (Stretches to fit exact dimensions)</option>
+                            <option value="max">Bound Constraint (Scale down if larger than dimensions)</option>
+                        </select>
+                    </div>
+
+                    <!-- Custom Dimensions -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="targetWidth" class="block text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Target Width (px)</label>
+                            <input type="number" id="targetWidth" value="1600" min="50" max="8000" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label for="targetHeight" class="block text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Target Height (px)</label>
+                            <input type="number" id="targetHeight" value="1600" min="50" max="8000" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right: Background & Output Format (5 cols) -->
+                <div class="md:col-span-5 space-y-4">
+                    
+                    <!-- Background Canvas Color -->
+                    <div id="bgColorContainer">
+                        <label for="padColor" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Canvas Padding Color</label>
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 gap-2 flex-grow">
+                                <input type="color" id="padColor" value="#ffffff" class="w-6 h-6 rounded cursor-pointer border-0 p-0 bg-transparent">
+                                <span id="padColorVal" class="text-xs font-mono text-gray-700 dark:text-gray-300">#ffffff (White)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Format & Quality -->
+                    <div>
+                        <label for="outputFormat" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Export Format</label>
+                        <select id="outputFormat" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="image/jpeg" selected>JPEG (.jpg) - Universal</option>
+                            <option value="image/webp">WebP (.webp) - Optimized</option>
+                            <option value="image/png">PNG (.png) - Lossless</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label for="qualitySlider" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Quality</label>
+                            <span id="qualityVal" class="text-xs font-bold text-blue-600 dark:text-blue-400">90%</span>
+                        </div>
+                        <input type="range" id="qualitySlider" min="30" max="100" value="90" class="w-full accent-blue-600 cursor-pointer">
+                    </div>
+
+                    <button id="processBatchBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl text-base shadow-md transition-all flex items-center justify-center gap-2 mt-4">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        Process Batch Now
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Step 3: Processing Progress Zone -->
+        <div id="processingZone" class="hidden text-center py-16 max-w-md mx-auto">
+            <div class="flex flex-col items-center gap-4">
+                <div class="loading-spinner"></div>
+                <div>
+                    <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Resizing Batch Images...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Processing locally in browser...</p>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                    <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                </div>
+                <span id="progressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+            </div>
+        </div>
+
+        <!-- Step 4: Results & Download Grid -->
+        <div id="resultZone" class="hidden">
+            
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-6 border border-gray-200 dark:border-gray-700">
+                <div>
+                    <h3 id="resultSummary" class="font-bold text-gray-900 dark:text-white text-sm">Batch Complete: 0 Photos Processed</h3>
+                    <p id="resultSaved" class="text-xs text-green-600 dark:text-green-400 font-semibold mt-0.5">-</p>
+                </div>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <button id="downloadAllZipBtn" class="flex-grow sm:flex-grow-0 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all text-xs flex items-center justify-center gap-2">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Download All (.ZIP)
+                    </button>
+                    <button id="resetAllBtn" class="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Start New Batch</button>
+                </div>
+            </div>
+
+            <!-- Result Cards Grid -->
+            <div id="resultsGrid" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+
+        </div>
+
+    </div>
+
+    <!-- SEO / Informational Section -->
+    <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🛍️ Perfect eBay & Amazon Listing Standards</h3>
+            <p>Fit non-square product photos into standard 1600×1600 square templates with pure white borders. Meet high-resolution zoom requirements across all major e-commerce marketplaces without distortion.</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ Batch Processing with Zero Server Uploads</h3>
+            <p>Process 20+ images in seconds directly in your web browser. Everything runs on client-side hardware using HTML5 Canvas, keeping your catalog photos private and avoiding cloud queue delays.</p>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const uploadZone = document.getElementById('uploadZone');
+    const configZone = document.getElementById('configZone');
+    const processingZone = document.getElementById('processingZone');
+    const resultZone = document.getElementById('resultZone');
+    
+    const batchSummaryTitle = document.getElementById('batchSummaryTitle');
+    const batchSummarySize = document.getElementById('batchSummarySize');
+    const changeFilesBtn = document.getElementById('changeFilesBtn');
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    
+    const fitMode = document.getElementById('fitMode');
+    const targetWidth = document.getElementById('targetWidth');
+    const targetHeight = document.getElementById('targetHeight');
+    const padColor = document.getElementById('padColor');
+    const padColorVal = document.getElementById('padColorVal');
+    const bgColorContainer = document.getElementById('bgColorContainer');
+    const outputFormat = document.getElementById('outputFormat');
+    const qualitySlider = document.getElementById('qualitySlider');
+    const qualityVal = document.getElementById('qualityVal');
+    
+    const processBatchBtn = document.getElementById('processBatchBtn');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
+    const statusMessage = document.getElementById('statusMessage');
+    const subStatusMessage = document.getElementById('subStatusMessage');
+    const resultSummary = document.getElementById('resultSummary');
+    const resultsGrid = document.getElementById('resultsGrid');
+    const downloadAllZipBtn = document.getElementById('downloadAllZipBtn');
+    const resetAllBtn = document.getElementById('resetAllBtn');
+
+    let uploadedFiles = [];
+    let processedResults = [];
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) handleFiles(e.target.files);
+    });
+
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
+        if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+    });
+
+    function handleFiles(files) {
+        uploadedFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+        if (uploadedFiles.length === 0) {
+            alert("Please select valid image files.");
+            return;
+        }
+
+        const totalBytes = uploadedFiles.reduce((acc, f) => acc + f.size, 0);
+        batchSummaryTitle.textContent = `${uploadedFiles.length} Photos Selected`;
+        batchSummarySize.textContent = `Total Size: ${formatBytes(totalBytes)}`;
+
+        uploadZone.classList.add('hidden');
+        configZone.classList.remove('hidden');
+    }
+
+    presetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            presetBtns.forEach(b => {
+                b.className = "preset-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2 px-2.5 rounded-lg text-xs transition-all text-center";
+            });
+            btn.className = "preset-btn bg-blue-600 text-white font-bold py-2 px-2.5 rounded-lg text-xs shadow-sm transition-all text-center";
+
+            targetWidth.value = btn.dataset.w;
+            targetHeight.value = btn.dataset.h;
+            fitMode.value = btn.dataset.mode;
+        });
+    });
+
+    fitMode.addEventListener('change', () => {
+        if (fitMode.value === 'pad') {
+            bgColorContainer.classList.remove('opacity-40', 'pointer-events-none');
+        } else {
+            bgColorContainer.classList.add('opacity-40', 'pointer-events-none');
+        }
+    });
+
+    padColor.addEventListener('input', () => {
+        padColorVal.textContent = padColor.value;
+    });
+
+    qualitySlider.addEventListener('input', () => {
+        qualityVal.textContent = `${qualitySlider.value}%`;
+    });
+
+    changeFilesBtn.addEventListener('click', () => {
+        uploadZone.classList.remove('hidden');
+        configZone.classList.add('hidden');
+        imageInput.value = '';
+    });
+
+    // Batch Processor
+    processBatchBtn.addEventListener('click', async () => {
+        configZone.classList.add('hidden');
+        processingZone.classList.remove('hidden');
+        progressBar.style.width = '0%';
+        progressPercent.textContent = '0%';
+        processedResults = [];
+
+        const tW = parseInt(targetWidth.value, 10) || 1600;
+        const tH = parseInt(targetHeight.value, 10) || 1600;
+        const mode = fitMode.value;
+        const padCol = padColor.value;
+        const format = outputFormat.value;
+        const quality = parseInt(qualitySlider.value, 10) / 100;
+        const ext = format === 'image/png' ? 'png' : (format === 'image/webp' ? 'webp' : 'jpg');
+        const total = uploadedFiles.length;
+
+        for (let i = 0; i < total; i++) {
+            const file = uploadedFiles[i];
+            const percent = Math.round(((i + 1) / total) * 100);
+            progressBar.style.width = `${percent}%`;
+            progressPercent.textContent = `${percent}%`;
+            statusMessage.textContent = `Processing image ${i + 1} of ${total}...`;
+            subStatusMessage.textContent = file.name;
+
+            try {
+                const img = await loadImage(file);
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                let canvasW = tW;
+                let canvasH = tH;
+                let drawX = 0, drawY = 0, drawW = tW, drawH = tH;
+
+                const imgAspect = img.naturalWidth / img.naturalHeight;
+                const targetAspect = tW / tH;
+
+                if (mode === 'pad') {
+                    canvas.width = tW;
+                    canvas.height = tH;
+                    ctx.fillStyle = padCol;
+                    ctx.fillRect(0, 0, tW, tH);
+
+                    if (imgAspect > targetAspect) {
+                        drawW = tW;
+                        drawH = tW / imgAspect;
+                        drawY = (tH - drawH) / 2;
+                    } else {
+                        drawH = tH;
+                        drawW = tH * imgAspect;
+                        drawX = (tW - drawW) / 2;
+                    }
+                    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+                } else if (mode === 'crop') {
+                    canvas.width = tW;
+                    canvas.height = tH;
+                    if (imgAspect > targetAspect) {
+                        const sW = img.naturalHeight * targetAspect;
+                        const sX = (img.naturalWidth - sW) / 2;
+                        ctx.drawImage(img, sX, 0, sW, img.naturalHeight, 0, 0, tW, tH);
+                    } else {
+                        const sH = img.naturalWidth / targetAspect;
+                        const sY = (img.naturalHeight - sH) / 2;
+                        ctx.drawImage(img, 0, sY, img.naturalWidth, sH, 0, 0, tW, tH);
+                    }
+                } else if (mode === 'max') {
+                    let finalW = img.naturalWidth;
+                    let finalH = img.naturalHeight;
+
+                    if (finalW > tW || finalH > tH) {
+                        if (imgAspect > targetAspect) {
+                            finalW = tW;
+                            finalH = tW / imgAspect;
+                        } else {
+                            finalH = tH;
+                            finalW = tH * imgAspect;
+                        }
+                    }
+                    canvas.width = Math.round(finalW);
+                    canvas.height = Math.round(finalH);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                } else { // stretch
+                    canvas.width = tW;
+                    canvas.height = tH;
+                    ctx.drawImage(img, 0, 0, tW, tH);
+                }
+
+                const blob = await new Promise(r => canvas.toBlob(r, format, quality));
+                const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                const outFileName = `${baseName}_resized.${ext}`;
+
+                processedResults.push({
+                    name: outFileName,
+                    origSize: file.size,
+                    blob: blob,
+                    width: canvas.width,
+                    height: canvas.height
+                });
+
+            } catch (err) {
+                console.error("Error processing file:", file.name, err);
+            }
+        }
+
+        processingZone.classList.add('hidden');
+        resultZone.classList.remove('hidden');
+        renderResultCards();
+    });
+
+    function loadImage(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = e.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function renderResultCards() {
+        resultsGrid.innerHTML = '';
+        resultSummary.textContent = `Batch Complete: ${processedResults.length} Photos Processed`;
+
+        processedResults.forEach(item => {
+            const card = document.createElement('div');
+            card.className = "bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex flex-col items-center shadow-sm text-xs";
+            
+            const imgUrl = URL.createObjectURL(item.blob);
+            
+            card.innerHTML = `
+                <div class="w-full h-36 flex items-center justify-center p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-2.5 checkerboard overflow-hidden">
+                    <img src="${imgUrl}" class="max-h-full max-w-full object-contain">
+                </div>
+                <div class="w-full text-left mb-2">
+                    <p class="font-bold text-gray-800 dark:text-gray-200 truncate" title="${item.name}">${item.name}</p>
+                    <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">${item.width} × ${item.height} px • <span class="text-blue-600 dark:text-blue-400 font-semibold">${formatBytes(item.blob.size)}</span></p>
+                </div>
+                <button onclick="downloadSingleBlob('${imgUrl}', '${item.name}')" class="w-full mt-auto bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold py-1.5 px-3 rounded-lg border border-gray-300 dark:border-gray-600 transition-all text-xs flex items-center justify-center gap-1">
+                    Download
+                </button>
+            `;
+            resultsGrid.appendChild(card);
+        });
+    }
+
+    window.downloadSingleBlob = function(url, filename) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
+    downloadAllZipBtn.addEventListener('click', async () => {
+        if (processedResults.length === 0) return;
+
+        downloadAllZipBtn.disabled = true;
+        downloadAllZipBtn.textContent = "Packing ZIP...";
+
+        const zip = new JSZip();
+        processedResults.forEach(item => {
+            zip.file(item.name, item.blob);
+        });
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const zipUrl = URL.createObjectURL(zipBlob);
+        downloadSingleBlob(zipUrl, `resized_batch_${Date.now()}.zip`);
+
+        downloadAllZipBtn.disabled = false;
+        downloadAllZipBtn.innerHTML = `
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            Download All (.ZIP)
+        `;
+    });
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    resetAllBtn.addEventListener('click', () => {
+        uploadZone.classList.remove('hidden');
+        configZone.classList.add('hidden');
+        processingZone.classList.add('hidden');
+        resultZone.classList.add('hidden');
+        imageInput.value = '';
+        uploadedFiles = [];
+        processedResults = [];
+    });
+</script>
