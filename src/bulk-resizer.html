@@ -1,6 +1,11 @@
 ---
 layout: layout.njk
 title: "Free Bulk Image Resizer & Canvas Padder"
+category: "image"
+icon: "🖼️"
+badgeColor: "cyan"
+order: 6
+description: "Batch resize, crop, and pad product photos with white borders for eBay, Amazon, and Etsy with 1-click ZIP downloads."
 ---
 
 <!-- JSZip CDN for Batch ZIP Export -->
@@ -8,20 +13,28 @@ title: "Free Bulk Image Resizer & Canvas Padder"
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Bulk Image <span class="text-blue-600 dark:text-blue-400">Resizer & Padder</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Batch resize, crop, and pad product photos to uniform dimensions for eBay, Amazon, and online stores.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            Bulk Image <span class="text-blue-600 dark:text-blue-400">Resizer & Padder</span>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Batch resize, crop, and pad product photos to uniform dimensions for eBay, Amazon, Etsy, and web stores directly in your browser.
+        </p>
     </header>
 
-    <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+    <!-- Primary Tool Card -->
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
         <!-- Step 1: Upload Zone -->
         <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
             <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp,image/avif" multiple class="hidden">
             <label for="imageInput" class="cursor-pointer">
-                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image Batch or Click to Upload</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select multiple JPG, PNG, or WebP photos</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select multiple JPG, PNG, WebP, or AVIF photos</p>
             </label>
         </div>
 
@@ -41,24 +54,24 @@ title: "Free Bulk Image Resizer & Canvas Padder"
                 <!-- Left: Resize Mode & Dimensions (7 cols) -->
                 <div class="md:col-span-7 space-y-4">
                     
-                    <!-- Presets -->
+                    <!-- Marketplace Presets -->
                     <div>
                         <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Marketplace Presets</label>
                         <div class="grid grid-cols-3 gap-2">
-                            <button type="button" data-w="1600" data-h="1600" data-mode="pad" class="preset-btn bg-blue-600 text-white font-bold py-2 px-2.5 rounded-lg text-xs shadow-sm transition-all text-center">1600×1600 (eBay/Amazon)</button>
-                            <button type="button" data-w="2000" data-h="2000" data-mode="pad" class="preset-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2 px-2.5 rounded-lg text-xs transition-all text-center">2000×2000 (Etsy/Shopify)</button>
+                            <button type="button" data-w="1600" data-h="1600" data-mode="pad" class="preset-btn bg-blue-600 text-white font-bold py-2 px-2.5 rounded-lg text-xs shadow-sm transition-all text-center">1600×1600 (eBay / Amazon)</button>
+                            <button type="button" data-w="2000" data-h="2000" data-mode="pad" class="preset-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2 px-2.5 rounded-lg text-xs transition-all text-center">2000×2000 (Etsy / Shopify)</button>
                             <button type="button" data-w="1080" data-h="1080" data-mode="pad" class="preset-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2 px-2.5 rounded-lg text-xs transition-all text-center">1080×1080 (Square Post)</button>
                         </div>
                     </div>
 
-                    <!-- Mode Select -->
+                    <!-- Fitting Mode Selection -->
                     <div>
                         <label for="fitMode" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Fitting Method</label>
-                        <select id="fitMode" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="pad" selected>Fit & Pad Canvas (Preserves full photo with borders)</option>
-                            <option value="crop">Cover & Crop (Fills exact box, trims excess edges)</option>
+                        <select id="fitMode" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                            <option value="pad" selected>Fit & Pad Canvas (Preserves entire photo with borders)</option>
+                            <option value="crop">Cover & Crop (Fills exact dimensions, trims excess edges)</option>
                             <option value="stretch">Exact Stretch (Stretches to fit exact dimensions)</option>
-                            <option value="max">Bound Constraint (Scale down if larger than dimensions)</option>
+                            <option value="max">Bound Constraint (Scale down proportionally if larger)</option>
                         </select>
                     </div>
 
@@ -66,11 +79,11 @@ title: "Free Bulk Image Resizer & Canvas Padder"
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label for="targetWidth" class="block text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Target Width (px)</label>
-                            <input type="number" id="targetWidth" value="1600" min="50" max="8000" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <input type="number" id="targetWidth" value="1600" min="50" max="8000" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         </div>
                         <div>
                             <label for="targetHeight" class="block text-xs text-gray-500 dark:text-gray-400 font-semibold mb-1">Target Height (px)</label>
-                            <input type="number" id="targetHeight" value="1600" min="50" max="8000" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <input type="number" id="targetHeight" value="1600" min="50" max="8000" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         </div>
                     </div>
 
@@ -79,11 +92,11 @@ title: "Free Bulk Image Resizer & Canvas Padder"
                 <!-- Right: Background & Output Format (5 cols) -->
                 <div class="md:col-span-5 space-y-4">
                     
-                    <!-- Background Canvas Color -->
+                    <!-- Background Canvas Colour -->
                     <div id="bgColorContainer">
-                        <label for="padColor" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Canvas Padding Color</label>
+                        <label for="padColor" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Canvas Padding Colour</label>
                         <div class="flex items-center gap-2">
-                            <div class="flex items-center bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 gap-2 flex-grow">
+                            <div class="flex items-center bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 gap-2 flex-grow transition-colors">
                                 <input type="color" id="padColor" value="#ffffff" class="w-6 h-6 rounded cursor-pointer border-0 p-0 bg-transparent">
                                 <span id="padColorVal" class="text-xs font-mono text-gray-700 dark:text-gray-300">#ffffff (White)</span>
                             </div>
@@ -93,23 +106,25 @@ title: "Free Bulk Image Resizer & Canvas Padder"
                     <!-- Output Format & Quality -->
                     <div>
                         <label for="outputFormat" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Export Format</label>
-                        <select id="outputFormat" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="image/jpeg" selected>JPEG (.jpg) - Universal</option>
-                            <option value="image/webp">WebP (.webp) - Optimized</option>
-                            <option value="image/png">PNG (.png) - Lossless</option>
+                        <select id="outputFormat" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                            <option value="image/jpeg" selected>JPEG (.jpg) — Universal</option>
+                            <option value="image/webp">WebP (.webp) — Optimised</option>
+                            <option value="image/png">PNG (.png) — Lossless</option>
                         </select>
                     </div>
 
                     <div>
                         <div class="flex justify-between items-center mb-1">
-                            <label for="qualitySlider" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Quality</label>
+                            <label for="qualitySlider" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Quality Level</label>
                             <span id="qualityVal" class="text-xs font-bold text-blue-600 dark:text-blue-400">90%</span>
                         </div>
                         <input type="range" id="qualitySlider" min="30" max="100" value="90" class="w-full accent-blue-600 cursor-pointer">
                     </div>
 
                     <button id="processBatchBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl text-base shadow-md transition-all flex items-center justify-center gap-2 mt-4">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
                         Process Batch Now
                     </button>
 
@@ -125,7 +140,7 @@ title: "Free Bulk Image Resizer & Canvas Padder"
                 <div class="loading-spinner"></div>
                 <div>
                     <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Resizing Batch Images...</p>
-                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Processing locally in browser...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Processing locally in browser memory...</p>
                 </div>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
                     <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
@@ -140,12 +155,14 @@ title: "Free Bulk Image Resizer & Canvas Padder"
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-6 border border-gray-200 dark:border-gray-700">
                 <div>
                     <h3 id="resultSummary" class="font-bold text-gray-900 dark:text-white text-sm">Batch Complete: 0 Photos Processed</h3>
-                    <p id="resultSaved" class="text-xs text-green-600 dark:text-green-400 font-semibold mt-0.5">-</p>
+                    <p id="resultSaved" class="text-xs text-green-600 dark:text-green-400 font-semibold mt-0.5">Ready for individual or ZIP archive download</p>
                 </div>
 
                 <div class="flex items-center gap-3 w-full sm:w-auto">
                     <button id="downloadAllZipBtn" class="flex-grow sm:flex-grow-0 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-sm transition-all text-xs flex items-center justify-center gap-2">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
                         Download All (.ZIP)
                     </button>
                     <button id="resetAllBtn" class="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Start New Batch</button>
@@ -162,12 +179,12 @@ title: "Free Bulk Image Resizer & Canvas Padder"
     <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🛍️ Perfect eBay & Amazon Listing Standards</h3>
-            <p>Fit non-square product photos into standard 1600×1600 square templates with pure white borders. Meet high-resolution zoom requirements across all major e-commerce marketplaces without distortion.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🛍️ Marketplace Listing Standards</h3>
+            <p>Fit non-square product photos into standard 1600×1600 square canvases with clean white borders. Comply with eBay, Amazon, Etsy, and Google Shopping high-resolution zoom requirements without stretching or cropping essential product details.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ Batch Processing with Zero Server Uploads</h3>
-            <p>Process 20+ images in seconds directly in your web browser. Everything runs on client-side hardware using HTML5 Canvas, keeping your catalog photos private and avoiding cloud queue delays.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ 100% In-Browser Batch Processing</h3>
+            <p>Batch resize and pad dozens of photos in seconds entirely within your web browser. All canvas manipulation executes locally on your device hardware, keeping commercial catalogue photos private without cloud queue delays or bandwidth limits.</p>
         </div>
     </div>
 
@@ -208,22 +225,38 @@ title: "Free Bulk Image Resizer & Canvas Padder"
     let uploadedFiles = [];
     let processedResults = [];
 
-    imageInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) handleFiles(e.target.files);
+    // Standard Drag-and-Drop Event Bindings
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
     });
 
-    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
+    });
+
     uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) {
+            handleFiles(dt.files);
+        }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            handleFiles(e.target.files);
+        }
     });
 
     function handleFiles(files) {
         uploadedFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
         if (uploadedFiles.length === 0) {
-            alert("Please select valid image files.");
+            alert("Please select valid image files (JPG, PNG, WebP, AVIF).");
             return;
         }
 
@@ -245,19 +278,22 @@ title: "Free Bulk Image Resizer & Canvas Padder"
             targetWidth.value = btn.dataset.w;
             targetHeight.value = btn.dataset.h;
             fitMode.value = btn.dataset.mode;
+            updateBgVisibility();
         });
     });
 
-    fitMode.addEventListener('change', () => {
+    fitMode.addEventListener('change', updateBgVisibility);
+
+    function updateBgVisibility() {
         if (fitMode.value === 'pad') {
             bgColorContainer.classList.remove('opacity-40', 'pointer-events-none');
         } else {
             bgColorContainer.classList.add('opacity-40', 'pointer-events-none');
         }
-    });
+    }
 
     padColor.addEventListener('input', () => {
-        padColorVal.textContent = padColor.value;
+        padColorVal.textContent = `${padColor.value} (${padColor.value.toLowerCase() === '#ffffff' ? 'White' : 'Custom'})`;
     });
 
     qualitySlider.addEventListener('input', () => {
@@ -270,7 +306,7 @@ title: "Free Bulk Image Resizer & Canvas Padder"
         imageInput.value = '';
     });
 
-    // Batch Processor
+    // Batch Resizing & Padding Engine
     processBatchBtn.addEventListener('click', async () => {
         configZone.classList.add('hidden');
         processingZone.classList.remove('hidden');
@@ -292,7 +328,7 @@ title: "Free Bulk Image Resizer & Canvas Padder"
             const percent = Math.round(((i + 1) / total) * 100);
             progressBar.style.width = `${percent}%`;
             progressPercent.textContent = `${percent}%`;
-            statusMessage.textContent = `Processing image ${i + 1} of ${total}...`;
+            statusMessage.textContent = `Processing photo ${i + 1} of ${total}...`;
             subStatusMessage.textContent = file.name;
 
             try {
@@ -302,10 +338,7 @@ title: "Free Bulk Image Resizer & Canvas Padder"
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
 
-                let canvasW = tW;
-                let canvasH = tH;
                 let drawX = 0, drawY = 0, drawW = tW, drawH = tH;
-
                 const imgAspect = img.naturalWidth / img.naturalHeight;
                 const targetAspect = tW / tH;
 
@@ -359,9 +392,9 @@ title: "Free Bulk Image Resizer & Canvas Padder"
                     ctx.drawImage(img, 0, 0, tW, tH);
                 }
 
-                const blob = await new Promise(r => canvas.toBlob(r, format, quality));
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, format, quality));
                 const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-                const outFileName = `${baseName}_resized.${ext}`;
+                const outFileName = `bwtools_bulk-resizer_${baseName}_${Date.now()}.${ext}`;
 
                 processedResults.push({
                     name: outFileName,
@@ -443,11 +476,14 @@ title: "Free Bulk Image Resizer & Canvas Padder"
 
         const zipBlob = await zip.generateAsync({ type: 'blob' });
         const zipUrl = URL.createObjectURL(zipBlob);
-        downloadSingleBlob(zipUrl, `resized_batch_${Date.now()}.zip`);
+        downloadSingleBlob(zipUrl, `bwtools_bulk-resizer_${Date.now()}.zip`);
+        setTimeout(() => URL.revokeObjectURL(zipUrl), 10000);
 
         downloadAllZipBtn.disabled = false;
         downloadAllZipBtn.innerHTML = `
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
             Download All (.ZIP)
         `;
     });
