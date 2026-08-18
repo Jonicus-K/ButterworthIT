@@ -1,32 +1,45 @@
 ---
 layout: layout.njk
-title: "Free AI Background Remover"
+title: "AI Background Remover"
+category: "image"
+icon: "✨"
+badgeColor: "blue"
+order: 1
+description: "Automatically isolate subjects, erase backdrops, and touch up edges with precision brush controls."
 ---
 
-<!-- ES Module Loader for imgly -->
+<!-- ES Module Loader for @imgly/background-removal -->
 <script type="module">
     import { removeBackground } from "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm";
     window.imglyRemoveBackground = removeBackground;
 </script>
 
+<!-- Precision Dynamic Brush Cursor -->
 <div id="brushCursor" class="pointer-events-none fixed rounded-full border-2 border-blue-500 bg-blue-500/20 transform -translate-x-1/2 -translate-y-1/2 hidden z-50"></div>
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Remove Backgrounds <span class="text-blue-600 dark:text-blue-400">Perfectly</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Edge sensitivity tuning, instant white/colour backdrops, and precision brush tools.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            Remove Backgrounds <span class="text-blue-600 dark:text-blue-400">Instantly</span>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Neural network subject segmentation, instant marketplace white backdrops, edge sensitivity tuning, and precision brush tools.
+        </p>
     </header>
 
     <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
         <!-- Step 1: Upload Zone -->
         <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
-            <input type="file" id="imageInput" accept="image/*" class="hidden">
+            <input type="file" id="imageInput" accept="image/png, image/jpeg, image/webp" class="hidden">
             <label for="imageInput" class="cursor-pointer">
-                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image or Click to Upload</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports PNG, JPG, and WEBP</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports PNG, JPG, and WebP (Up to 4K)</p>
             </label>
         </div>
 
@@ -35,8 +48,8 @@ title: "Free AI Background Remover"
             <div class="flex flex-col items-center gap-4">
                 <div class="loading-spinner"></div>
                 <div>
-                    <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Initializing AI Engine...</p>
-                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Downloading AI model files (cached after first run)...</p>
+                    <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Initialising AI Engine...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Downloading neural network assets (cached for future use)...</p>
                 </div>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
                     <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
@@ -68,7 +81,7 @@ title: "Free AI Background Remover"
                     <span id="sensitivityVal" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300 w-8">70</span>
                 </div>
 
-                <!-- Brush Tools -->
+                <!-- Precision Touch-Up Brushes -->
                 <div class="flex items-center gap-2 border-l border-gray-300 dark:border-gray-700 pl-3">
                     <span class="font-bold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wider">Brush:</span>
                     <button id="modeErase" class="bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all">🧹 Erase</button>
@@ -79,21 +92,24 @@ title: "Free AI Background Remover"
 
                 <!-- Zoom Controls -->
                 <div class="flex items-center gap-1 border-l border-gray-300 dark:border-gray-700 pl-3">
-                    <button id="zoomOut" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded text-xs font-bold shadow-sm">-</button>
-                    <span id="zoomVal" class="text-xs font-mono w-10 text-center font-bold">100%</span>
-                    <button id="zoomIn" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded text-xs font-bold shadow-sm">+</button>
+                    <button id="zoomOut" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded text-xs font-bold shadow-sm text-gray-700 dark:text-gray-200">-</button>
+                    <span id="zoomVal" class="text-xs font-mono w-10 text-center font-bold text-gray-700 dark:text-gray-200">100%</span>
+                    <button id="zoomIn" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded text-xs font-bold shadow-sm text-gray-700 dark:text-gray-200">+</button>
                     <button id="zoomReset" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded text-xs text-gray-500 dark:text-gray-400 shadow-sm ml-1">Reset</button>
                 </div>
             </div>
 
-            <!-- Viewport Canvas -->
+            <!-- Viewport Canvas Container -->
             <div id="viewport" class="relative overflow-auto max-h-[550px] checkerboard rounded-xl p-4 border border-gray-200 dark:border-gray-700 text-center">
                 <canvas id="editCanvas" class="inline-block shadow-lg rounded-lg cursor-none align-top"></canvas>
             </div>
 
+            <!-- Action Buttons -->
             <div class="text-center flex flex-col items-center gap-3 mt-6">
                 <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md transition-all flex items-center gap-2">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
                     Download HD Image
                 </button>
                 <button id="resetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Upload Another Image</button>
@@ -101,15 +117,15 @@ title: "Free AI Background Remover"
         </div>
     </div>
     
-<!-- SEO / Informational Section -->
+    <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🎯 Neural Network Subject Isolation</h3>
-            <p>Our background remover utilizes browser-native WebAssembly machine learning models to detect foreground subjects, hair, and complex edges without sending a single pixel across the internet.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🎯 In-Browser Subject Segmentation</h3>
+            <p>Our background remover runs browser-native WebAssembly machine learning models to detect subjects, hair, and complex contours locally without sending a single pixel over the network.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🛍️ Built for Online Marketplaces</h3>
-            <p>Easily switch to clean white backgrounds to meet eBay, Amazon, and Google Shopping product photography requirements, or export transparent PNGs with custom edge sensitivity.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🛍️ Marketplace-Optimised Export</h3>
+            <p>Easily switch to pure white backgrounds to comply with eBay, Amazon, and Etsy product photo requirements, or export transparent high-definition PNGs with custom edge thresholding.</p>
         </div>
     </div>
 
@@ -156,19 +172,40 @@ title: "Free AI Background Remover"
     let baseDisplayWidth = 0;
     let baseDisplayHeight = 0;
 
-    imageInput.addEventListener('change', (e) => {
-        if (e.target.files[0]) processImage(e.target.files[0]);
+    // Drag-and-drop bindings
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
     });
 
-    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
+    });
+
     uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files[0]) processImage(e.dataTransfer.files[0]);
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files[0]) {
+            processImage(dt.files[0]);
+        }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+            processImage(e.target.files[0]);
+        }
     });
 
     async function processImage(file) {
+        if (!file.type.startsWith('image/')) {
+            alert('Please upload a valid image file (PNG, JPG, WebP).');
+            return;
+        }
+
         uploadZone.classList.add('hidden');
         processingZone.classList.remove('hidden');
         resultZone.classList.add('hidden');
@@ -189,9 +226,9 @@ title: "Free AI Background Remover"
 
                     if (key.includes('fetch')) {
                         statusMessage.textContent = "Downloading AI Model Files...";
-                        subStatusMessage.textContent = `Fetching assets (${percent}%). One-time download, cached for future runs.`;
+                        subStatusMessage.textContent = `Fetching neural network binaries (${percent}%). Cached after initial run.`;
                     } else if (key.includes('compute') || key.includes('inference')) {
-                        statusMessage.textContent = "Analyzing & Segmenting Subject...";
+                        statusMessage.textContent = "Analysing & Segmenting Subject...";
                         subStatusMessage.textContent = "Running neural network segmentation locally in your browser.";
                     } else {
                         statusMessage.textContent = "Processing Cutout...";
@@ -225,7 +262,7 @@ title: "Free AI Background Remover"
 
         } catch (error) {
             console.error(error);
-            alert("Error processing image. Please try again.");
+            alert("Error processing image with AI engine. Please verify WebAssembly is enabled and try again.");
             resetUI();
         }
     }
@@ -297,7 +334,7 @@ title: "Free AI Background Remover"
         activeTool = 'restore';
         modeRestore.className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all";
         modeErase.className = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all";
-        brushCursor.className = "pointer-events-none fixed rounded-full border-2 border-green-500 bg-green-500/20 transform -translate-x-1/2 -translate-y-1/2 z-50";
+        brushCursor.className = "pointer-events-none fixed rounded-full border-2 border-emerald-500 bg-emerald-500/20 transform -translate-x-1/2 -translate-y-1/2 z-50";
     });
 
     brushSize.addEventListener('input', () => {
@@ -374,27 +411,32 @@ title: "Free AI Background Remover"
         updateCursorSize();
     }
 
+    // Standardised zero-upload trigger: bwtools_bg-remover_[timestamp].[png|jpg]
     downloadBtn.addEventListener('click', () => {
-        const mime = (activeBg === 'transparent') ? 'image/png' : 'image/jpeg';
-        const ext = (activeBg === 'transparent') ? 'png' : 'jpg';
+        const isTransparent = (activeBg === 'transparent');
+        const mime = isTransparent ? 'image/png' : 'image/jpeg';
+        const ext = isTransparent ? 'png' : 'jpg';
 
         editCanvas.toBlob((blob) => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `bwtools_cutout_${Date.now()}.${ext}`;
+            a.download = `bwtools_bg-remover_${Date.now()}.${ext}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
         }, mime, 0.95);
     });
 
     resetBtn.addEventListener('click', resetUI);
+
     function resetUI() {
         uploadZone.classList.remove('hidden');
         processingZone.classList.add('hidden');
         resultZone.classList.add('hidden');
         imageInput.value = '';
+        progressBar.style.width = '0%';
+        progressPercent.textContent = '0%';
     }
 </script>
