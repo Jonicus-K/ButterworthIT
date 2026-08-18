@@ -1,35 +1,64 @@
 ---
 layout: layout.njk
 title: "Free Image Compressor & WebP Converter"
+category: "image"
+icon: "⚡"
+badgeColor: "green"
+order: 2
+description: "Shrink image file sizes by up to 90% without quality loss. Convert heavy PNGs and JPEGs to modern WebP."
 ---
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Image Compressor & <span class="text-blue-600 dark:text-blue-400">WebP</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Shrink image file sizes by up to 90% without losing clarity.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            Image Compressor & <span class="text-blue-600 dark:text-blue-400">Optimiser</span>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Shrink image file sizes by up to 90% without losing visual clarity. Convert PNG and JPEG photos to next-gen WebP locally.
+        </p>
     </header>
 
+    <!-- Primary Tool Card -->
     <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
-        <!-- Upload Zone -->
+        <!-- Step 1: Upload Zone -->
         <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
             <input type="file" id="imageInput" accept="image/png, image/jpeg, image/webp" class="hidden">
             <label for="imageInput" class="cursor-pointer">
-                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image or Click to Upload</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports PNG, JPG, and WEBP files</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports PNG, JPG, and WebP (Up to 25MB)</p>
             </label>
         </div>
 
-        <!-- Editor Zone -->
-        <div id="editorZone" class="hidden">
-            
-            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-6 grid sm:grid-cols-2 gap-4 border border-gray-200 dark:border-gray-700">
+        <!-- Step 2: Processing Progress Zone -->
+        <div id="processingZone" class="hidden text-center py-16 max-w-md mx-auto">
+            <div class="flex flex-col items-center gap-4">
+                <div class="loading-spinner"></div>
                 <div>
-                    <label for="formatSelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Convert Format:</label>
-                    <select id="formatSelect" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option value="image/webp" selected>WebP (Best Compression)</option>
+                    <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Compressing Image...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Applying in-browser canvas quantization...</p>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                    <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                </div>
+                <span id="progressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+            </div>
+        </div>
+
+        <!-- Step 3: Result & Configuration Zone -->
+        <div id="resultZone" class="hidden">
+            
+            <!-- Controls Toolbar -->
+            <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-6 grid sm:grid-cols-2 gap-4 border border-gray-200 dark:border-gray-700 text-sm">
+                <div>
+                    <label for="formatSelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Target Format:</label>
+                    <select id="formatSelect" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                        <option value="image/webp" selected>WebP (Optimised Compression)</option>
                         <option value="image/jpeg">JPEG (Standard Photo)</option>
                         <option value="image/png">PNG (Lossless)</option>
                     </select>
@@ -44,6 +73,7 @@ title: "Free Image Compressor & WebP Converter"
                 </div>
             </div>
 
+            <!-- Compression Metrics Cards -->
             <div class="grid grid-cols-3 gap-4 mb-6 text-center">
                 <div class="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                     <span class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Original Size</span>
@@ -59,13 +89,17 @@ title: "Free Image Compressor & WebP Converter"
                 </div>
             </div>
 
-            <div class="flex justify-center items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-4 mb-6 min-h-[250px] border border-gray-200 dark:border-gray-700">
-                <img id="imagePreview" class="max-h-[400px] w-auto rounded-lg shadow-sm" src="" alt="Compressed Preview">
+            <!-- Canvas/Image Preview Viewport -->
+            <div class="flex justify-center items-center bg-gray-100 dark:bg-gray-900 rounded-xl p-4 mb-6 min-h-[250px] checkerboard border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <img id="imagePreview" class="max-h-[400px] w-auto rounded-lg shadow-sm object-contain" src="" alt="Compressed Preview">
             </div>
 
+            <!-- Action Buttons -->
             <div class="text-center flex flex-col items-center gap-3">
                 <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md transition-all flex items-center gap-2">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
                     Download Compressed Image
                 </button>
                 <button id="resetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Compress Another Image</button>
@@ -74,15 +108,15 @@ title: "Free Image Compressor & WebP Converter"
 
     </div>
 
-<!-- SEO / Informational Section -->
+    <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ Lossless & Next-Gen WebP Conversion</h3>
-            <p>Convert heavy JPG and PNG images into modern WebP format. Reduce image file payloads by up to 90% without sacrificing visual sharpness or clarity.</p>
+            <p>Convert heavy JPG and PNG images into modern WebP format. Reduce image file payloads by up to 90% without sacrificing visual sharpness, contrast, or fine details.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🚀 Boost Page Speed & SEO</h3>
-            <p>Faster-loading images dramatically improve Google Core Web Vitals (LCP scores) and save mobile bandwidth for website visitors and online shoppers.</p>
+            <p>Smaller, optimised images dramatically improve Core Web Vitals (Largest Contentful Paint), cut mobile bandwidth costs, and accelerate web page load times with zero server uploads.</p>
         </div>
     </div>
 
@@ -91,7 +125,8 @@ title: "Free Image Compressor & WebP Converter"
 <script>
     const imageInput = document.getElementById('imageInput');
     const uploadZone = document.getElementById('uploadZone');
-    const editorZone = document.getElementById('editorZone');
+    const processingZone = document.getElementById('processingZone');
+    const resultZone = document.getElementById('resultZone');
     const formatSelect = document.getElementById('formatSelect');
     const qualitySlider = document.getElementById('qualitySlider');
     const qualityVal = document.getElementById('qualityVal');
@@ -101,33 +136,67 @@ title: "Free Image Compressor & WebP Converter"
     const imagePreview = document.getElementById('imagePreview');
     const downloadBtn = document.getElementById('downloadBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
 
     let originalFile = null;
     let originalImg = new Image();
     let compressedBlob = null;
+    let currentPreviewUrl = null;
 
-    imageInput.addEventListener('change', (e) => {
-        if (e.target.files[0]) loadFile(e.target.files[0]);
+    // Drag-and-drop event bindings
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
     });
 
-    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
+    });
+
     uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files[0]) {
+            loadFile(dt.files[0]);
+        }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+            loadFile(e.target.files[0]);
+        }
     });
 
     function loadFile(file) {
+        if (!file.type.startsWith('image/')) {
+            alert('Please select a valid image file (PNG, JPG, or WebP).');
+            return;
+        }
+
         originalFile = file;
         origSize.textContent = formatBytes(file.size);
+
+        uploadZone.classList.add('hidden');
+        processingZone.classList.remove('hidden');
+        resultZone.classList.add('hidden');
+        progressBar.style.width = '40%';
+        progressPercent.textContent = '40%';
 
         const reader = new FileReader();
         reader.onload = (e) => {
             originalImg.onload = () => {
-                uploadZone.classList.add('hidden');
-                editorZone.classList.remove('hidden');
-                compressImage();
+                progressBar.style.width = '80%';
+                progressPercent.textContent = '80%';
+                setTimeout(() => {
+                    processingZone.classList.add('hidden');
+                    resultZone.classList.remove('hidden');
+                    compressImage();
+                }, 150);
             };
             originalImg.src = e.target.result;
         };
@@ -145,10 +214,11 @@ title: "Free Image Compressor & WebP Converter"
         if (!originalImg.src) return;
 
         const canvas = document.createElement('canvas');
-        canvas.width = originalImg.width;
-        canvas.height = originalImg.height;
+        canvas.width = originalImg.naturalWidth || originalImg.width;
+        canvas.height = originalImg.naturalHeight || originalImg.height;
         const ctx = canvas.getContext('2d');
         
+        // Fill white background for JPEGs to prevent transparency rendering black
         if (formatSelect.value === 'image/jpeg') {
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -175,7 +245,11 @@ title: "Free Image Compressor & WebP Converter"
                 savedPct.className = "text-lg font-bold text-amber-600 dark:text-amber-400 mt-1 block";
             }
 
-            imagePreview.src = URL.createObjectURL(blob);
+            if (currentPreviewUrl) {
+                URL.revokeObjectURL(currentPreviewUrl);
+            }
+            currentPreviewUrl = URL.createObjectURL(blob);
+            imagePreview.src = currentPreviewUrl;
         }, mimeType, quality);
     }
 
@@ -187,26 +261,32 @@ title: "Free Image Compressor & WebP Converter"
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
+    // Standardised zero-upload download trigger: bwtools_image-compressor_[timestamp].[ext]
     downloadBtn.addEventListener('click', () => {
         if (!compressedBlob) return;
         const extMap = { 'image/webp': 'webp', 'image/jpeg': 'jpg', 'image/png': 'png' };
-        const ext = extMap[formatSelect.value] || 'jpg';
+        const ext = extMap[formatSelect.value] || 'webp';
         
         const url = URL.createObjectURL(compressedBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `compressed_${Date.now()}.${ext}`;
+        a.download = `bwtools_image-compressor_${Date.now()}.${ext}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
     });
 
     resetBtn.addEventListener('click', () => {
         uploadZone.classList.remove('hidden');
-        editorZone.classList.add('hidden');
+        processingZone.classList.add('hidden');
+        resultZone.classList.add('hidden');
         imageInput.value = '';
         originalFile = null;
         compressedBlob = null;
+        if (currentPreviewUrl) {
+            URL.revokeObjectURL(currentPreviewUrl);
+            currentPreviewUrl = null;
+        }
     });
 </script>
