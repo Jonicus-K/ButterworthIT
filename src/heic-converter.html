@@ -1,6 +1,11 @@
 ---
 layout: layout.njk
 title: "Free HEIC to JPEG / PNG Converter"
+category: "image"
+icon: "📱"
+badgeColor: "sky"
+order: 4
+description: "Batch convert Apple iPhone and iPad HEIC/HEIF photos to high-res JPG or PNG with zero upload limits."
 ---
 
 <!-- heic2any & JSZip CDNs -->
@@ -9,20 +14,28 @@ title: "Free HEIC to JPEG / PNG Converter"
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">HEIC to <span class="text-blue-600 dark:text-blue-400">JPEG & PNG</span> Converter</h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Convert Apple iPhone & iPad photos to standard formats with zero file uploads or quantity limits.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            HEIC to <span class="text-blue-600 dark:text-blue-400">JPEG & PNG</span> Converter
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Convert Apple iPhone & iPad photos to standard formats with zero file uploads, privacy risks, or quantity limits.
+        </p>
     </header>
 
+    <!-- Primary Tool Card -->
     <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
         <!-- Step 1: Upload Zone -->
         <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
             <input type="file" id="fileInput" accept=".heic,.HEIC,.heif,.HEIF" multiple class="hidden">
             <label for="fileInput" class="cursor-pointer">
-                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop HEIC Photos or Click to Upload</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports batch conversion of multiple .heic / .heif files</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports batch conversion of multiple .heic and .heif files</p>
             </label>
         </div>
 
@@ -48,15 +61,15 @@ title: "Free HEIC to JPEG / PNG Converter"
             <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-6 grid sm:grid-cols-3 gap-4 border border-gray-200 dark:border-gray-700 text-sm">
                 <div>
                     <label for="formatSelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Target Format:</label>
-                    <select id="formatSelect" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option value="image/jpeg" selected>JPEG (Standard Photo)</option>
+                    <select id="formatSelect" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                        <option value="image/jpeg" selected>JPEG (Universal Photo)</option>
                         <option value="image/png">PNG (Lossless Quality)</option>
                     </select>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <label for="qualitySlider" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Quality:</label>
+                        <label for="qualitySlider" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Quality Level:</label>
                         <span id="qualityVal" class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/50 px-2 py-0.5 rounded">90%</span>
                     </div>
                     <input type="range" id="qualitySlider" min="20" max="100" value="90" class="w-full accent-blue-600 cursor-pointer mt-1">
@@ -64,7 +77,9 @@ title: "Free HEIC to JPEG / PNG Converter"
 
                 <div class="flex items-end">
                     <button id="downloadZipBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all text-xs flex items-center justify-center gap-2">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
                         Download All (.ZIP)
                     </button>
                 </div>
@@ -73,22 +88,22 @@ title: "Free HEIC to JPEG / PNG Converter"
             <!-- Converted Cards Grid -->
             <div id="convertedGrid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6"></div>
 
-            <div class="text-center">
+            <div class="text-center pt-2 border-t border-gray-100 dark:border-gray-700">
                 <button id="resetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Convert More HEIC Photos</button>
             </div>
         </div>
 
     </div>
 
-<!-- SEO / Informational Section -->
+    <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🍏 Apple iOS & iPadOS Compatibility</h3>
-            <p>Convert Apple's High-Efficiency Image Format (.HEIC / .HEIF) into universal JPG or PNG files compatible with Windows, Android, and web platforms.</p>
+            <p>Convert Apple's High Efficiency Image Format (.HEIC / .HEIF) into universal JPG or PNG files fully compatible with Windows, Android, Linux, and web listing platforms.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ Batch Processing in Browser</h3>
-            <p>Decode and convert dozens of high-resolution photos simultaneously using local browser memory without uploading raw camera files to remote servers.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ Batch Processing with Zero Uploads</h3>
+            <p>Decode and convert dozens of high-resolution camera captures simultaneously using local browser memory without uploading raw, personal photos to remote cloud servers.</p>
         </div>
     </div>
 
@@ -113,16 +128,32 @@ title: "Free HEIC to JPEG / PNG Converter"
     let uploadedFiles = [];
     let convertedResults = [];
 
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) handleFiles(e.target.files);
+    // Standard Drag-and-Drop Event Bindings
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
     });
 
-    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
+    });
+
     uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) {
+            handleFiles(dt.files);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            handleFiles(e.target.files);
+        }
     });
 
     qualitySlider.addEventListener('input', () => {
@@ -180,10 +211,10 @@ title: "Free HEIC to JPEG / PNG Converter"
                     quality: targetQuality
                 });
 
-                // heic2any can return an array if multi-frame
+                // heic2any returns an array if the file contains multi-frame/burst images
                 const finalBlob = Array.isArray(outputBlob) ? outputBlob[0] : outputBlob;
                 const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-                const outputFileName = `${baseName}.${targetExt}`;
+                const outputFileName = `bwtools_heic-converter_${baseName}_${Date.now()}.${targetExt}`;
 
                 convertedResults.push({
                     origName: file.name,
@@ -211,13 +242,17 @@ title: "Free HEIC to JPEG / PNG Converter"
             const imgUrl = URL.createObjectURL(item.blob);
             
             card.innerHTML = `
-                <img src="${imgUrl}" class="max-h-48 w-auto object-contain rounded-lg border border-gray-200 dark:border-gray-700 mb-3 shadow-xs">
+                <div class="w-full h-48 flex items-center justify-center p-1 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-3 checkerboard overflow-hidden">
+                    <img src="${imgUrl}" class="max-h-full max-w-full object-contain rounded-lg shadow-xs">
+                </div>
                 <div class="w-full text-left mb-3">
                     <p class="font-bold text-xs text-gray-800 dark:text-gray-200 truncate" title="${item.fileName}">${item.fileName}</p>
                     <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">${formatBytes(item.origSize)} → <span class="text-blue-600 dark:text-blue-400 font-semibold">${formatBytes(item.blob.size)}</span></p>
                 </div>
-                <button onclick="downloadBlob('${imgUrl}', '${item.fileName}')" class="w-full mt-auto bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold py-1.5 px-3 rounded-lg border border-gray-300 dark:border-gray-600 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm">
-                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                <button onclick="downloadSingleBlob('${imgUrl}', '${item.fileName}')" class="w-full mt-auto bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold py-1.5 px-3 rounded-lg border border-gray-300 dark:border-gray-600 transition-all text-xs flex items-center justify-center gap-1.5 shadow-sm">
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
                     Download
                 </button>
             `;
@@ -225,7 +260,7 @@ title: "Free HEIC to JPEG / PNG Converter"
         });
     }
 
-    window.downloadBlob = function(url, filename) {
+    window.downloadSingleBlob = function(url, filename) {
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
@@ -247,11 +282,14 @@ title: "Free HEIC to JPEG / PNG Converter"
 
         const zipBlob = await zip.generateAsync({ type: 'blob' });
         const zipUrl = URL.createObjectURL(zipBlob);
-        downloadBlob(zipUrl, `heic_converted_${Date.now()}.zip`);
+        window.downloadSingleBlob(zipUrl, `bwtools_heic-converter_${Date.now()}.zip`);
+        setTimeout(() => URL.revokeObjectURL(zipUrl), 10000);
 
         downloadZipBtn.disabled = false;
         downloadZipBtn.innerHTML = `
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
             Download All (.ZIP)
         `;
     });
