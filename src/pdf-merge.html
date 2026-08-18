@@ -1,46 +1,78 @@
 ---
 layout: layout.njk
 title: "Free PDF Merger & Splitter"
+category: "pdf"
+icon: "🧩"
+badgeColor: "amber"
+order: 3
+description: "Stitch multiple PDF documents together or extract custom page ranges with zero file size limits."
 ---
 
+<!-- pdf-lib & JSZip CDN dependencies -->
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">PDF Merger & <span class="text-blue-600 dark:text-blue-400">Splitter</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Combine documents or extract custom page ranges locally.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            PDF Merger & <span class="text-blue-600 dark:text-blue-400">Splitter</span>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Combine multiple PDF documents into one or extract custom page ranges locally in your browser with zero file uploads.
+        </p>
     </header>
 
-    <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+    <!-- Primary Tool Card -->
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
         <!-- Mode Switcher Tabs -->
         <div class="flex justify-center mb-6">
             <div class="inline-flex p-1 bg-gray-100 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
-                <button id="tabMerge" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm transition-all flex items-center gap-2">
+                <button id="tabMerge" type="button" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm transition-all flex items-center gap-2">
                     🧩 Merge Multiple PDFs
                 </button>
-                <button id="tabSplit" class="px-6 py-2.5 rounded-lg font-bold text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all flex items-center gap-2">
+                <button id="tabSplit" type="button" class="px-6 py-2.5 rounded-lg font-bold text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all flex items-center gap-2">
                     ✂️ Split / Extract Pages
                 </button>
             </div>
         </div>
 
-        <!-- MERGE SECTION -->
+        <!-- ================= SECTION 1: MERGE ================= -->
         <div id="sectionMerge">
+            
+            <!-- Step 1: Merge Upload Zone -->
             <div id="mergeUploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
                 <input type="file" id="mergeFileInput" accept="application/pdf" multiple class="hidden">
                 <label for="mergeFileInput" class="cursor-pointer">
-                    <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
                     <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop PDFs or Click to Upload</p>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select two or more PDF files to combine</p>
                 </label>
             </div>
 
+            <!-- Step 2: Merge Processing Zone -->
+            <div id="mergeProcessingZone" class="hidden text-center py-16 max-w-md mx-auto">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="loading-spinner"></div>
+                    <div>
+                        <p id="mergeStatusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Merging PDF Documents...</p>
+                        <p id="mergeSubStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Stitching document streams in browser memory...</p>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                        <div id="mergeProgressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                    </div>
+                    <span id="mergeProgressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+                </div>
+            </div>
+
+            <!-- Step 3: Merge Result / Workspace Zone -->
             <div id="mergeWorkspace" class="hidden">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200">Files to Combine</h3>
+                    <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Documents to Combine</h3>
                     <label for="mergeFileInputMore" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold py-1.5 px-4 rounded-lg border border-gray-300 dark:border-gray-600 transition-all text-xs cursor-pointer shadow-sm">
                         + Add More PDFs
                         <input type="file" id="mergeFileInputMore" accept="application/pdf" multiple class="hidden">
@@ -49,37 +81,61 @@ title: "Free PDF Merger & Splitter"
 
                 <div id="mergeFileList" class="space-y-3 mb-6"></div>
 
-                <div class="text-center flex flex-col items-center gap-3">
-                    <button id="mergeActionBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md transition-all flex items-center gap-2">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                <div class="text-center flex flex-col items-center gap-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+                    <button id="mergeActionBtn" type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-8 rounded-xl text-base shadow-md transition-all flex items-center justify-center gap-2">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
                         Merge PDFs into One File
                     </button>
-                    <button id="mergeResetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Start Over</button>
+                    <button id="mergeResetBtn" type="button" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Start Over</button>
                 </div>
             </div>
         </div>
 
-        <!-- SPLIT / EXTRACT SECTION -->
+        <!-- ================= SECTION 2: SPLIT ================= -->
         <div id="sectionSplit" class="hidden">
+            
+            <!-- Step 1: Split Upload Zone -->
             <div id="splitUploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
                 <input type="file" id="splitFileInput" accept="application/pdf" class="hidden">
                 <label for="splitFileInput" class="cursor-pointer">
-                    <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
+                    <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+                    </svg>
                     <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Single PDF or Click to Upload</p>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select the PDF to split or extract pages from</p>
                 </label>
             </div>
 
+            <!-- Step 2: Split Processing Zone -->
+            <div id="splitProcessingZone" class="hidden text-center py-16 max-w-md mx-auto">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="loading-spinner"></div>
+                    <div>
+                        <p id="splitStatusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Extracting Pages...</p>
+                        <p id="splitSubStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Slicing PDF objects in browser memory...</p>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                        <div id="splitProgressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                    </div>
+                    <span id="splitProgressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+                </div>
+            </div>
+
+            <!-- Step 3: Split Result / Configuration Zone -->
             <div id="splitWorkspace" class="hidden">
                 <div class="bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h4 id="splitFileName" class="font-bold text-gray-800 dark:text-gray-200 text-sm">-</h4>
                         <p id="splitFileInfo" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">-</p>
                     </div>
-                    <button id="splitChangeFileBtn" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">Choose Different File</button>
+                    <button id="splitChangeFileBtn" type="button" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">Choose Different File</button>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    
+                    <!-- Mode A: Range Extraction -->
                     <div class="border-2 border-blue-500 bg-blue-50/40 dark:bg-blue-900/20 rounded-xl p-5 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-2 mb-2">
@@ -88,49 +144,50 @@ title: "Free PDF Merger & Splitter"
                             </div>
                             <p class="text-xs text-gray-600 dark:text-gray-400 mb-4 pl-6">Extract specific pages or page ranges into a single new PDF document.</p>
                             <div class="pl-6">
-                                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Page Range:</label>
-                                <input type="text" id="splitRangeInput" placeholder="e.g. 1-3, 5, 8" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <label for="splitRangeInput" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Page Range:</label>
+                                <input type="text" id="splitRangeInput" placeholder="e.g. 1-3, 5, 8" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                             </div>
                         </div>
 
-                        <button id="extractRangeBtn" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all text-sm">
+                        <button id="extractRangeBtn" type="button" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-sm">
                             Download Extracted PDF
                         </button>
                     </div>
 
+                    <!-- Mode B: Split Every Page -->
                     <div class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/40 rounded-xl p-5 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center gap-2 mb-2">
                                 <input type="radio" id="splitModeAll" name="splitMethod" value="all" class="accent-blue-600 h-4 w-4">
                                 <label for="splitModeAll" class="font-bold text-gray-800 dark:text-gray-200 text-sm">Split Every Page Separately</label>
                             </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-4 pl-6">Break every page into its own individual 1-page PDF file.</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 pl-6 bg-gray-50 dark:bg-gray-900 py-2 px-3 rounded-lg border border-gray-200 dark:border-gray-700">Output: Single <span class="font-semibold text-gray-700 dark:text-gray-300">.ZIP</span> archive.</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-4 pl-6">Break every single page into its own individual 1-page PDF file.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 pl-6 bg-gray-50 dark:bg-gray-900 py-2 px-3 rounded-lg border border-gray-200 dark:border-gray-700">Output: Single <span class="font-semibold text-gray-700 dark:text-gray-300">.ZIP</span> archive containing all pages.</p>
                         </div>
 
-                        <button id="splitAllBtn" class="mt-6 w-full bg-gray-800 dark:bg-gray-700 hover:bg-gray-900 dark:hover:bg-gray-600 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all text-sm">
+                        <button id="splitAllBtn" type="button" class="mt-6 w-full bg-gray-800 dark:bg-gray-700 hover:bg-gray-900 dark:hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl shadow-sm transition-all text-sm">
                             Split All Pages (.ZIP)
                         </button>
                     </div>
                 </div>
 
-                <div class="text-center">
-                    <button id="splitResetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Start Over</button>
+                <div class="text-center pt-2 border-t border-gray-100 dark:border-gray-700">
+                    <button id="splitResetBtn" type="button" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Start Over</button>
                 </div>
             </div>
         </div>
 
     </div>
 
-<!-- SEO / Informational Section -->
+    <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🧩 Combine or Extract Custom Ranges</h3>
-            <p>Merge dozens of separate PDF documents together, or extract specific page ranges (e.g. 1-3, 7) into a brand new standalone file.</p>
+            <p>Merge dozens of separate PDF documents together into a cohesive report, or extract specific page ranges (e.g. 1-3, 7) into a brand new standalone file without quality loss.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">♾️ No Daily Limits or Paywalls</h3>
-            <p>Unlike commercial PDF tools that throttle daily tasks or charge recurring subscriptions, our client-side engine processes unlimited files without caps.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">♾️ Zero Uploads & No Paywalls</h3>
+            <p>Unlike commercial PDF SaaS services that throttle daily tasks or require recurring paid subscriptions, our client-side WebAssembly and JavaScript engine processes unlimited files directly in your browser.</p>
         </div>
     </div>
 
@@ -147,13 +204,17 @@ title: "Free PDF Merger & Splitter"
     const mergeFileInput = document.getElementById('mergeFileInput');
     const mergeFileInputMore = document.getElementById('mergeFileInputMore');
     const mergeUploadZone = document.getElementById('mergeUploadZone');
+    const mergeProcessingZone = document.getElementById('mergeProcessingZone');
     const mergeWorkspace = document.getElementById('mergeWorkspace');
     const mergeFileList = document.getElementById('mergeFileList');
     const mergeActionBtn = document.getElementById('mergeActionBtn');
     const mergeResetBtn = document.getElementById('mergeResetBtn');
+    const mergeProgressBar = document.getElementById('mergeProgressBar');
+    const mergeProgressPercent = document.getElementById('mergeProgressPercent');
 
     const splitFileInput = document.getElementById('splitFileInput');
     const splitUploadZone = document.getElementById('splitUploadZone');
+    const splitProcessingZone = document.getElementById('splitProcessingZone');
     const splitWorkspace = document.getElementById('splitWorkspace');
     const splitFileName = document.getElementById('splitFileName');
     const splitFileInfo = document.getElementById('splitFileInfo');
@@ -162,10 +223,13 @@ title: "Free PDF Merger & Splitter"
     const splitAllBtn = document.getElementById('splitAllBtn');
     const splitResetBtn = document.getElementById('splitResetBtn');
     const splitChangeFileBtn = document.getElementById('splitChangeFileBtn');
+    const splitProgressBar = document.getElementById('splitProgressBar');
+    const splitProgressPercent = document.getElementById('splitProgressPercent');
 
     let mergeFiles = [];
     let splitFileObj = null;
 
+    // Tabs toggle
     tabMerge.addEventListener('click', () => {
         tabMerge.className = "px-6 py-2.5 rounded-lg font-bold text-sm bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm transition-all flex items-center gap-2";
         tabSplit.className = "px-6 py-2.5 rounded-lg font-bold text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all flex items-center gap-2";
@@ -180,6 +244,28 @@ title: "Free PDF Merger & Splitter"
         sectionMerge.classList.add('hidden');
     });
 
+    // Merge Drag & Drop bindings
+    ['dragenter', 'dragover'].forEach(evt => {
+        mergeUploadZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            mergeUploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(evt => {
+        mergeUploadZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            mergeUploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        });
+    });
+
+    mergeUploadZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) {
+            handleMergeFiles(dt.files);
+        }
+    });
+
     mergeFileInput.addEventListener('change', (e) => handleMergeFiles(e.target.files));
     mergeFileInputMore.addEventListener('change', (e) => handleMergeFiles(e.target.files));
 
@@ -187,7 +273,7 @@ title: "Free PDF Merger & Splitter"
         if (!files || files.length === 0) return;
 
         for (const file of Array.from(files)) {
-            if (file.type === 'application/pdf') {
+            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
                 try {
                     const arrayBuffer = await file.arrayBuffer();
                     const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
@@ -202,13 +288,14 @@ title: "Free PDF Merger & Splitter"
                     });
                 } catch (err) {
                     console.error(err);
-                    alert(`Failed to load "${file.name}". It may be password-protected.`);
+                    alert(`Failed to load "${file.name}". The document may be encrypted or corrupted.`);
                 }
             }
         }
 
         if (mergeFiles.length > 0) {
             mergeUploadZone.classList.add('hidden');
+            mergeProcessingZone.classList.add('hidden');
             mergeWorkspace.classList.remove('hidden');
             renderMergeList();
         }
@@ -223,19 +310,19 @@ title: "Free PDF Merger & Splitter"
                 <div class="flex items-center gap-3 w-full md:w-auto">
                     <span class="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-bold text-xs px-2.5 py-1 rounded-lg">${index + 1}</span>
                     <div class="overflow-hidden">
-                        <p class="font-bold text-sm text-gray-800 dark:text-gray-200 truncate max-w-xs">${item.file.name}</p>
+                        <p class="font-bold text-sm text-gray-800 dark:text-gray-200 truncate max-w-xs" title="${item.file.name}">${item.file.name}</p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">${formatBytes(item.file.size)} • ${item.pageCount} page(s)</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 w-full md:w-auto">
                     <div class="flex items-center gap-1.5 text-xs">
                         <label class="font-semibold text-gray-600 dark:text-gray-400">Pages:</label>
-                        <input type="text" value="${item.pageRange}" onchange="updateMergeRange('${item.id}', this.value)" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 w-24 font-mono text-center focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                        <input type="text" value="${item.pageRange}" onchange="updateMergeRange('${item.id}', this.value)" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 w-28 font-mono text-center focus:ring-1 focus:ring-blue-500 focus:outline-none">
                     </div>
                     <div class="flex gap-1">
-                        <button onclick="moveMergeFile(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 cursor-not-allowed bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs p-1.5 rounded"' : 'class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-xs p-1.5 rounded border border-gray-300 dark:border-gray-600 shadow-sm"'}>↑</button>
-                        <button onclick="moveMergeFile(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled class="opacity-30 cursor-not-allowed bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs p-1.5 rounded"' : 'class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-xs p-1.5 rounded border border-gray-300 dark:border-gray-600 shadow-sm"'}>↓</button>
-                        <button onclick="removeMergeFile('${item.id}')" class="bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 font-bold text-xs px-2 py-1.5 rounded border border-red-200 dark:border-red-800 ml-1">Remove</button>
+                        <button type="button" onclick="moveMergeFile(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 cursor-not-allowed bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs p-1.5 rounded-lg"' : 'class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-xs p-1.5 rounded-lg border border-gray-300 dark:border-gray-600 shadow-xs"'}>↑</button>
+                        <button type="button" onclick="moveMergeFile(${index}, 1)" ${index === mergeFiles.length - 1 ? 'disabled class="opacity-30 cursor-not-allowed bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs p-1.5 rounded-lg"' : 'class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-xs p-1.5 rounded-lg border border-gray-300 dark:border-gray-600 shadow-xs"'}>↓</button>
+                        <button type="button" onclick="removeMergeFile('${item.id}')" class="bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 font-bold text-xs px-2.5 py-1.5 rounded-lg border border-rose-200 dark:border-rose-800 ml-1">Remove</button>
                     </div>
                 </div>
             `;
@@ -266,50 +353,96 @@ title: "Free PDF Merger & Splitter"
 
     mergeActionBtn.addEventListener('click', async () => {
         if (mergeFiles.length === 0) return;
-        mergeActionBtn.disabled = true;
-        mergeActionBtn.textContent = "Merging PDFs...";
+
+        mergeWorkspace.classList.add('hidden');
+        mergeProcessingZone.classList.remove('hidden');
+        mergeProgressBar.style.width = '0%';
+        mergeProgressPercent.textContent = '0%';
 
         setTimeout(async () => {
             try {
                 const mergedPdf = await PDFDocument.create();
-                for (const item of mergeFiles) {
+                const total = mergeFiles.length;
+
+                for (let i = 0; i < total; i++) {
+                    const item = mergeFiles[i];
                     const srcPdf = await PDFDocument.load(item.arrayBuffer, { ignoreEncryption: true });
                     const pageIndices = parsePageRange(item.pageRange, item.pageCount);
                     if (pageIndices.length > 0) {
                         const pages = await mergedPdf.copyPages(srcPdf, pageIndices);
                         pages.forEach(p => mergedPdf.addPage(p));
                     }
+
+                    const pct = Math.round(((i + 1) / total) * 90);
+                    mergeProgressBar.style.width = `${pct}%`;
+                    mergeProgressPercent.textContent = `${pct}%`;
                 }
+
                 const bytes = await mergedPdf.save();
-                downloadFile(new Blob([bytes], { type: 'application/pdf' }), `merged_${Date.now()}.pdf`);
+                mergeProgressBar.style.width = '100%';
+                mergeProgressPercent.textContent = '100%';
+
+                downloadBlob(new Blob([bytes], { type: 'application/pdf' }), `bwtools_pdf-merge_${Date.now()}.pdf`);
+
+                setTimeout(() => {
+                    mergeProcessingZone.classList.add('hidden');
+                    mergeWorkspace.classList.remove('hidden');
+                }, 300);
+
             } catch (err) {
                 console.error(err);
-                alert("Error merging PDFs.");
-            } finally {
-                mergeActionBtn.disabled = false;
-                mergeActionBtn.innerHTML = `
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                    Merge PDFs into One File
-                `;
+                alert("Error merging PDF documents.");
+                mergeProcessingZone.classList.add('hidden');
+                mergeWorkspace.classList.remove('hidden');
             }
         }, 100);
     });
 
     mergeResetBtn.addEventListener('click', resetMergeUI);
+
     function resetMergeUI() {
         mergeUploadZone.classList.remove('hidden');
+        mergeProcessingZone.classList.add('hidden');
         mergeWorkspace.classList.add('hidden');
         mergeFileInput.value = '';
+        mergeFileInputMore.value = '';
         mergeFiles = [];
         mergeFileList.innerHTML = '';
     }
 
+    // Split Drag & Drop bindings
+    ['dragenter', 'dragover'].forEach(evt => {
+        splitUploadZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            splitUploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(evt => {
+        splitUploadZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            splitUploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        });
+    });
+
+    splitUploadZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files[0]) {
+            handleSplitFile(dt.files[0]);
+        }
+    });
+
     splitFileInput.addEventListener('change', (e) => {
-        if (e.target.files[0]) handleSplitFile(e.target.files[0]);
+        if (e.target.files && e.target.files[0]) {
+            handleSplitFile(e.target.files[0]);
+        }
     });
 
     async function handleSplitFile(file) {
-        if (file.type !== 'application/pdf') return;
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            alert('Please select a valid PDF file.');
+            return;
+        }
 
         try {
             const arrayBuffer = await file.arrayBuffer();
@@ -327,17 +460,21 @@ title: "Free PDF Merger & Splitter"
             splitRangeInput.value = pageCount > 1 ? `1-${Math.min(2, pageCount)}` : `1`;
 
             splitUploadZone.classList.add('hidden');
+            splitProcessingZone.classList.add('hidden');
             splitWorkspace.classList.remove('hidden');
         } catch (err) {
             console.error(err);
-            alert("Unable to read PDF file.");
+            alert("Unable to read PDF file. It may be password-protected.");
         }
     }
 
     extractRangeBtn.addEventListener('click', async () => {
         if (!splitFileObj) return;
-        extractRangeBtn.disabled = true;
-        extractRangeBtn.textContent = "Extracting...";
+
+        splitWorkspace.classList.add('hidden');
+        splitProcessingZone.classList.remove('hidden');
+        splitProgressBar.style.width = '0%';
+        splitProgressPercent.textContent = '0%';
 
         setTimeout(async () => {
             try {
@@ -346,6 +483,8 @@ title: "Free PDF Merger & Splitter"
 
                 if (selectedIndices.length === 0) {
                     alert("Please enter a valid page range.");
+                    splitProcessingZone.classList.add('hidden');
+                    splitWorkspace.classList.remove('hidden');
                     return;
                 }
 
@@ -353,45 +492,69 @@ title: "Free PDF Merger & Splitter"
                 const copiedPages = await outPdf.copyPages(srcPdf, selectedIndices);
                 copiedPages.forEach(p => outPdf.addPage(p));
 
+                splitProgressBar.style.width = '100%';
+                splitProgressPercent.textContent = '100%';
+
                 const bytes = await outPdf.save();
-                downloadFile(new Blob([bytes], { type: 'application/pdf' }), `extracted_${Date.now()}.pdf`);
+                downloadBlob(new Blob([bytes], { type: 'application/pdf' }), `bwtools_pdf-split_${Date.now()}.pdf`);
+
+                setTimeout(() => {
+                    splitProcessingZone.classList.add('hidden');
+                    splitWorkspace.classList.remove('hidden');
+                }, 300);
+
             } catch (err) {
                 console.error(err);
                 alert("Error extracting pages.");
-            } finally {
-                extractRangeBtn.disabled = false;
-                extractRangeBtn.textContent = "Download Extracted PDF";
+                splitProcessingZone.classList.add('hidden');
+                splitWorkspace.classList.remove('hidden');
             }
         }, 100);
     });
 
     splitAllBtn.addEventListener('click', async () => {
         if (!splitFileObj) return;
-        splitAllBtn.disabled = true;
-        splitAllBtn.textContent = "Splitting All...";
+
+        splitWorkspace.classList.add('hidden');
+        splitProcessingZone.classList.remove('hidden');
+        splitProgressBar.style.width = '0%';
+        splitProgressPercent.textContent = '0%';
 
         setTimeout(async () => {
             try {
                 const srcPdf = await PDFDocument.load(splitFileObj.arrayBuffer, { ignoreEncryption: true });
                 const zip = new JSZip();
+                const total = splitFileObj.pageCount;
 
-                for (let i = 0; i < splitFileObj.pageCount; i++) {
+                for (let i = 0; i < total; i++) {
                     const singleDoc = await PDFDocument.create();
                     const [page] = await singleDoc.copyPages(srcPdf, [i]);
                     singleDoc.addPage(page);
 
                     const bytes = await singleDoc.save();
                     zip.file(`page_${i + 1}.pdf`, bytes);
+
+                    const pct = Math.round(((i + 1) / total) * 80);
+                    splitProgressBar.style.width = `${pct}%`;
+                    splitProgressPercent.textContent = `${pct}%`;
                 }
 
                 const zipBlob = await zip.generateAsync({ type: 'blob' });
-                downloadFile(zipBlob, `split_pages_${Date.now()}.zip`);
+                splitProgressBar.style.width = '100%';
+                splitProgressPercent.textContent = '100%';
+
+                downloadBlob(zipBlob, `bwtools_pdf-split_all_${Date.now()}.zip`);
+
+                setTimeout(() => {
+                    splitProcessingZone.classList.add('hidden');
+                    splitWorkspace.classList.remove('hidden');
+                }, 300);
+
             } catch (err) {
                 console.error(err);
-                alert("Error splitting pages.");
-            } finally {
-                splitAllBtn.disabled = false;
-                splitAllBtn.textContent = "Split All Pages (.ZIP)";
+                alert("Error splitting all pages.");
+                splitProcessingZone.classList.add('hidden');
+                splitWorkspace.classList.remove('hidden');
             }
         }, 100);
     });
@@ -401,6 +564,7 @@ title: "Free PDF Merger & Splitter"
 
     function resetSplitUI() {
         splitUploadZone.classList.remove('hidden');
+        splitProcessingZone.classList.add('hidden');
         splitWorkspace.classList.add('hidden');
         splitFileInput.value = '';
         splitFileObj = null;
@@ -429,7 +593,7 @@ title: "Free PDF Merger & Splitter"
         return Array.from(pages).sort((a, b) => a - b);
     }
 
-    function downloadFile(blob, filename) {
+    function downloadBlob(blob, filename) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -437,7 +601,7 @@ title: "Free PDF Merger & Splitter"
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
     }
 
     function formatBytes(bytes) {
