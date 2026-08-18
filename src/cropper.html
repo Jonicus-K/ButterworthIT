@@ -1,75 +1,94 @@
 ---
 layout: layout.njk
 title: "Marketplace & Social Image Cropper"
+category: "image"
+icon: "✂️"
+badgeColor: "purple"
+order: 3
+description: "Crop and frame listing photos for eBay 1:1, Etsy banners, social media stories, and custom aspect ratios."
 ---
 
+<!-- Cropper.js Dependencies -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 
-<style>
-    .img-container {
-        max-height: 500px;
-        background-image: conic-gradient(#eee 90deg, #fff 90deg 180deg, #eee 180deg 270deg, #fff 270deg);
-        background-size: 20px 20px;
-    }
-    .dark .img-container {
-        background-image: conic-gradient(#2d3748 90deg, #1a202c 90deg 180deg, #2d3748 180deg 270deg, #1a202c 270deg);
-    }
-    .img-container img {
-        max-height: 500px;
-        display: block;
-        max-width: 100%;
-    }
-</style>
-
 <main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Marketplace & Social Image <span class="text-blue-600 dark:text-blue-400">Cropper</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Crop, frame, and rotate images for eBay, Etsy, Instagram, and web.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            Marketplace & Social Image <span class="text-blue-600 dark:text-blue-400">Cropper</span>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Crop, frame, rotate, and mirror listing photos for eBay, Etsy, Instagram, and web storefronts directly in your browser.
+        </p>
     </header>
 
+    <!-- Primary Tool Card -->
     <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
-        <!-- Upload Zone -->
+        <!-- Step 1: Upload Zone -->
         <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
-            <input type="file" id="imageInput" accept="image/*" class="hidden">
+            <input type="file" id="imageInput" accept="image/png, image/jpeg, image/webp, image/gif" class="hidden">
             <label for="imageInput" class="cursor-pointer">
-                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image or Click to Upload</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports PNG, JPG, WEBP, and GIF</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports PNG, JPG, WebP, and GIF</p>
             </label>
         </div>
 
-        <!-- Editor Zone -->
-        <div id="editorZone" class="hidden">
+        <!-- Step 2: Processing Zone -->
+        <div id="processingZone" class="hidden text-center py-16 max-w-md mx-auto">
+            <div class="flex flex-col items-center gap-4">
+                <div class="loading-spinner"></div>
+                <div>
+                    <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Preparing Studio Canvas...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Loading image viewport locally...</p>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                    <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                </div>
+                <span id="progressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+            </div>
+        </div>
+
+        <!-- Step 3: Editor / Result Zone -->
+        <div id="resultZone" class="hidden">
             
-            <div class="bg-gray-100 dark:bg-gray-900 p-3 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-3 border border-gray-200 dark:border-gray-700 text-sm">
-                <div class="flex items-center gap-2 flex-wrap">
+            <!-- Aspect Ratio & Transformation Toolbar -->
+            <div class="bg-gray-100 dark:bg-gray-900 p-3.5 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-3 border border-gray-200 dark:border-gray-700 text-sm">
+                
+                <!-- Aspect Ratio Buttons -->
+                <div class="flex items-center gap-1.5 flex-wrap">
                     <span class="font-bold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wider mr-1">Aspect Ratio:</span>
-                    <button data-ratio="free" class="ratio-btn bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium shadow-sm transition-all text-xs">Freeform</button>
-                    <button data-ratio="1" class="ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-medium transition-all text-xs">1:1 (eBay/Square)</button>
-                    <button data-ratio="3" class="ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-medium transition-all text-xs">3:1 (Etsy Banner)</button>
-                    <button data-ratio="0.5625" class="ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-medium transition-all text-xs">9:16 (Story)</button>
-                    <button data-ratio="1.7777" class="ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-medium transition-all text-xs">16:9 (Landscape)</button>
+                    <button data-ratio="free" class="ratio-btn bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm transition-all text-xs">Freeform</button>
+                    <button data-ratio="1" class="ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-bold transition-all text-xs">1:1 (eBay / Square)</button>
+                    <button data-ratio="3" class="ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-bold transition-all text-xs">3:1 (Etsy Banner)</button>
+                    <button data-ratio="0.5625" class="ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-bold transition-all text-xs">9:16 (Story)</button>
+                    <button data-ratio="1.7777" class="ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-bold transition-all text-xs">16:9 (Landscape)</button>
                 </div>
 
-                <div class="flex items-center gap-1 border-l border-gray-300 dark:border-gray-700 pl-3">
-                    <button id="rotateLeft" title="Rotate Left 90°" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-1.5 rounded-lg text-xs font-bold shadow-sm">↺ 90°</button>
-                    <button id="rotateRight" title="Rotate Right 90°" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-1.5 rounded-lg text-xs font-bold shadow-sm">↻ 90°</button>
-                    <button id="flipH" title="Flip Horizontal" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-1.5 rounded-lg text-xs font-bold shadow-sm">↔ Flip</button>
-                    <button id="flipV" title="Flip Vertical" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 p-1.5 rounded-lg text-xs font-bold shadow-sm">↕ Flip</button>
+                <!-- Transformation Controls -->
+                <div class="flex items-center gap-1.5 border-l border-gray-300 dark:border-gray-700 pl-3">
+                    <button id="rotateLeft" title="Rotate Anti-Clockwise 90°" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all">↺ 90°</button>
+                    <button id="rotateRight" title="Rotate Clockwise 90°" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all">↻ 90°</button>
+                    <button id="flipH" title="Flip Horizontal" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all">↔ Flip</button>
+                    <button id="flipV" title="Flip Vertical" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all">↕ Flip</button>
                 </div>
             </div>
 
-            <div class="img-container rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden flex justify-center items-center mb-6">
-                <img id="cropperTarget" src="" alt="Image to crop">
+            <!-- Cropper Canvas Viewport -->
+            <div class="checkerboard rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden flex justify-center items-center mb-6 max-h-[500px]">
+                <img id="cropperTarget" class="max-h-[500px] max-w-full block" src="" alt="Source Preview">
             </div>
 
+            <!-- Export Settings Well -->
             <div class="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-700 mb-6 grid sm:grid-cols-2 gap-4">
                 <div>
                     <label for="exportFormat" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Export Format:</label>
-                    <select id="exportFormat" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <select id="exportFormat" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         <option value="image/png" selected>PNG (Lossless / Transparent)</option>
                         <option value="image/jpeg">JPEG (Standard Photo)</option>
                         <option value="image/webp">WebP (Optimised Web)</option>
@@ -78,16 +97,19 @@ title: "Marketplace & Social Image Cropper"
 
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <label for="exportQuality" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Quality:</label>
+                        <label for="exportQuality" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Quality Level:</label>
                         <span id="qualityVal" class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/50 px-2 py-0.5 rounded">90%</span>
                     </div>
                     <input type="range" id="exportQuality" min="10" max="100" value="90" class="w-full accent-blue-600 cursor-pointer mt-1">
                 </div>
             </div>
 
+            <!-- Action Buttons -->
             <div class="text-center flex flex-col items-center gap-3">
                 <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md transition-all flex items-center gap-2">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
                     Download Cropped Image
                 </button>
                 <button id="resetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Crop Another Image</button>
@@ -96,15 +118,15 @@ title: "Marketplace & Social Image Cropper"
 
     </div>
 
-<!-- SEO / Informational Section -->
+    <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">📐 1-Click Ratio Presets</h3>
-            <p>Quickly frame photos to exact 1:1 square dimensions for eBay listings, 3:1 for Etsy shop banners, or 9:16 for social media stories with lossless canvas rendering.</p>
+            <p>Quickly frame product photos to exact 1:1 square dimensions for eBay listings, 3:1 for Etsy shop banners, or 9:16 for social media stories with hardware-accelerated HTML5 canvas rendering.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🔄 Rotate & Mirror Adjustments</h3>
-            <p>Fix orientation, rotate portrait photos 90 degrees, or flip mirrored products horizontally without recompressing the rest of your listing catalog.</p>
+            <p>Correct photo orientation, rotate portrait photos 90 degrees clockwise or anti-clockwise, and flip mirrored product photos horizontally without uploading images to external cloud servers.</p>
         </div>
     </div>
 
@@ -113,7 +135,8 @@ title: "Marketplace & Social Image Cropper"
 <script>
     const imageInput = document.getElementById('imageInput');
     const uploadZone = document.getElementById('uploadZone');
-    const editorZone = document.getElementById('editorZone');
+    const processingZone = document.getElementById('processingZone');
+    const resultZone = document.getElementById('resultZone');
     const cropperTarget = document.getElementById('cropperTarget');
     const ratioBtns = document.querySelectorAll('.ratio-btn');
     const rotateLeft = document.getElementById('rotateLeft');
@@ -125,47 +148,88 @@ title: "Marketplace & Social Image Cropper"
     const qualityVal = document.getElementById('qualityVal');
     const downloadBtn = document.getElementById('downloadBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
 
     let cropper = null;
     let scaleX = 1;
     let scaleY = 1;
+    let currentObjectUrl = null;
 
-    imageInput.addEventListener('change', (e) => {
-        if (e.target.files[0]) loadFile(e.target.files[0]);
+    // Drag-and-drop bindings
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
     });
 
-    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
+    });
+
     uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files[0]) {
+            loadFile(dt.files[0]);
+        }
+    });
+
+    imageInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+            loadFile(e.target.files[0]);
+        }
     });
 
     function loadFile(file) {
-        const url = URL.createObjectURL(file);
-        cropperTarget.src = url;
+        if (!file.type.startsWith('image/')) {
+            alert('Please select a valid image file (PNG, JPG, WebP, GIF).');
+            return;
+        }
 
         uploadZone.classList.add('hidden');
-        editorZone.classList.remove('hidden');
+        processingZone.classList.remove('hidden');
+        resultZone.classList.add('hidden');
+        progressBar.style.width = '40%';
+        progressPercent.textContent = '40%';
 
-        if (cropper) cropper.destroy();
+        if (currentObjectUrl) {
+            URL.revokeObjectURL(currentObjectUrl);
+        }
 
-        cropper = new Cropper(cropperTarget, {
-            aspectRatio: NaN,
-            viewMode: 1,
-            autoCropArea: 0.9,
-            responsive: true,
-            background: true
-        });
+        currentObjectUrl = URL.createObjectURL(file);
+        cropperTarget.src = currentObjectUrl;
+
+        cropperTarget.onload = () => {
+            progressBar.style.width = '80%';
+            progressPercent.textContent = '80%';
+
+            setTimeout(() => {
+                processingZone.classList.add('hidden');
+                resultZone.classList.remove('hidden');
+
+                if (cropper) cropper.destroy();
+
+                cropper = new Cropper(cropperTarget, {
+                    aspectRatio: NaN,
+                    viewMode: 1,
+                    autoCropArea: 0.9,
+                    responsive: true,
+                    background: false
+                });
+            }, 150);
+        };
     }
 
     ratioBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             ratioBtns.forEach(b => {
-                b.className = "ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-medium transition-all text-xs";
+                b.className = "ratio-btn bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-lg font-bold transition-all text-xs";
             });
-            btn.className = "ratio-btn bg-blue-600 text-white px-3 py-1.5 rounded-lg font-medium shadow-sm transition-all text-xs";
+            btn.className = "ratio-btn bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm transition-all text-xs";
 
             const ratioVal = btn.getAttribute('data-ratio');
             if (ratioVal === 'free') {
@@ -176,23 +240,33 @@ title: "Marketplace & Social Image Cropper"
         });
     });
 
-    rotateLeft.addEventListener('click', () => cropper.rotate(-90));
-    rotateRight.addEventListener('click', () => cropper.rotate(90));
+    rotateLeft.addEventListener('click', () => {
+        if (cropper) cropper.rotate(-90);
+    });
+
+    rotateRight.addEventListener('click', () => {
+        if (cropper) cropper.rotate(90);
+    });
     
     flipH.addEventListener('click', () => {
-        scaleX = -scaleX;
-        cropper.scaleX(scaleX);
+        if (cropper) {
+            scaleX = -scaleX;
+            cropper.scaleX(scaleX);
+        }
     });
 
     flipV.addEventListener('click', () => {
-        scaleY = -scaleY;
-        cropper.scaleY(scaleY);
+        if (cropper) {
+            scaleY = -scaleY;
+            cropper.scaleY(scaleY);
+        }
     });
 
     exportQuality.addEventListener('input', () => {
         qualityVal.textContent = `${exportQuality.value}%`;
     });
 
+    // Standardised zero-upload download trigger: bwtools_cropper_[timestamp].[ext]
     downloadBtn.addEventListener('click', () => {
         if (!cropper) return;
 
@@ -202,6 +276,7 @@ title: "Marketplace & Social Image Cropper"
         const canvas = cropper.getCroppedCanvas({
             imageSmoothingEnabled: true,
             imageSmoothingQuality: 'high',
+            fillColor: format === 'image/jpeg' ? '#ffffff' : null
         });
 
         if (!canvas) return;
@@ -214,21 +289,28 @@ title: "Marketplace & Social Image Cropper"
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `cropped_${Date.now()}.${ext}`;
+            a.download = `bwtools_cropper_${Date.now()}.${ext}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
         }, format, quality);
     });
 
     resetBtn.addEventListener('click', () => {
-        if (cropper) cropper.destroy();
-        cropper = null;
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
         scaleX = 1;
         scaleY = 1;
         uploadZone.classList.remove('hidden');
-        editorZone.classList.add('hidden');
+        processingZone.classList.add('hidden');
+        resultZone.classList.add('hidden');
         imageInput.value = '';
+        if (currentObjectUrl) {
+            URL.revokeObjectURL(currentObjectUrl);
+            currentObjectUrl = null;
+        }
     });
 </script>
