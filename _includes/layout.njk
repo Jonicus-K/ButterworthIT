@@ -74,6 +74,12 @@
         <p>&copy; 2026 BWTools.uk - Fast, 100% Private Client-Side Tools.</p>
         <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">All processing happens directly in your web browser. No files are uploaded to any server.</p>
     </footer>
-
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
+    });
+  }
+</script>
 </body>
 </html>

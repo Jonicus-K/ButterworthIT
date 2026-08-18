@@ -22,63 +22,22 @@ title: "Free, Private In-Browser Web Tools"
         </h2>
         
         <div class="grid md:grid-cols-3 gap-6">
-            
-            <!-- AI Background Remover Card -->
-            <a href="/bg-remover" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">✨</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">AI Background Remover</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Automatically isolate subjects, erase backdrops, and touch up edges with precision brush controls.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
+            {% for tool in collections.tools | filterByCategory("image") %}
+            <a href="{{ tool.url }}" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
+                <div class="w-12 h-12 bg-{{ tool.data.badgeColor or 'blue' }}-50 dark:bg-{{ tool.data.badgeColor or 'blue' }}-900/40 text-{{ tool.data.badgeColor or 'blue' }}-600 dark:text-{{ tool.data.badgeColor or 'blue' }}-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    {{ tool.data.icon or '✨' }}
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {{ tool.data.title }}
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    {{ tool.data.description }}
+                </p>
+                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    Open Tool &rarr;
+                </span>
             </a>
-
-            <!-- Image Compressor Card -->
-            <a href="/compressor" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-green-50 dark:bg-green-900/40 text-green-600 dark:text-green-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-green-600 group-hover:text-white transition-all">⚡</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Image Compressor & WebP</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Shrink image file sizes by up to 90% without quality loss. Convert heavy PNGs/JPEGs to modern WebP.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- Image Cropper Card -->
-            <a href="/cropper" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-purple-600 group-hover:text-white transition-all">✂️</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Marketplace Cropper</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Crop and frame listing photos for eBay 1:1, Etsy banners, social media stories, and custom aspect ratios.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- HEIC to JPEG/PNG Card -->
-            <a href="/heic-converter" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-sky-600 group-hover:text-white transition-all">📱</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:hover:text-blue-400 transition-colors">HEIC to JPG / PNG</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Batch convert Apple iPhone HEIC and HEIF photos to high-res JPG or PNG with zero upload limits.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- Image to .ICO Card -->
-            <a href="/image-to-ico" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">⭐</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Image to .ICO Converter</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Pack multiple icon resolutions (16x16 up to 256x256) into a true multi-layer Windows and web .ico file.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- Bulk Resizer Card -->
-            <a href="/bulk-resizer" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-cyan-50 dark:bg-cyan-900/40 text-cyan-600 dark:text-cyan-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-cyan-600 group-hover:text-white transition-all">🖼️</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Bulk Resizer & Padder</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Batch resize and pad product photos with white borders for eBay, Amazon, and Etsy with 1-click ZIP downloads.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- Video to GIF Maker Card -->
-            <a href="/video-to-gif" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-rose-600 group-hover:text-white transition-all">🎬</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Video to GIF Maker</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Trim and convert MP4, WebM, or MOV video clips into animated GIFs with custom FPS and resolution.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
+            {% endfor %}
         </div>
     </section>
 
@@ -89,63 +48,22 @@ title: "Free, Private In-Browser Web Tools"
         </h2>
 
         <div class="grid md:grid-cols-3 gap-6">
-            
-            <!-- PDF to Image Card -->
-            <a href="/pdf-to-image" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-amber-600 group-hover:text-white transition-all">🖼️</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">PDF to JPG / PNG</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Extract PDF pages into crisp images or download all pages in a single ZIP archive locally.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
+            {% for tool in collections.tools | filterByCategory("pdf") %}
+            <a href="{{ tool.url }}" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
+                <div class="w-12 h-12 bg-{{ tool.data.badgeColor or 'amber' }}-50 dark:bg-{{ tool.data.badgeColor or 'amber' }}-900/40 text-{{ tool.data.badgeColor or 'amber' }}-600 dark:text-{{ tool.data.badgeColor or 'amber' }}-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    {{ tool.data.icon or '📄' }}
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {{ tool.data.title }}
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    {{ tool.data.description }}
+                </p>
+                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    Open Tool &rarr;
+                </span>
             </a>
-
-            <!-- Image to PDF Compiler Card -->
-            <a href="/image-to-pdf" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-amber-600 group-hover:text-white transition-all">📑</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Image to PDF Compiler</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Combine multiple PNG, JPG, or WEBP photos into a single PDF document with custom margins.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- PDF Merger & Splitter Card -->
-            <a href="/pdf-merge" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-amber-600 group-hover:text-white transition-all">🧩</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">PDF Merger & Splitter</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Stitch multiple PDF documents together or extract custom page ranges with zero file size limits.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- PDF Signer Card -->
-            <a href="/pdf-signer" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">✍️</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">PDF Signer & Annotator</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Draw or place signatures, fill form text, insert checkmarks, and date stamps on any PDF document.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- PDF Password Protect Card -->
-            <a href="/pdf-protect" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all">🔒</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:hover:text-blue-400 transition-colors">PDF Password Protect & Unlock</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Encrypt confidential documents with strong passwords or remove passwords from protected PDFs.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- PDF Page Organiser Card -->
-            <a href="/pdf-organiser" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-rose-600 group-hover:text-white transition-all">📑</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:hover:text-blue-400 transition-colors">PDF Page Organiser & Rotator</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Reorder, rotate, delete, or duplicate PDF pages visually in your browser with zero server uploads.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- Invoice Generator Card -->
-            <a href="/invoice-generator" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-all">🧾</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Invoice & Receipt Maker</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Create unwatermarked PDF invoices and receipts with custom logos, VAT rates, and line items.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
+            {% endfor %}
         </div>
     </section>
 
@@ -156,49 +74,23 @@ title: "Free, Private In-Browser Web Tools"
         </h2>
 
         <div class="grid md:grid-cols-3 gap-6">
-            
-            <!-- EXIF Stripper Card -->
-            <a href="/exif-stripper" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-rose-600 group-hover:text-white transition-all">🛡️</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">EXIF & Privacy Cleaner</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Inspect and scrub GPS location data, camera information, and timestamps from photos before uploading.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
+            {% for tool in collections.tools | filterByCategory("privacy") %}
+            <a href="{{ tool.url }}" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
+                <div class="w-12 h-12 bg-{{ tool.data.badgeColor or 'indigo' }}-50 dark:bg-{{ tool.data.badgeColor or 'indigo' }}-900/40 text-{{ tool.data.badgeColor or 'indigo' }}-600 dark:text-{{ tool.data.badgeColor or 'indigo' }}-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    {{ tool.data.icon or '🔒' }}
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {{ tool.data.title }}
+                </h3>
+                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                    {{ tool.data.description }}
+                </p>
+                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    Open Tool &rarr;
+                </span>
             </a>
-
-            <!-- QR Code Generator Card -->
-            <a href="/qr-generator" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-all">📱</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Custom QR Generator</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Create high-resolution and vector QR codes for websites, Wi-Fi networks, and contact cards.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- Barcode Generator Card -->
-            <a href="/barcode-generator" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-amber-600 group-hover:text-white transition-all">🏷️</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Custom Barcode Generator</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Create retail EAN-13, UPC-A, and Code-128 linear barcodes with SVG and high-resolution PNG downloads.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- SVG to PNG Converter Card -->
-            <a href="/svg-converter" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-teal-50 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-teal-600 group-hover:text-white transition-all">📐</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">SVG to PNG & Favicon</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Render vector SVGs to high-resolution PNGs or generate a complete multi-size favicon pack (.ZIP).</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
-            <!-- Diff Checker Card -->
-            <a href="/diff-checker" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                <div class="w-12 h-12 bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-purple-600 group-hover:text-white transition-all">🔍</div>
-                <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Text & Document Diff Checker</h3>
-                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Compare contracts, legal text, and code side-by-side with color-coded additions and deletions.</p>
-                <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open Tool &rarr;</span>
-            </a>
-
+            {% endfor %}
         </div>
     </section>
-    
 
 </main>

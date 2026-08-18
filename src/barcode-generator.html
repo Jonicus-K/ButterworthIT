@@ -1,6 +1,11 @@
 ---
 layout: layout.njk
 title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
+category: "privacy"
+icon: "🏷️"
+badgeColor: "amber"
+order: 3
+description: "Create retail EAN-13, UPC-A, and Code-128 linear barcodes with SVG and high-resolution PNG downloads."
 ---
 
 <!-- JsBarcode Library CDN -->
@@ -9,11 +14,15 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
 <main class="max-w-5xl mx-auto px-4 py-8">
     
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Custom Barcode <span class="text-blue-600 dark:text-blue-400">Generator</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Generate retail-ready linear barcodes for eBay, Amazon, inventory management, and product packaging.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            Custom Barcode <span class="text-blue-600 dark:text-blue-400">Generator</span>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Generate retail-ready linear barcodes for eBay, Amazon, inventory management, and product packaging directly in your browser.
+        </p>
     </header>
 
-    <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
         <div class="grid md:grid-cols-12 gap-8">
             
@@ -23,7 +32,7 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
                 <!-- Format Selection -->
                 <div>
                     <label for="barcodeFormat" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Barcode Standard / Symbology</label>
-                    <select id="barcodeFormat" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <select id="barcodeFormat" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         <option value="CODE128" selected>Code 128 (Standard / Alphanumeric)</option>
                         <option value="EAN13">EAN-13 (International Retail / UK / EU)</option>
                         <option value="UPC">UPC-A (North American Retail)</option>
@@ -41,11 +50,11 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
                         <label for="barcodeValue" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Barcode Value / Data</label>
                         <span id="formatHint" class="text-[11px] text-gray-500 dark:text-gray-400">Accepts numbers, letters, & symbols</span>
                     </div>
-                    <input type="text" id="barcodeValue" value="BWTOOLS-2026" placeholder="Enter barcode number or text" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <input type="text" id="barcodeValue" value="BWTOOLS-2026" placeholder="Enter barcode number or text" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                     <p id="errorMsg" class="hidden text-xs text-red-500 font-semibold mt-1.5"></p>
                 </div>
 
-                <!-- Appearance Customization -->
+                <!-- Appearance Customisation -->
                 <div class="bg-gray-50 dark:bg-gray-900/60 p-4 rounded-xl border border-gray-200 dark:border-gray-700 space-y-4">
                     <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Customise Bar Dimensions</h3>
                     
@@ -69,7 +78,7 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="lineColor" class="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-semibold">Bar Color</label>
+                            <label for="lineColor" class="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-semibold">Bar Colour</label>
                             <div class="flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 gap-2">
                                 <input type="color" id="lineColor" value="#000000" class="w-6 h-6 rounded cursor-pointer border-0 p-0 bg-transparent">
                                 <span id="lineColorVal" class="text-xs font-mono text-gray-700 dark:text-gray-300">#000000</span>
@@ -77,7 +86,7 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
                         </div>
 
                         <div>
-                            <label for="bgColor" class="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-semibold">Background</label>
+                            <label for="bgColor" class="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-semibold">Background Colour</label>
                             <div class="flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 gap-2">
                                 <input type="color" id="bgColor" value="#ffffff" class="w-6 h-6 rounded cursor-pointer border-0 p-0 bg-transparent">
                                 <span id="bgColorVal" class="text-xs font-mono text-gray-700 dark:text-gray-300">#ffffff</span>
@@ -104,12 +113,14 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
                     <div class="p-6 bg-white rounded-2xl shadow-md border border-gray-200 flex items-center justify-center min-h-[160px] w-full overflow-x-auto">
                         <svg id="barcodeTarget" class="max-w-full h-auto"></svg>
                     </div>
-                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-3 text-center">Compatible with hand scanners & smartphone cameras</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-3 text-center">Compatible with standard optical scanners & mobile cameras</p>
                 </div>
 
                 <div class="w-full space-y-2.5 mt-6">
                     <button id="downloadPngBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all text-sm flex items-center justify-center gap-2">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
                         Download High-Res PNG
                     </button>
                     
@@ -128,11 +139,11 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🏷️ Retail & Packaging Ready</h3>
-            <p>Generate standard EAN-13, UPC-A, and Code 128 linear barcodes with accurate guard bars and quiet zones for retail labels, packaging boxes, and marketplace logistics.</p>
+            <p>Generate standard EAN-13, UPC-A, and Code 128 linear symbologies with exact quiet zones and guard patterns suitable for retail packaging, eBay listings, Amazon FBA labels, and warehouse inventories.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ Lossless Vector Export</h3>
-            <p>Export directly in pure scalable vector (.SVG) format for Illustrator, Photoshop, and professional printing, or download crisp PNGs for instant adhesive sticker printing.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ Lossless Vector Export & Privacy</h3>
+            <p>All barcode calculations and vector renderings execute 100% locally in your browser with zero server uploads. Export lossless SVGs for Adobe Illustrator or double-density PNGs for direct thermal label printing.</p>
         </div>
     </div>
 
@@ -156,7 +167,7 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
     const downloadPngBtn = document.getElementById('downloadPngBtn');
     const downloadSvgBtn = document.getElementById('downloadSvgBtn');
 
-    // Default sample values for formats
+    // Default sample values and format guidelines
     const defaults = {
         CODE128: { val: 'BWTOOLS-2026', hint: 'Accepts numbers, letters, and symbols' },
         EAN13: { val: '501234567890', hint: 'Enter 12 or 13 numeric digits' },
@@ -234,7 +245,7 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
         }
     }
 
-    // High-Resolution PNG Export
+    // High-Resolution PNG Export (2x High-DPI Scale)
     downloadPngBtn.addEventListener('click', () => {
         const svgElement = barcodeTarget;
         const svgString = new XMLSerializer().serializeToString(svgElement);
@@ -245,7 +256,7 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
         const img = new Image();
         img.onload = () => {
             const canvas = document.createElement('canvas');
-            const scale = 2; // 2x High-DPI scale
+            const scale = 2; // 2x Scale for crisp thermal and offset print rendering
             canvas.width = img.width * scale;
             canvas.height = img.height * scale;
             const ctx = canvas.getContext('2d');
@@ -256,29 +267,31 @@ title: "Free Barcode Generator (EAN-13, UPC, Code 128)"
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `barcode_${Date.now()}.png`;
+                a.download = `bwtools_barcode-generator_${Date.now()}.png`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                setTimeout(() => URL.revokeObjectURL(url), 5000);
             }, 'image/png');
+            URLObj.revokeObjectURL(blobURL);
         };
         img.src = blobURL;
     });
 
-    // Vector SVG Export
+    // Scalable Vector SVG Export
     downloadSvgBtn.addEventListener('click', () => {
         const svgString = new XMLSerializer().serializeToString(barcodeTarget);
         const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `barcode_${Date.now()}.svg`;
+        a.download = `bwtools_barcode-generator_${Date.now()}.svg`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
     });
 
+    // Initial render on load
     renderBarcode();
 </script>
