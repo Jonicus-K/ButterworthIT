@@ -1,146 +1,192 @@
-<nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700 relative z-50 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center">
-        
-        <!-- Brand Logo -->
-        <a href="/" class="flex items-center group">
-            <img src="/assets/logo.png" alt="BWTools.uk" class="h-10 sm:h-12 md:h-14 w-auto object-contain transition-transform group-hover:scale-105">
-        </a>
-
-        <!-- Desktop Navigation (Hidden on Mobile) -->
-        <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+<nav class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200 dark:border-gray-700 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
             
-            <!-- Image Tools Dropdown -->
-            <div class="relative group py-2">
-                <button class="flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    🖼️ Image Tools
-                    <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div class="absolute left-0 top-full hidden group-hover:block w-56 pt-2">
-                    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700 py-2">
-                        <a href="/bg-remover" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">AI Background Remover</a>
-                        <a href="/compressor" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Image Compressor</a>
-                        <a href="/cropper" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Image Cropper</a>
-                        <a href="/heic-converter" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">HEIC to JPG / PNG</a>
-                        <a href="/image-to-ico" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Image to .ICO </a>
-                        <a href="/bulk-resizer" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Bulk Resizer & Padder</a>
-                        <a href="/video-to-gif" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Video to GIF Maker</a>
-                    </div>
-                </div>
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2 text-xl font-extrabold tracking-tight text-gray-900 dark:text-white group">
+                    <span class="text-2xl group-hover:scale-110 transition-transform">🛠️</span>
+                    <span>BW<span class="text-blue-600 dark:text-blue-400">Tools</span></span>
+                </a>
             </div>
 
-            <!-- PDF Tools Dropdown -->
-            <div class="relative group py-2">
-                <button class="flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    📄 PDF & Converters
-                    <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div class="absolute right-0 top-full hidden group-hover:block w-56 pt-2">
-                    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700 py-2">
-                        <a href="/pdf-to-image" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">PDF to JPG / PNG</a>
-                        <a href="/image-to-pdf" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Image to PDF Compiler</a>
-                        <a href="/pdf-merge" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">PDF Merger & Splitter</a>
-                        <a href="/pdf-signer" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">PDF Signer & Fill</a>
-                        <a href="/pdf-protect" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">PDF Password Protect & Unlock</a>
-                        <a href="/pdf-organiser" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">PDF Page Organiser &amp; Rotator</a>
-                        <a href="/invoice-generator" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Invoice & Receipt Maker</a>
+            <!-- Desktop Navigation Dropdowns (Automated via Collections) -->
+            <div class="hidden md:flex items-center gap-1 lg:gap-2">
+                
+                <!-- 1. Image Tools Dropdown -->
+                <div class="relative group">
+                    <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
+                        <span>🖼️ Image Tools</span>
+                        <svg class="w-4 h-4 transition-transform group-hover:rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="absolute left-0 mt-1 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2 hidden group-hover:block transition-all z-50">
+                        {% for tool in collections.tools %}
+                            {% if tool.data.category == "image" %}
+                            <a href="{{ tool.url }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all group/item">
+                                <span class="text-xl group-hover/item:scale-110 transition-transform">{{ tool.data.icon or '✨' }}</span>
+                                <div class="overflow-hidden">
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors truncate">
+                                        {{ tool.data.title }}
+                                    </div>
+                                    {% if tool.data.description %}
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[220px]">
+                                        {{ tool.data.description }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
-            </div>
 
-            <!-- Privacy & Utilities Dropdown -->
-            <div class="relative group py-2">
-                <button class="flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    🔒 Utilities
-                    <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                </button>
-                <div class="absolute right-0 top-full hidden group-hover:block w-56 pt-2">
-                    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-100 dark:border-gray-700 py-2">
-                        <a href="/exif-stripper" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">EXIF & Privacy Cleaner</a>
-                        <a href="/qr-generator" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Custom QR Generator</a>
-                        <a href="/barcode-generator" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Custom Barcode Generator</a>
-                        <a href="/svg-converter" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">SVG to PNG & Favicon</a>
-                        <a href="/diff-checker" class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400">Text & Document Diff Checker</a>
+                <!-- 2. PDF & Document Tools Dropdown -->
+                <div class="relative group">
+                    <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
+                        <span>📄 PDF & Documents</span>
+                        <svg class="w-4 h-4 transition-transform group-hover:rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="absolute left-0 mt-1 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2 hidden group-hover:block transition-all z-50">
+                        {% for tool in collections.tools %}
+                            {% if tool.data.category == "pdf" %}
+                            <a href="{{ tool.url }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all group/item">
+                                <span class="text-xl group-hover/item:scale-110 transition-transform">{{ tool.data.icon or '📄' }}</span>
+                                <div class="overflow-hidden">
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors truncate">
+                                        {{ tool.data.title }}
+                                    </div>
+                                    {% if tool.data.description %}
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[220px]">
+                                        {{ tool.data.description }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
+
+                <!-- 3. Privacy & Quick Utilities Dropdown -->
+                <div class="relative group">
+                    <button class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
+                        <span>🔒 Utilities</span>
+                        <svg class="w-4 h-4 transition-transform group-hover:rotate-180 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="absolute right-0 mt-1 w-80 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2 hidden group-hover:block transition-all z-50">
+                        {% for tool in collections.tools %}
+                            {% if tool.data.category == "privacy" %}
+                            <a href="{{ tool.url }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all group/item">
+                                <span class="text-xl group-hover/item:scale-110 transition-transform">{{ tool.data.icon or '🔒' }}</span>
+                                <div class="overflow-hidden">
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors truncate">
+                                        {{ tool.data.title }}
+                                    </div>
+                                    {% if tool.data.description %}
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[220px]">
+                                        {{ tool.data.description }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Support Button -->
-            <a href="https://ko-fi.com/YOUR_USERNAME" target="_blank" rel="noopener" class="bg-[#FF5E5B] hover:bg-[#e04f4c] text-white font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm text-xs">
-                🫖 Buy Me a Tea
-            </a>
+            <!-- Right Controls: Buy Me a Tea & Dark Mode Toggle -->
+            <div class="flex items-center gap-3">
+                <a href="https://ko-fi.com/bwtools" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold py-2 px-3.5 rounded-xl border border-rose-200 dark:border-rose-800 transition-all shadow-sm">
+                    <span>🫖</span> Buy Me a Tea
+                </a>
 
-            <!-- Dark Mode Toggle Button -->
-            <button id="themeToggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2 transition-colors" title="Toggle dark mode">
-                <svg id="themeToggleDarkIcon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                <svg id="themeToggleLightIcon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-            </button>
+                <!-- Theme Toggle Button -->
+                <button id="themeToggleBtn" aria-label="Toggle Dark Mode" class="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none">
+                    <svg id="themeMoonIcon" class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="themeSunIcon" class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+
+                <!-- Mobile Hamburger Button -->
+                <button id="mobileMenuBtn" aria-label="Open Navigation Drawer" class="md:hidden p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
 
         </div>
-
-        <!-- Mobile Header Actions (Visible only on mobile) -->
-        <div class="flex items-center gap-2 md:hidden">
-            <!-- Mobile Dark Mode Toggle -->
-            <button id="themeToggleMobile" type="button" class="text-gray-500 dark:text-gray-400 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                <svg id="themeToggleDarkIconMobile" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                <svg id="themeToggleLightIconMobile" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-            </button>
-
-            <!-- Mobile Hamburger Button -->
-            <button id="mobileMenuBtn" type="button" class="text-gray-700 dark:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none" aria-label="Open menu">
-                <svg id="hamburgerIcon" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                <svg id="closeIcon" class="hidden w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-        </div>
-
     </div>
 
-    <!-- Mobile Slide-Down Drawer -->
-    <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 px-4 pt-3 pb-6 space-y-4 shadow-xl">
+    <!-- Mobile Drawer Menu (Automated via Collections) -->
+    <div id="mobileDrawer" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 pt-3 pb-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
         
-        <!-- Category 1: Image Tools -->
-        <div>
-            <span class="block text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">🖼️ Image Tools</span>
-            <div class="space-y-1 pl-2">
-                <a href="/bg-remover" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">AI Background Remover</a>
-                <a href="/compressor" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Image Compressor</a>
-                <a href="/cropper" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Marketplace Cropper</a>
-                <a href="/heic-converter" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">HEIC to JPG / PNG</a>
-                <a href="/image-to-ico" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Image to .ICO</a>
-                <a href="/bulk-resizer" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Bulk Resizer & Padder</a>
-                <a href="/video-to-gif" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Video to GIF Maker</a>
+        <!-- Mobile Section 1: Image Tools -->
+        <div class="mb-4">
+            <div class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 px-2">
+                🖼️ Image Editing & Optimisation
+            </div>
+            <div class="space-y-1">
+                {% for tool in collections.tools %}
+                    {% if tool.data.category == "image" %}
+                    <a href="{{ tool.url }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <span>{{ tool.data.icon or '✨' }}</span>
+                        <span>{{ tool.data.title }}</span>
+                    </a>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
 
-        <!-- Category 2: PDF Tools -->
-        <div>
-            <span class="block text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">📄 PDF Tools</span>
-            <div class="space-y-1 pl-2">
-                <a href="/pdf-to-image" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">PDF to JPG / PNG</a>
-                <a href="/image-to-pdf" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Image to PDF Compiler</a>
-                <a href="/pdf-merge" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">PDF Merger & Splitter</a>
-                <a href="/pdf-signer" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">PDF Signer & Fill</a>
-                <a href="/pdf-protect" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">PDF Password Protect & Unlock</a>
-                <a href="/pdf-organiser" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">PDF Page Organiser &amp; Rotator</a>
-                <a href="/invoice-generator" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Invoice & Receipt Maker</a>
+        <!-- Mobile Section 2: PDF & Document Tools -->
+        <div class="mb-4">
+            <div class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 px-2">
+                📄 PDF & Document Tools
+            </div>
+            <div class="space-y-1">
+                {% for tool in collections.tools %}
+                    {% if tool.data.category == "pdf" %}
+                    <a href="{{ tool.url }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <span>{{ tool.data.icon or '📄' }}</span>
+                        <span>{{ tool.data.title }}</span>
+                    </a>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
 
-        <!-- Category 3: Utilities -->
-        <div>
-            <span class="block text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">🔒 Privacy & Utilities</span>
-            <div class="space-y-1 pl-2">
-                <a href="/exif-stripper" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">EXIF & Privacy Cleaner</a>
-                <a href="/qr-generator" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Custom QR Generator</a>
-                <a href="/barcode-generator" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Custom Barcode Generator</a>
-                <a href="/svg-converter" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">SVG to PNG & Favicon</a>
-                <a href="/diff-checker" class="block py-2 text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">Text & Document Diff Checker</a>
+        <!-- Mobile Section 3: Privacy & Quick Utilities -->
+        <div class="mb-4">
+            <div class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 px-2">
+                🔒 Privacy & Quick Utilities
+            </div>
+            <div class="space-y-1">
+                {% for tool in collections.tools %}
+                    {% if tool.data.category == "privacy" %}
+                    <a href="{{ tool.url }}" class="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <span>{{ tool.data.icon or '🔒' }}</span>
+                        <span>{{ tool.data.title }}</span>
+                    </a>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
 
-        <!-- Mobile Ko-fi Button -->
-        <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
-            <a href="https://ko-fi.com/bwtools" target="_blank" rel="noopener" class="w-full bg-[#FF5E5B] hover:bg-[#e04f4c] text-white font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm text-sm">
-                🫖 Buy Me a Tea
+        <!-- Mobile Ko-fi Support Link -->
+        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <a href="https://ko-fi.com/bwtools" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold py-2.5 px-4 rounded-xl border border-rose-200 dark:border-rose-800 text-sm">
+                <span>🫖</span> Buy Me a Tea
             </a>
         </div>
 
@@ -148,54 +194,26 @@
 </nav>
 
 <script>
-    const themeToggleDarkIcon = document.getElementById('themeToggleDarkIcon');
-    const themeToggleLightIcon = document.getElementById('themeToggleLightIcon');
-    const themeToggleBtn = document.getElementById('themeToggle');
-
-    const themeToggleDarkIconMobile = document.getElementById('themeToggleDarkIconMobile');
-    const themeToggleLightIconMobile = document.getElementById('themeToggleLightIconMobile');
-    const themeToggleMobile = document.getElementById('themeToggleMobile');
-
+    // Mobile Drawer Toggle
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const hamburgerIcon = document.getElementById('hamburgerIcon');
-    const closeIcon = document.getElementById('closeIcon');
-
-    // Sync theme icons
-    function syncThemeIcons() {
-        const isDark = document.documentElement.classList.contains('dark');
-        if (isDark) {
-            themeToggleLightIcon.classList.remove('hidden');
-            themeToggleDarkIcon.classList.add('hidden');
-            themeToggleLightIconMobile.classList.remove('hidden');
-            themeToggleDarkIconMobile.classList.add('hidden');
-        } else {
-            themeToggleDarkIcon.classList.remove('hidden');
-            themeToggleLightIcon.classList.add('hidden');
-            themeToggleDarkIconMobile.classList.remove('hidden');
-            themeToggleLightIconMobile.classList.add('hidden');
-        }
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    if (mobileMenuBtn && mobileDrawer) {
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileDrawer.classList.toggle('hidden');
+        });
     }
 
-    function toggleTheme() {
-        if (document.documentElement.classList.contains('dark')) {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('color-theme', 'light');
-        } else {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('color-theme', 'dark');
-        }
-        syncThemeIcons();
+    // Dark Mode LocalStorage Toggle
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
     }
-
-    syncThemeIcons();
-    themeToggleBtn.addEventListener('click', toggleTheme);
-    themeToggleMobile.addEventListener('click', toggleTheme);
-
-    // Mobile Hamburger Toggle
-    mobileMenuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-        hamburgerIcon.classList.toggle('hidden');
-        closeIcon.classList.toggle('hidden');
-    });
 </script>
