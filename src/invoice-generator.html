@@ -1,38 +1,44 @@
 ---
 layout: layout.njk
-title: "Free Invoice & Receipt Generator"
+title: "Free In-Browser Invoice & Receipt Generator"
 ---
 
-<!-- html2pdf bundle for crisp vector PDF rendering -->
+<!-- html2pdf.js bundle for vector PDF export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <main class="max-w-7xl mx-auto px-4 py-8">
     
-    <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Instant Invoice & <span class="text-blue-600 dark:text-blue-400">Receipt</span> Generator</h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Create professional, custom-branded PDF invoices and receipts with automatic VAT calculations.</p>
+    <!-- Page Header -->
+    <header class="text-center mb-8">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            Instant Invoice & <span class="text-blue-600 dark:text-blue-400">Receipt</span> Generator
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Create professional, custom-branded PDF invoices, quotes, and receipts with automatic VAT calculations—100% locally in your browser.
+        </p>
     </header>
 
-    <div class="grid lg:grid-cols-12 gap-8">
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Left: Form Controls (6 cols) -->
+        <!-- Left Column: Form Controls (6 cols) -->
         <div class="lg:col-span-6 space-y-6">
             
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 space-y-6 transition-colors">
+            <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 space-y-6 transition-colors">
                 
                 <!-- Document Type & Currency -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="docType" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Document Type</label>
-                        <select id="docType" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="INVOICE">Tax Invoice</option>
-                            <option value="RECEIPT">Payment Receipt</option>
-                            <option value="QUOTE">Price Quote / Estimate</option>
+                        <label for="docType" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1.5">Document Type</label>
+                        <select id="docType" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                            <option value="TAX INVOICE">Tax Invoice</option>
+                            <option value="PAYMENT RECEIPT">Payment Receipt</option>
+                            <option value="PRICE QUOTE">Price Quote / Estimate</option>
+                            <option value="PROFORMA INVOICE">Proforma Invoice</option>
                         </select>
                     </div>
                     <div>
-                        <label for="currencySelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Currency</label>
-                        <select id="currencySelect" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <label for="currencySelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1.5">Currency</label>
+                        <select id="currencySelect" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                             <option value="£" selected>GBP (£)</option>
                             <option value="$">USD ($)</option>
                             <option value="€">EUR (€)</option>
@@ -42,40 +48,40 @@ title: "Free Invoice & Receipt Generator"
                     </div>
                 </div>
 
-                <!-- Business Info & Logo -->
+                <!-- Business Details & Logo -->
                 <div class="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <div class="flex items-center justify-between">
                         <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Your Business Details</h3>
                         <label for="logoInput" class="text-xs text-blue-600 dark:text-blue-400 hover:underline cursor-pointer font-semibold">
                             + Add Logo
-                            <input type="file" id="logoInput" accept="image/*" class="hidden">
+                            <input type="file" id="logoInput" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="hidden">
                         </label>
                     </div>
                     
-                    <input type="text" id="bizName" placeholder="Your Business Name" value="Acme Services Ltd" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <textarea id="bizAddress" rows="2" placeholder="Business Address / Contact Details" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">123 High Street, London, UK
-support@acmeservices.co.uk</textarea>
+                    <input type="text" id="bizName" placeholder="Your Business Name" value="Acme Services Ltd" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                    <textarea id="bizAddress" rows="2" placeholder="Business Address & Contact Details" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">123 High Street, London, UK
+billing@acmeservices.co.uk</textarea>
                 </div>
 
                 <!-- Client Details & Dates -->
                 <div class="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Client & Dates</h3>
-                    <input type="text" id="clientName" placeholder="Client / Company Name" value="Client Corp" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <textarea id="clientAddress" rows="2" placeholder="Client Address / Email" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">456 Enterprise Way, Suite 4
-billing@clientcorp.com</textarea>
+                    <input type="text" id="clientName" placeholder="Client / Company Name" value="Client Corp" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                    <textarea id="clientAddress" rows="2" placeholder="Client Address / Email" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">456 Enterprise Way, Suite 4
+accounts@clientcorp.com</textarea>
 
                     <div class="grid grid-cols-3 gap-3">
                         <div>
-                            <label for="invNumber" class="block text-[11px] text-gray-500 dark:text-gray-400 font-semibold mb-1">Invoice #</label>
-                            <input type="text" id="invNumber" value="INV-001" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <label for="invNumber" class="block text-[11px] text-gray-500 dark:text-gray-400 font-semibold mb-1">Doc #</label>
+                            <input type="text" id="invNumber" value="INV-001" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         </div>
                         <div>
-                            <label for="invDate" class="block text-[11px] text-gray-500 dark:text-gray-400 font-semibold mb-1">Invoice Date</label>
-                            <input type="date" id="invDate" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <label for="invDate" class="block text-[11px] text-gray-500 dark:text-gray-400 font-semibold mb-1">Issue Date</label>
+                            <input type="date" id="invDate" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         </div>
                         <div>
                             <label for="dueDate" class="block text-[11px] text-gray-500 dark:text-gray-400 font-semibold mb-1">Due Date</label>
-                            <input type="date" id="dueDate" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <input type="date" id="dueDate" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         </div>
                     </div>
                 </div>
@@ -84,36 +90,40 @@ billing@clientcorp.com</textarea>
                 <div class="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <div class="flex items-center justify-between">
                         <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Line Items</h3>
-                        <button type="button" id="addItemBtn" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-semibold">+ Add Item</button>
+                        <button type="button" id="addItemBtn" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-semibold flex items-center gap-1">
+                            <span>+</span> Add Line Item
+                        </button>
                     </div>
 
                     <div id="itemsContainer" class="space-y-2">
-                        <!-- Populated by JS -->
+                        <!-- Populated by JavaScript -->
                     </div>
                 </div>
 
-                <!-- Tax & Payment Terms -->
+                <!-- Tax, Discounts & Payment Terms -->
                 <div class="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label for="taxRate" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Tax / VAT Rate (%)</label>
-                            <input type="number" id="taxRate" value="20" min="0" max="100" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <input type="number" id="taxRate" value="20" min="0" max="100" step="0.5" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         </div>
                         <div>
                             <label for="discountVal" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Discount Amount</label>
-                            <input type="number" id="discountVal" value="0" min="0" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <input type="number" id="discountVal" value="0" min="0" step="0.01" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         </div>
                     </div>
 
                     <div>
                         <label for="paymentNotes" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Payment Instructions / Bank Details</label>
-                        <textarea id="paymentNotes" rows="2" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">Bank: Barclays | Sort Code: 20-00-00 | Account: 12345678
-Payment due within 14 days. Thank you for your business!</textarea>
+                        <textarea id="paymentNotes" rows="2" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">Bank: Barclays | Sort Code: 20-00-00 | Account: 12345678
+Payment due within 14 days. Thank you for your custom!</textarea>
                     </div>
                 </div>
 
-                <button type="button" id="downloadPdfBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl text-base shadow-md transition-all flex items-center justify-center gap-2">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                <button type="button" id="downloadPdfBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-6 rounded-xl text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
                     Download Invoice PDF
                 </button>
 
@@ -121,27 +131,28 @@ Payment due within 14 days. Thank you for your business!</textarea>
 
         </div>
 
-        <!-- Right: Live A4 Printable Preview (6 cols) -->
+        <!-- Right Column: Live Printable Sheet Preview (6 cols) -->
         <div class="lg:col-span-6 flex flex-col items-center">
             <div class="sticky top-6 w-full">
-                <span class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 text-center">Live Document Preview</span>
+                <span class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 text-center">
+                    Live Document Preview
+                </span>
 
-                <!-- Printable Sheet Wrapper -->
                 <div class="overflow-x-auto w-full flex justify-center pb-4">
-                    <div id="invoiceSheet" class="bg-white text-gray-800 p-8 sm:p-10 rounded-xl shadow-2xl border border-gray-200 w-full max-w-[595px] min-h-[700px] text-xs flex flex-col justify-between" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                    <div id="invoiceSheet" class="bg-white text-gray-800 p-8 sm:p-10 rounded-xl shadow-2xl border border-gray-200 w-full max-w-[595px] min-h-[720px] text-xs flex flex-col justify-between" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                         
                         <div>
-                            <!-- Header -->
+                            <!-- Preview Header -->
                             <div class="flex justify-between items-start border-b border-gray-200 pb-6 mb-6">
                                 <div>
                                     <div id="previewLogoContainer" class="hidden mb-3">
-                                        <img id="previewLogo" class="max-h-12 w-auto object-contain" src="" alt="Logo">
+                                        <img id="previewLogo" class="max-h-12 w-auto object-contain" src="" alt="Business Logo">
                                     </div>
                                     <h1 id="previewBizName" class="text-xl font-extrabold text-gray-900 leading-tight">Acme Services Ltd</h1>
-                                    <p id="previewBizAddress" class="text-gray-500 whitespace-pre-line mt-1">123 High Street, London, UK&#10;support@acmeservices.co.uk</p>
+                                    <p id="previewBizAddress" class="text-gray-500 whitespace-pre-line mt-1">123 High Street, London, UK&#10;billing@acmeservices.co.uk</p>
                                 </div>
                                 <div class="text-right">
-                                    <span id="previewDocType" class="text-2xl font-black text-blue-600 tracking-tight">INVOICE</span>
+                                    <span id="previewDocType" class="text-2xl font-black text-blue-600 tracking-tight">TAX INVOICE</span>
                                     <p class="font-bold text-gray-700 mt-1"># <span id="previewInvNumber">INV-001</span></p>
                                     <p class="text-gray-500 mt-0.5">Date: <span id="previewInvDate">-</span></p>
                                     <p class="text-gray-500">Due: <span id="previewDueDate">-</span></p>
@@ -152,10 +163,10 @@ Payment due within 14 days. Thank you for your business!</textarea>
                             <div class="mb-6">
                                 <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Billed To:</span>
                                 <h4 id="previewClientName" class="font-bold text-gray-900 text-sm mt-0.5">Client Corp</h4>
-                                <p id="previewClientAddress" class="text-gray-500 whitespace-pre-line">456 Enterprise Way, Suite 4&#10;billing@clientcorp.com</p>
+                                <p id="previewClientAddress" class="text-gray-500 whitespace-pre-line">456 Enterprise Way, Suite 4&#10;accounts@clientcorp.com</p>
                             </div>
 
-                            <!-- Table -->
+                            <!-- Items Table -->
                             <table class="w-full text-left mb-6 border-collapse">
                                 <thead>
                                     <tr class="border-b-2 border-gray-200 text-gray-400 uppercase text-[10px] tracking-wider">
@@ -166,28 +177,28 @@ Payment due within 14 days. Thank you for your business!</textarea>
                                     </tr>
                                 </thead>
                                 <tbody id="previewItemsBody" class="divide-y divide-gray-100 text-gray-700">
-                                    <!-- Dynamic rows -->
+                                    <!-- Dynamic Rows -->
                                 </tbody>
                             </table>
                         </div>
 
                         <div>
-                            <!-- Totals Box -->
+                            <!-- Totals Area -->
                             <div class="flex justify-end border-t border-gray-200 pt-4 mb-6">
-                                <div class="w-48 space-y-1.5 text-right">
+                                <div class="w-52 space-y-1.5 text-right">
                                     <div class="flex justify-between text-gray-500">
                                         <span>Subtotal:</span>
                                         <span id="previewSubtotal">£0.00</span>
                                     </div>
-                                    <div id="previewDiscountRow" class="hidden flex justify-between text-green-600">
+                                    <div id="previewDiscountRow" class="hidden flex justify-between text-emerald-600">
                                         <span>Discount:</span>
                                         <span id="previewDiscount">-£0.00</span>
                                     </div>
                                     <div class="flex justify-between text-gray-500">
-                                        <span>VAT / Tax (<span id="previewTaxRate">20</span>%):</span>
+                                        <span>VAT (<span id="previewTaxRate">20</span>%):</span>
                                         <span id="previewTax">£0.00</span>
                                     </div>
-                                    <div class="flex justify-between text-base font-extrabold text-gray-900 border-t border-gray-300 pt-1.5">
+                                    <div class="flex justify-between text-base font-extrabold text-gray-900 border-t border-gray-300 pt-2">
                                         <span>Total:</span>
                                         <span id="previewTotal" class="text-blue-600">£0.00</span>
                                     </div>
@@ -196,7 +207,7 @@ Payment due within 14 days. Thank you for your business!</textarea>
 
                             <!-- Footer Notes -->
                             <div class="border-t border-gray-100 pt-4 text-[10px] text-gray-400">
-                                <p id="previewPaymentNotes" class="whitespace-pre-line leading-relaxed">Bank: Barclays | Sort Code: 20-00-00 | Account: 12345678&#10;Payment due within 14 days. Thank you for your business!</p>
+                                <p id="previewPaymentNotes" class="whitespace-pre-line leading-relaxed">Bank: Barclays | Sort Code: 20-00-00 | Account: 12345678&#10;Payment due within 14 days. Thank you for your custom!</p>
                             </div>
                         </div>
 
@@ -208,21 +219,22 @@ Payment due within 14 days. Thank you for your business!</textarea>
 
     </div>
 
-    <!-- SEO / Informational Section -->
+    <!-- SEO / Informational Grid -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">💼 Professional Billing Without Monthly Fees</h3>
-            <p>Generate clean, unwatermarked tax invoices, price estimates, and receipts instantly. Add your custom logo, line items, and payment instructions without creating an account or paying SaaS subscriptions.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">💼 Professional Billing Without Recurring Subscriptions</h3>
+            <p>Generate clean, unwatermarked tax invoices, price estimates, and receipts instantly. Organise your line items, embed your business logo, and tailor payment instructions without creating an account or paying monthly SaaS fees.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ 100% Client-Side Privacy</h3>
-            <p>All financial totals, client billing addresses, and banking details remain strictly on your local device. Invoices are compiled to PDF directly inside your web browser without transmitting data to any server.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🔒 100% Client-Side Privacy</h3>
+            <p>Your client billing details, bank accounts, and financial totals remain strictly inside your browser engine. Files and invoices are compiled to vector PDF on your device without server uploads.</p>
         </div>
     </div>
 
 </main>
 
 <script>
+    // Form Selectors
     const docType = document.getElementById('docType');
     const currencySelect = document.getElementById('currencySelect');
     const logoInput = document.getElementById('logoInput');
@@ -240,7 +252,7 @@ Payment due within 14 days. Thank you for your business!</textarea>
     const addItemBtn = document.getElementById('addItemBtn');
     const downloadPdfBtn = document.getElementById('downloadPdfBtn');
 
-    // Preview targets
+    // Preview Selectors
     const previewLogoContainer = document.getElementById('previewLogoContainer');
     const previewLogo = document.getElementById('previewLogo');
     const previewBizName = document.getElementById('previewBizName');
@@ -260,15 +272,16 @@ Payment due within 14 days. Thank you for your business!</textarea>
     const previewTotal = document.getElementById('previewTotal');
     const previewPaymentNotes = document.getElementById('previewPaymentNotes');
 
-    // Default dates
+    // Initialise Default Dates
     const today = new Date().toISOString().split('T')[0];
     const inTwoWeeks = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     invDate.value = today;
     dueDate.value = inTwoWeeks;
 
+    // Initial Line Items
     let items = [
-        { desc: 'Web Design & Development', qty: 1, price: 650.00 },
-        { desc: 'Domain & Cloudflare Hosting Setup', qty: 1, price: 120.00 }
+        { desc: 'Web Design & Cloudflare Setup', qty: 1, price: 650.00 },
+        { desc: 'Local Network & IT Support Consultation', qty: 2, price: 75.00 }
     ];
 
     function renderItemsInput() {
@@ -277,10 +290,10 @@ Payment due within 14 days. Thank you for your business!</textarea>
             const row = document.createElement('div');
             row.className = "flex gap-2 items-center";
             row.innerHTML = `
-                <input type="text" placeholder="Description" value="${item.desc}" data-index="${index}" data-field="desc" class="item-input flex-grow bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <input type="number" placeholder="Qty" value="${item.qty}" min="1" step="1" data-index="${index}" data-field="qty" class="item-input w-16 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2 py-1.5 text-xs text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <input type="number" placeholder="Price" value="${item.price}" min="0" step="0.01" data-index="${index}" data-field="price" class="item-input w-20 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2 py-1.5 text-xs text-right focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <button type="button" onclick="removeItem(${index})" class="text-red-500 hover:text-red-700 p-1 text-sm font-bold" title="Delete Row">✕</button>
+                <input type="text" placeholder="Description" value="${item.desc}" data-index="${index}" data-field="desc" class="item-input flex-grow bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                <input type="number" placeholder="Qty" value="${item.qty}" min="1" step="1" data-index="${index}" data-field="qty" class="item-input w-16 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2 py-1.5 text-xs text-center focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                <input type="number" placeholder="Price" value="${item.price}" min="0" step="0.01" data-index="${index}" data-field="price" class="item-input w-20 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-2 py-1.5 text-xs text-right focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
+                <button type="button" onclick="removeItem(${index})" class="text-rose-500 hover:text-rose-700 p-1.5 text-sm font-bold transition-colors" title="Delete Row">✕</button>
             `;
             itemsContainer.appendChild(row);
         });
@@ -305,11 +318,11 @@ Payment due within 14 days. Thank you for your business!</textarea>
     };
 
     addItemBtn.addEventListener('click', () => {
-        items.push({ desc: 'Consulting Services', qty: 1, price: 100.00 });
+        items.push({ desc: 'Additional Consultation Services', qty: 1, price: 50.00 });
         renderItemsInput();
     });
 
-    // Logo Upload
+    // Logo Upload Reader
     logoInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -333,7 +346,7 @@ Payment due within 14 days. Thank you for your business!</textarea>
         previewDueDate.textContent = dueDate.value || '-';
         previewPaymentNotes.textContent = paymentNotes.value;
 
-        // Render rows
+        // Render Table Rows
         previewItemsBody.innerHTML = '';
         let subtotal = 0;
 
@@ -343,10 +356,10 @@ Payment due within 14 days. Thank you for your business!</textarea>
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="py-2">${item.desc || '-'}</td>
-                <td class="py-2 text-center">${item.qty}</td>
-                <td class="py-2 text-right">${sym}${(item.price || 0).toFixed(2)}</td>
-                <td class="py-2 text-right font-medium">${sym}${lineTotal.toFixed(2)}</td>
+                <td class="py-2 text-gray-800">${item.desc || '-'}</td>
+                <td class="py-2 text-center text-gray-600">${item.qty}</td>
+                <td class="py-2 text-right text-gray-600">${sym}${(item.price || 0).toFixed(2)}</td>
+                <td class="py-2 text-right font-medium text-gray-900">${sym}${lineTotal.toFixed(2)}</td>
             `;
             previewItemsBody.appendChild(tr);
         });
@@ -371,33 +384,42 @@ Payment due within 14 days. Thank you for your business!</textarea>
         }
     }
 
-    // Input listeners
+    // Attach Event Listeners to Controls
     [docType, currencySelect, bizName, bizAddress, clientName, clientAddress, invNumber, invDate, dueDate, taxRate, discountVal, paymentNotes].forEach(el => {
         el.addEventListener('input', updatePreview);
     });
 
-    // Generate Vector PDF
+    // Compile Vector PDF Client-Side
     downloadPdfBtn.addEventListener('click', () => {
         downloadPdfBtn.disabled = true;
-        downloadPdfBtn.textContent = "Rendering PDF...";
+        const originalHtml = downloadPdfBtn.innerHTML;
+        downloadPdfBtn.innerHTML = `
+            <div class="loading-spinner w-4 h-4 border-2 border-white border-t-transparent inline-block mr-2"></div>
+            Compiling PDF...
+        `;
 
         const element = document.getElementById('invoiceSheet');
+        const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const slugDoc = docType.value.toLowerCase().replace(/\s+/g, '_');
+        const cleanInvNum = (invNumber.value || '001').replace(/[^a-zA-Z0-9_-]/g, '');
+
         const opt = {
-            margin: 0,
-            filename: `${docType.value.toLowerCase()}_${invNumber.value || '001'}.pdf`,
+            margin: [5, 5, 5, 5],
+            filename: `bwtools_${slugDoc}_${cleanInvNum}_${timestamp}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
             downloadPdfBtn.disabled = false;
-            downloadPdfBtn.innerHTML = `
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                Download Invoice PDF
-            `;
+            downloadPdfBtn.innerHTML = originalHtml;
+        }).catch(() => {
+            downloadPdfBtn.disabled = false;
+            downloadPdfBtn.innerHTML = originalHtml;
         });
     });
 
+    // Initial render
     renderItemsInput();
 </script>
