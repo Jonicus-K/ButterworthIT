@@ -1,19 +1,30 @@
 ---
 layout: layout.njk
 title: "Free Text & Document Diff Checker"
+category: "privacy"
+icon: "🔍"
+badgeColor: "purple"
+order: 5
+description: "Compare contracts, legal text, and code side-by-side with colour-coded additions and deletions."
 ---
 
-<!-- jsdiff CDN -->
+<!-- jsdiff Library CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.1.0/diff.min.js"></script>
 
-<main class="max-w-7xl mx-auto px-4 py-8">
+<main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Text & Document <span class="text-blue-600 dark:text-blue-400">Diff Checker</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Compare two text documents, code snippets, or CSV files side-by-side with color-coded difference tracking.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            Text & Document <span class="text-blue-600 dark:text-blue-400">Diff Checker</span>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Compare contracts, source code, or CSV files side-by-side with colour-coded difference tracking and exportable reports.
+        </p>
     </header>
 
-    <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+    <!-- Primary Tool Card -->
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
         <!-- Toolbar & Diff Configuration -->
         <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-6 flex flex-wrap items-center justify-between gap-4 border border-gray-200 dark:border-gray-700 text-sm">
@@ -21,7 +32,7 @@ title: "Free Text & Document Diff Checker"
             <div class="flex items-center gap-3 flex-wrap">
                 <div>
                     <label for="diffGranularity" class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Comparison Mode</label>
-                    <select id="diffGranularity" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <select id="diffGranularity" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         <option value="words" selected>Words</option>
                         <option value="lines">Lines</option>
                         <option value="chars">Characters</option>
@@ -30,7 +41,7 @@ title: "Free Text & Document Diff Checker"
 
                 <div>
                     <label for="viewMode" class="block text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">View Layout</label>
-                    <select id="viewMode" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <select id="viewMode" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         <option value="split" selected>Side-by-Side (Split)</option>
                         <option value="unified">Unified (Inline)</option>
                     </select>
@@ -44,11 +55,11 @@ title: "Free Text & Document Diff Checker"
                     <span id="removedCount" class="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 px-2 py-0.5 rounded font-bold">-0 Removed</span>
                 </div>
 
-                <button id="swapBtn" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-all shadow-xs flex items-center gap-1">
+                <button id="swapBtn" type="button" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 font-bold px-3 py-1.5 rounded-lg text-xs transition-all shadow-xs flex items-center gap-1">
                     ⇄ Swap
                 </button>
 
-                <button id="clearBtn" class="text-xs text-red-500 hover:underline font-semibold">
+                <button id="clearBtn" type="button" class="text-xs text-rose-600 dark:text-rose-400 hover:underline font-semibold">
                     Clear Both
                 </button>
             </div>
@@ -67,7 +78,7 @@ title: "Free Text & Document Diff Checker"
                         <input type="file" id="origFileInput" accept=".txt,.csv,.json,.js,.html,.md,.xml,.css" class="hidden">
                     </label>
                 </div>
-                <textarea id="originalText" rows="9" placeholder="Paste original text or code here..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl p-3 font-mono text-xs leading-relaxed focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y">The quick brown fox jumps over the lazy dog.
+                <textarea id="originalText" rows="9" placeholder="Paste original text or code here..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl p-3 font-mono text-xs leading-relaxed focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y transition-colors">The quick brown fox jumps over the lazy dog.
 It is an established fact that client-side privacy matters.
 Version 1.0.0 released in 2025.</textarea>
             </div>
@@ -81,7 +92,7 @@ Version 1.0.0 released in 2025.</textarea>
                         <input type="file" id="modFileInput" accept=".txt,.csv,.json,.js,.html,.md,.xml,.css" class="hidden">
                     </label>
                 </div>
-                <textarea id="modifiedText" rows="9" placeholder="Paste modified text or code here..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl p-3 font-mono text-xs leading-relaxed focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y">The fast brown fox leaps over the lazy dog.
+                <textarea id="modifiedText" rows="9" placeholder="Paste modified text or code here..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl p-3 font-mono text-xs leading-relaxed focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y transition-colors">The fast brown fox leaps over the lazy dog.
 It is an established fact that 100% client-side privacy matters.
 Version 2.0.0 released in 2026.</textarea>
             </div>
@@ -89,12 +100,25 @@ Version 2.0.0 released in 2026.</textarea>
         </div>
 
         <!-- Output Difference Container -->
-        <div>
+        <div class="mb-6">
             <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-3">Diff Comparison Result</h3>
             
             <div id="diffOutputContainer" class="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 font-mono text-xs leading-relaxed overflow-x-auto min-h-[140px] max-h-[500px]">
-                <!-- Rendered dynamically -->
+                <!-- Dynamically rendered diff content -->
             </div>
+        </div>
+
+        <!-- Action Export Buttons -->
+        <div class="text-center flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+            <button id="downloadReportBtn" type="button" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-sm shadow-md transition-all flex items-center justify-center gap-2">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download Diff Report (.txt)
+            </button>
+            <button id="copyResultBtn" type="button" class="w-full sm:w-auto bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-3 px-6 rounded-lg text-sm transition-all flex items-center justify-center gap-2">
+                📋 Copy Result
+            </button>
         </div>
 
     </div>
@@ -103,11 +127,11 @@ Version 2.0.0 released in 2026.</textarea>
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🔍 Granular Difference Highlighting</h3>
-            <p>Easily compare contracts, code branches, essay revisions, or inventory CSVs. Switch between word, line, and character-level comparisons in either split or unified views.</p>
+            <p>Compare contract agreements, code revisions, essay edits, or CSV database files side-by-side. Seamlessly switch between word, line, and character-level inspections in split or unified layouts.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ 100% Confidential In-Browser Diffing</h3>
-            <p>Unlike commercial diff websites that store pasted snippets and documents on external servers, your sensitive proprietary code and confidential legal texts never leave your browser.</p>
+            <p>Unlike third-party diff servers that log and store pasted texts in remote cloud databases, all diff algorithms execute entirely within your web browser with zero server uploads.</p>
         </div>
     </div>
 
@@ -125,6 +149,8 @@ Version 2.0.0 released in 2026.</textarea>
     const clearBtn = document.getElementById('clearBtn');
     const origFileInput = document.getElementById('origFileInput');
     const modFileInput = document.getElementById('modFileInput');
+    const downloadReportBtn = document.getElementById('downloadReportBtn');
+    const copyResultBtn = document.getElementById('copyResultBtn');
 
     function performDiff() {
         const text1 = originalText.value;
@@ -145,8 +171,8 @@ Version 2.0.0 released in 2026.</textarea>
         let deletions = 0;
 
         diff.forEach(part => {
-            if (part.added) additions += (mode === 'lines' ? part.count : 1);
-            if (part.removed) deletions += (mode === 'lines' ? part.count : 1);
+            if (part.added) additions += (mode === 'lines' ? (part.count || 1) : 1);
+            if (part.removed) deletions += (mode === 'lines' ? (part.count || 1) : 1);
         });
 
         addedCount.textContent = `+${additions} Added`;
@@ -234,7 +260,7 @@ Version 2.0.0 released in 2026.</textarea>
         diffOutputContainer.appendChild(grid);
     }
 
-    // Event Listeners
+    // Input and configuration events
     originalText.addEventListener('input', performDiff);
     modifiedText.addEventListener('input', performDiff);
     diffGranularity.addEventListener('change', performDiff);
@@ -253,23 +279,54 @@ Version 2.0.0 released in 2026.</textarea>
         performDiff();
     });
 
-    // File Upload Handlers
-    function loadFile(input, target) {
-        input.addEventListener('change', (e) => {
+    // File loading helper
+    function bindFileInput(inputEl, targetTextArea) {
+        inputEl.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (event) => {
-                target.value = event.target.result;
+                targetTextArea.value = event.target.result;
                 performDiff();
             };
             reader.readAsText(file);
         });
     }
 
-    loadFile(origFileInput, originalText);
-    loadFile(modFileInput, modifiedText);
+    bindFileInput(origFileInput, originalText);
+    bindFileInput(modFileInput, modifiedText);
 
-    // Initial Diff Calculation
+    // Standardised zero-upload trigger: bwtools_diff-checker_[timestamp].txt
+    downloadReportBtn.addEventListener('click', () => {
+        const reportHeader = `BWTools.uk — Diff Report\nGenerated: ${new Date().toUTCString()}\nMode: ${diffGranularity.value}\n${addedCount.textContent} | ${removedCount.textContent}\n======================================================\n\n`;
+        const content = reportHeader + diffOutputContainer.innerText;
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bwtools_diff-checker_${Date.now()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+    });
+
+    // Copy to clipboard helper
+    copyResultBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(diffOutputContainer.innerText);
+            const originalLabel = copyResultBtn.textContent;
+            copyResultBtn.textContent = '✓ Copied!';
+            copyResultBtn.classList.add('bg-green-600', 'text-white');
+            setTimeout(() => {
+                copyResultBtn.textContent = originalLabel;
+                copyResultBtn.classList.remove('bg-green-600', 'text-white');
+            }, 2000);
+        } catch {
+            alert('Failed to copy to clipboard.');
+        }
+    });
+
+    // Initial render
     performDiff();
 </script>
