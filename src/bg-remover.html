@@ -189,7 +189,8 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
     const copyClipboardBtn = document.getElementById('copyClipboardBtn');
     const resetBtn = document.getElementById('resetBtn');
 
-    let originalImg = new Image();
+    let originalCanvas = document.createElement('canvas');
+    let originalCtx = originalCanvas.getContext('2d');
     let rawCutoutCanvas = document.createElement('canvas');
     let rawCutoutCtx = rawCutoutCanvas.getContext('2d');
     
@@ -233,14 +234,26 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
         }
     }
 
-    function saveHistoryState() {
-        const stateCanvas = document.createElement('canvas');
-        stateCanvas.width = rawCutoutCanvas.width;
-        stateCanvas.height = rawCutoutCanvas.height;
-        const stateCtx = stateCanvas.getContext('2d');
-        stateCtx.drawImage(rawCutoutCanvas, 0, 0);
+    function recalculateDisplayBounds() {
+        const maxAllowedWidth = Math.max(300, viewport.clientWidth - 48);
+        const aspect = editCanvas.height / editCanvas.width;
+        baseDisplayWidth = Math.min(maxAllowedWidth, editCanvas.width);
+        baseDisplayHeight = baseDisplayWidth * aspect;
+        applyZoom();
+    }
 
-        historyStack.push(stateCanvas);
+    function saveHistoryState() {
+        const rawState = document.createElement('canvas');
+        rawState.width = rawCutoutCanvas.width;
+        rawState.height = rawCutoutCanvas.height;
+        rawState.getContext('2d').drawImage(rawCutoutCanvas, 0, 0);
+
+        const origState = document.createElement('canvas');
+        origState.width = originalCanvas.width;
+        origState.height = originalCanvas.height;
+        origState.getContext('2d').drawImage(originalCanvas, 0, 0);
+
+        historyStack.push({ raw: rawState, orig: origState });
         if (historyStack.length > MAX_HISTORY) historyStack.shift();
         updateUndoButton();
     }
@@ -259,14 +272,20 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
         if (historyStack.length === 0) return;
         const prevState = historyStack.pop();
         
-        rawCutoutCanvas.width = prevState.width;
-        rawCutoutCanvas.height = prevState.height;
+        rawCutoutCanvas.width = prevState.raw.width;
+        rawCutoutCanvas.height = prevState.raw.height;
         rawCutoutCtx.clearRect(0, 0, rawCutoutCanvas.width, rawCutoutCanvas.height);
-        rawCutoutCtx.drawImage(prevState, 0, 0);
+        rawCutoutCtx.drawImage(prevState.raw, 0, 0);
 
-        editCanvas.width = prevState.width;
-        editCanvas.height = prevState.height;
+        originalCanvas.width = prevState.orig.width;
+        originalCanvas.height = prevState.orig.height;
+        originalCtx.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+        originalCtx.drawImage(prevState.orig, 0, 0);
+
+        editCanvas.width = prevState.raw.width;
+        editCanvas.height = prevState.raw.height;
         
+        recalculateDisplayBounds();
         updateDimensionsMeta();
         updateUndoButton();
         renderCanvas();
@@ -274,7 +293,8 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
 
     // Clipboard Paste Listener
     window.addEventListener('paste', (e) => {
-        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
+        if (!items) return;
         for (let item of items) {
             if (item.type.indexOf('image') !== -1) {
                 const blob = item.getAsFile();
@@ -329,29 +349,35 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
         resultZone.classList.add('hidden');
 
         const fileUrl = URL.createObjectURL(file);
-        originalImg.src = fileUrl;
+        const tempUploadedImg = new Image();
+        tempUploadedImg.src = fileUrl;
 
         try {
-            const rawBlob = await window.imglyRemoveBackground(file, {
-                model: 'isnet',
-                progress: (key, current, total) => {
-                    const ratio = total > 0 ? (current / total) : 0;
-                    
-                    if (key.includes('fetch')) {
-                        const fetchPercent = Math.round(ratio * 55);
-                        setProgress(
-                            fetchPercent,
-                            "Downloading AI Model Files...",
-                            `Fetching neural network binaries (${Math.round(ratio * 100)}%). Cached after initial run.`
-                        );
-                    } else if (key.includes('compute') || key.includes('inference')) {
-                        startInferenceAnimation();
-                    } else {
-                        const phasePercent = 60 + Math.round(ratio * 30);
-                        setProgress(phasePercent, "Processing Cutout...", "Optimising alpha edges and subject mask...");
+            const [rawBlob] = await Promise.all([
+                window.imglyRemoveBackground(file, {
+                    model: 'isnet',
+                    progress: (key, current, total) => {
+                        const ratio = total > 0 ? (current / total) : 0;
+                        
+                        if (key.includes('fetch')) {
+                            const fetchPercent = Math.round(ratio * 55);
+                            setProgress(
+                                fetchPercent,
+                                "Downloading AI Model Files...",
+                                `Fetching neural network binaries (${Math.round(ratio * 100)}%). Cached after initial run.`
+                            );
+                        } else if (key.includes('compute') || key.includes('inference')) {
+                            startInferenceAnimation();
+                        } else {
+                            const phasePercent = 60 + Math.round(ratio * 30);
+                            setProgress(phasePercent, "Processing Cutout...", "Optimising alpha edges and subject mask...");
+                        }
                     }
-                }
-            });
+                }),
+                new Promise((resolve) => {
+                    tempUploadedImg.onload = resolve;
+                })
+            ]);
 
             stopInferenceAnimation();
             setProgress(94, "Finalising Cutout...", "Refining contours and preparing workspace...");
@@ -365,19 +391,17 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
                 editCanvas.height = tempAiImg.height;
                 rawCutoutCanvas.width = tempAiImg.width;
                 rawCutoutCanvas.height = tempAiImg.height;
+                originalCanvas.width = tempAiImg.width;
+                originalCanvas.height = tempAiImg.height;
 
                 rawCutoutCtx.drawImage(tempAiImg, 0, 0);
+                originalCtx.drawImage(tempUploadedImg, 0, 0);
 
                 processingZone.classList.add('hidden');
                 resultZone.classList.remove('hidden');
 
-                const maxAllowedWidth = Math.max(300, viewport.clientWidth - 48);
-                const aspect = editCanvas.height / editCanvas.width;
-                baseDisplayWidth = Math.min(maxAllowedWidth, editCanvas.width);
-                baseDisplayHeight = baseDisplayWidth * aspect;
-
                 zoomLevel = 1.0;
-                applyZoom();
+                recalculateDisplayBounds();
                 updateDimensionsMeta();
                 renderCanvas();
             };
@@ -457,7 +481,7 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
 
         if (!found) return;
 
-        const padding = 12;
+        const padding = 16;
         minX = Math.max(0, minX - padding);
         minY = Math.max(0, minY - padding);
         maxX = Math.min(w, maxX + padding);
@@ -466,21 +490,21 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
         const cropW = maxX - minX;
         const cropH = maxY - minY;
 
-        const croppedData = rawCutoutCtx.getImageData(minX, minY, cropW, cropH);
+        const croppedCutoutData = rawCutoutCtx.getImageData(minX, minY, cropW, cropH);
+        const croppedOrigData = originalCtx.getImageData(minX, minY, cropW, cropH);
 
         rawCutoutCanvas.width = cropW;
         rawCutoutCanvas.height = cropH;
-        rawCutoutCtx.putImageData(croppedData, 0, 0);
+        rawCutoutCtx.putImageData(croppedCutoutData, 0, 0);
+
+        originalCanvas.width = cropW;
+        originalCanvas.height = cropH;
+        originalCtx.putImageData(croppedOrigData, 0, 0);
 
         editCanvas.width = cropW;
         editCanvas.height = cropH;
 
-        const maxAllowedWidth = Math.max(300, viewport.clientWidth - 48);
-        const aspect = editCanvas.height / editCanvas.width;
-        baseDisplayWidth = Math.min(maxAllowedWidth, editCanvas.width);
-        baseDisplayHeight = baseDisplayWidth * aspect;
-
-        applyZoom();
+        recalculateDisplayBounds();
         updateDimensionsMeta();
         renderCanvas();
     });
@@ -533,14 +557,14 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
         activeTool = 'erase';
         modeErase.className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all";
         modeRestore.className = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all";
-        brushCursor.className = "pointer-events-none fixed rounded-full border-2 border-blue-500 bg-blue-500/20 transform -translate-x-1/2 -translate-y-1/2 z-50";
+        brushCursor.className = "pointer-events-none fixed rounded-full border-2 border-blue-500 bg-blue-500/20 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-[width,height] duration-75";
     });
 
     modeRestore.addEventListener('click', () => {
         activeTool = 'restore';
         modeRestore.className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all";
         modeErase.className = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all";
-        brushCursor.className = "pointer-events-none fixed rounded-full border-2 border-emerald-500 bg-emerald-500/20 transform -translate-x-1/2 -translate-y-1/2 z-50";
+        brushCursor.className = "pointer-events-none fixed rounded-full border-2 border-emerald-500 bg-emerald-500/20 transform -translate-x-1/2 -translate-y-1/2 z-50 transition-[width,height] duration-75";
     });
 
     brushSize.addEventListener('input', () => {
@@ -614,7 +638,7 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
         } else if (activeTool === 'restore') {
             rawCutoutCtx.globalCompositeOperation = 'source-over';
             rawCutoutCtx.clip();
-            rawCutoutCtx.drawImage(originalImg, 0, 0, rawCutoutCanvas.width, rawCutoutCanvas.height);
+            rawCutoutCtx.drawImage(originalCanvas, 0, 0);
         }
         rawCutoutCtx.restore();
         renderCanvas();
@@ -685,4 +709,10 @@ description: "Automatically isolate subjects, erase backdrops, trim transparent 
         progressBar.style.width = '0%';
         progressPercent.textContent = '0%';
     }
+
+    window.addEventListener('resize', () => {
+        if (!resultZone.classList.contains('hidden')) {
+            recalculateDisplayBounds();
+        }
+    });
 </script>
