@@ -1,39 +1,74 @@
 ---
 layout: layout.njk
-title: "Free, Private In-Browser Web Tools"
+title: "Free, Fast & 100% Private In-Browser Web Tools"
 ---
 
-<main class="max-w-7xl mx-auto px-4 py-12">
+<main class="max-w-7xl mx-auto px-4 py-8 md:py-10">
     
-    <!-- Hero Banner -->
-    <header class="text-center mb-16">
-        <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight text-gray-900 dark:text-white">
+    <!-- Hero Section -->
+    <header class="text-center mb-8 md:mb-10 max-w-3xl mx-auto">
+        <h1 class="text-3xl md:text-5xl font-extrabold mb-3 tracking-tight text-gray-900 dark:text-white">
             Fast, Free & <span class="text-blue-600 dark:text-blue-400">100% Private</span> Web Tools
         </h1>
-        <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Zero file uploads, no account signups, and unlimited usage. All processing runs directly inside your web browser.
+        <p class="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+            Zero server uploads, no signups, and unlimited usage. All processing executes locally in your browser.
         </p>
+
+        <!-- Live Tool Search & Category Filter Chips -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-xl mx-auto mb-2">
+            <div class="relative w-full">
+                <input 
+                    type="text" 
+                    id="toolSearchInput" 
+                    placeholder="Search tools (e.g. WebP, PDF, crop, watermark)..." 
+                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition-all"
+                    aria-label="Search tools"
+                />
+                <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3.5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs font-semibold">
+            <a href="#category-image" class="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800/50 hover:bg-blue-100 transition-colors">🖼️ Image Tools</a>
+            <a href="#category-pdf" class="px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-100 dark:border-amber-800/50 hover:bg-amber-100 transition-colors">📄 PDF Tools</a>
+            <a href="#category-privacy" class="px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/50 hover:bg-indigo-100 transition-colors">🔒 Privacy & Utilities</a>
+        </div>
     </header>
 
+    <!-- Empty State for Search -->
+    <div id="noResultsMessage" class="hidden text-center py-12">
+        <p class="text-lg font-bold text-gray-700 dark:text-gray-300">No matching tools found</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Try searching with different keywords.</p>
+    </div>
+
     <!-- Category 1: Image Utilities -->
-    <section class="mb-16">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            🖼️ Image Editing & Optimisation
-        </h2>
-        <div class="grid md:grid-cols-3 gap-6">
+    <section id="category-image" class="tool-section mb-10">
+        <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700/60 pb-3 mb-5">
+            <h2 class="text-xl font-bold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                <span>🖼️</span> Image Editing & Optimisation
+            </h2>
+            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Browser-Native</span>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {% for tool in collections.tools %}
                 {% if tool.data.category == "image" %}
-                <a href="{{ tool.url }}" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                    <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                        {{ tool.data.icon }}
+                <a href="{{ tool.url }}" class="tool-card group bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700/80 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all flex flex-col justify-between" data-title="{{ tool.data.title | lower }}" data-desc="{{ tool.data.description | lower }}">
+                    <div>
+                        <div class="flex items-start gap-3.5 mb-2.5">
+                            <div class="w-10 h-10 shrink-0 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-lg flex items-center justify-center font-bold text-lg group-hover:bg-blue-600 group-hover:text-white transition-all shadow-inner">
+                                {{ tool.data.icon }}
+                            </div>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug pt-0.5">
+                                {{ tool.data.title }}
+                            </h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 text-xs leading-relaxed mb-4">
+                            {{ tool.data.description }}
+                        </p>
                     </div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        {{ tool.data.title }}
-                    </h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                        {{ tool.data.description }}
-                    </p>
-                    <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span class="text-blue-600 dark:text-blue-400 font-semibold text-xs flex items-center gap-1 group-hover:translate-x-1 transition-transform pt-2 border-t border-gray-100 dark:border-gray-700/50">
                         Open Tool &rarr;
                     </span>
                 </a>
@@ -43,24 +78,31 @@ title: "Free, Private In-Browser Web Tools"
     </section>
 
     <!-- Category 2: PDF & Document Tools -->
-    <section class="mb-16">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            📄 PDF & Document Tools
-        </h2>
-        <div class="grid md:grid-cols-3 gap-6">
+    <section id="category-pdf" class="tool-section mb-10">
+        <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700/60 pb-3 mb-5">
+            <h2 class="text-xl font-bold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                <span>📄</span> PDF & Document Tools
+            </h2>
+            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Zero Uploads</span>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {% for tool in collections.tools %}
                 {% if tool.data.category == "pdf" %}
-                <a href="{{ tool.url }}" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                    <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                        {{ tool.data.icon }}
+                <a href="{{ tool.url }}" class="tool-card group bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700/80 hover:shadow-md hover:border-amber-500 dark:hover:border-amber-400 transition-all flex flex-col justify-between" data-title="{{ tool.data.title | lower }}" data-desc="{{ tool.data.description | lower }}">
+                    <div>
+                        <div class="flex items-start gap-3.5 mb-2.5">
+                            <div class="w-10 h-10 shrink-0 bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 rounded-lg flex items-center justify-center font-bold text-lg group-hover:bg-amber-600 group-hover:text-white transition-all shadow-inner">
+                                {{ tool.data.icon }}
+                            </div>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors leading-snug pt-0.5">
+                                {{ tool.data.title }}
+                            </h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 text-xs leading-relaxed mb-4">
+                            {{ tool.data.description }}
+                        </p>
                     </div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        {{ tool.data.title }}
-                    </h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                        {{ tool.data.description }}
-                    </p>
-                    <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span class="text-amber-600 dark:text-amber-400 font-semibold text-xs flex items-center gap-1 group-hover:translate-x-1 transition-transform pt-2 border-t border-gray-100 dark:border-gray-700/50">
                         Open Tool &rarr;
                     </span>
                 </a>
@@ -70,24 +112,31 @@ title: "Free, Private In-Browser Web Tools"
     </section>
 
     <!-- Category 3: Privacy & Utilities -->
-    <section class="mb-16">
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-            🔒 Privacy & Quick Utilities
-        </h2>
-        <div class="grid md:grid-cols-3 gap-6">
+    <section id="category-privacy" class="tool-section mb-10">
+        <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700/60 pb-3 mb-5">
+            <h2 class="text-xl font-bold flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                <span>🔒</span> Privacy & Quick Utilities
+            </h2>
+            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Client-Side Only</span>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {% for tool in collections.tools %}
                 {% if tool.data.category == "privacy" %}
-                <a href="{{ tool.url }}" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-500 dark:hover:border-blue-400 transition-all group">
-                    <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center font-bold text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                        {{ tool.data.icon }}
+                <a href="{{ tool.url }}" class="tool-card group bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700/80 hover:shadow-md hover:border-indigo-500 dark:hover:border-indigo-400 transition-all flex flex-col justify-between" data-title="{{ tool.data.title | lower }}" data-desc="{{ tool.data.description | lower }}">
+                    <div>
+                        <div class="flex items-start gap-3.5 mb-2.5">
+                            <div class="w-10 h-10 shrink-0 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-lg flex items-center justify-center font-bold text-lg group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-inner">
+                                {{ tool.data.icon }}
+                            </div>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug pt-0.5">
+                                {{ tool.data.title }}
+                            </h3>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 text-xs leading-relaxed mb-4">
+                            {{ tool.data.description }}
+                        </p>
                     </div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        {{ tool.data.title }}
-                    </h3>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                        {{ tool.data.description }}
-                    </p>
-                    <span class="text-blue-600 dark:text-blue-400 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span class="text-indigo-600 dark:text-indigo-400 font-semibold text-xs flex items-center gap-1 group-hover:translate-x-1 transition-transform pt-2 border-t border-gray-100 dark:border-gray-700/50">
                         Open Tool &rarr;
                     </span>
                 </a>
@@ -97,3 +146,50 @@ title: "Free, Private In-Browser Web Tools"
     </section>
 
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('toolSearchInput');
+        const cards = document.querySelectorAll('.tool-card');
+        const sections = document.querySelectorAll('.tool-section');
+        const noResults = document.getElementById('noResultsMessage');
+
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            let totalVisible = 0;
+
+            sections.forEach(section => {
+                const sectionCards = section.querySelectorAll('.tool-card');
+                let sectionVisibleCount = 0;
+
+                sectionCards.forEach(card => {
+                    const title = card.getAttribute('data-title') || '';
+                    const desc = card.getAttribute('data-desc') || '';
+                    const matches = title.includes(query) || desc.includes(query);
+
+                    if (matches) {
+                        card.classList.remove('hidden');
+                        sectionVisibleCount++;
+                        totalVisible++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                if (sectionVisibleCount === 0 && query !== '') {
+                    section.classList.add('hidden');
+                } else {
+                    section.classList.remove('hidden');
+                }
+            });
+
+            if (totalVisible === 0 && query !== '') {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        });
+    });
+</script>
