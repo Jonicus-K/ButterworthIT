@@ -1,6 +1,6 @@
 ---
 layout: layout.njk
-title: "Free PDF to JPG / PNG Converter"
+title: "Free PDF to JPG / PNG Converter - 100% Private & In-Browser"
 ---
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -10,61 +10,73 @@ title: "Free PDF to JPG / PNG Converter"
     
     <header class="text-center mb-6">
         <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">Convert PDF to <span class="text-blue-600 dark:text-blue-400">Images</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Extract PDF pages into high-resolution JPG/PNG images locally.</p>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Extract PDF pages into crisp, high-resolution JPG or PNG images locally without server uploads.</p>
     </header>
 
     <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
-        <!-- Upload Zone -->
+        <!-- Step 1: Upload Zone -->
         <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
             <input type="file" id="fileInput" accept="application/pdf" class="hidden">
             <label for="fileInput" class="cursor-pointer">
-                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
                 <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop PDF or Click to Upload</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports multi-page PDF documents</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports all standard and multi-page PDF documents</p>
             </label>
         </div>
 
-        <!-- Processing -->
-        <div id="processingZone" class="hidden text-center py-16">
+        <!-- Step 2: Processing Zone -->
+        <div id="processingZone" class="hidden text-center py-16 max-w-md mx-auto">
             <div class="flex flex-col items-center gap-4">
                 <div class="loading-spinner"></div>
-                <p id="statusMessage" class="text-lg font-medium text-gray-700 dark:text-gray-200">Reading PDF document...</p>
+                <div>
+                    <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Reading PDF document...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Rendering pages via browser canvas...</p>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                    <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                </div>
+                <span id="progressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
             </div>
         </div>
 
-        <!-- Editor Zone -->
-        <div id="editorZone" class="hidden">
+        <!-- Step 3: Result Zone / Editor -->
+        <div id="resultZone" class="hidden">
             
             <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-6 grid sm:grid-cols-2 md:grid-cols-3 gap-4 border border-gray-200 dark:border-gray-700 text-sm">
                 <div>
                     <label for="formatSelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Output Format:</label>
                     <select id="formatSelect" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         <option value="image/jpeg" selected>JPG (Smaller File Size)</option>
-                        <option value="image/png">PNG (High Clarity)</option>
+                        <option value="image/png">PNG (Lossless Clarity)</option>
                     </select>
                 </div>
 
                 <div>
-                    <label for="scaleSelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Image Quality / DPI:</label>
+                    <label for="scaleSelect" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Image Resolution / DPI:</label>
                     <select id="scaleSelect" class="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <option value="1.5">Standard Quality (150 DPI)</option>
-                        <option value="2.0" selected>High Quality (200 DPI)</option>
+                        <option value="1.5">Standard (150 DPI)</option>
+                        <option value="2.0" selected>High Clarity (200 DPI)</option>
                         <option value="3.0">Ultra HD (300 DPI)</option>
                     </select>
                 </div>
 
                 <div class="flex items-end sm:col-span-2 md:col-span-1">
-                    <button id="downloadZipBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    <button id="downloadZipBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm transition-all flex items-center justify-center gap-2">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
                         Download All (.ZIP)
                     </button>
                 </div>
             </div>
 
+            <!-- Previews Grid -->
             <div id="pagesGrid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-6"></div>
 
-            <div class="text-center">
+            <div class="text-center pt-2">
                 <button id="resetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Convert Another PDF</button>
             </div>
         </div>
@@ -74,12 +86,12 @@ title: "Free PDF to JPG / PNG Converter"
     <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">📄 High-DPI Vector Extraction</h3>
-            <p>Extract PDF pages at up to 300 DPI Ultra HD resolution. Vector text and sharp charts are rasterized into crisp PNG or lightweight JPG files.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">📄 High-DPI Vector Rasterisation</h3>
+            <p>Convert PDF vector elements and text directly into crisp 300 DPI raster graphics. Select between lightweight JPG compression or pristine lossless PNG output on the fly.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">📦 1-Click ZIP Archive</h3>
-            <p>Convert multi-page PDFs in seconds and download all extracted pages packed inside a single ZIP file with zero file size restrictions.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🔒 100% Client-Side Privacy</h3>
+            <p>Your PDF is parsed entirely inside your browser using HTML5 Canvas and WebAssembly. No data, pages, or text extracts are ever transmitted to an external server.</p>
         </div>
     </div>
 
@@ -91,8 +103,11 @@ title: "Free PDF to JPG / PNG Converter"
     const fileInput = document.getElementById('fileInput');
     const uploadZone = document.getElementById('uploadZone');
     const processingZone = document.getElementById('processingZone');
-    const editorZone = document.getElementById('editorZone');
+    const resultZone = document.getElementById('resultZone');
     const statusMessage = document.getElementById('statusMessage');
+    const subStatusMessage = document.getElementById('subStatusMessage');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
     const pagesGrid = document.getElementById('pagesGrid');
     const formatSelect = document.getElementById('formatSelect');
     const scaleSelect = document.getElementById('scaleSelect');
@@ -106,22 +121,38 @@ title: "Free PDF to JPG / PNG Converter"
         if (e.target.files[0]) loadPDF(e.target.files[0]);
     });
 
-    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-900');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-900');
+        });
+    });
+
     uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files[0] && e.dataTransfer.files[0].type === 'application/pdf') {
-            loadPDF(e.dataTransfer.files[0]);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const file = e.dataTransfer.files[0];
+            if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                loadPDF(file);
+            } else {
+                alert('Please upload a valid PDF document.');
+            }
         }
     });
 
     async function loadPDF(file) {
         uploadZone.classList.add('hidden');
         processingZone.classList.remove('hidden');
-        editorZone.classList.add('hidden');
+        resultZone.classList.add('hidden');
         pagesGrid.innerHTML = '';
         pageBlobs = [];
+        updateProgress(0, 'Reading PDF document...', 'Parsing file structure...');
 
         try {
             const arrayBuffer = await file.arrayBuffer();
@@ -129,16 +160,38 @@ title: "Free PDF to JPG / PNG Converter"
             await renderAllPages();
 
             processingZone.classList.add('hidden');
-            editorZone.classList.remove('hidden');
+            resultZone.classList.remove('hidden');
         } catch (error) {
-            console.error("PDF Load Error:", error);
-            alert("Unable to process PDF. The file may be password protected.");
+            console.error('PDF Processing Error:', error);
+            alert('Unable to process PDF. The file may be password-protected or corrupted.');
             resetUI();
         }
     }
 
-    formatSelect.addEventListener('change', renderAllPages);
-    scaleSelect.addEventListener('change', renderAllPages);
+    function updateProgress(percentage, message, subMessage) {
+        progressBar.style.width = `${percentage}%`;
+        progressPercent.textContent = `${Math.round(percentage)}%`;
+        if (message) statusMessage.textContent = message;
+        if (subMessage) subStatusMessage.textContent = subMessage;
+    }
+
+    formatSelect.addEventListener('change', async () => {
+        if (!pdfDoc) return;
+        resultZone.classList.add('hidden');
+        processingZone.classList.remove('hidden');
+        await renderAllPages();
+        processingZone.classList.add('hidden');
+        resultZone.classList.remove('hidden');
+    });
+
+    scaleSelect.addEventListener('change', async () => {
+        if (!pdfDoc) return;
+        resultZone.classList.add('hidden');
+        processingZone.classList.remove('hidden');
+        await renderAllPages();
+        processingZone.classList.add('hidden');
+        resultZone.classList.remove('hidden');
+    });
 
     async function renderAllPages() {
         if (!pdfDoc) return;
@@ -149,8 +202,9 @@ title: "Free PDF to JPG / PNG Converter"
         const ext = mimeType === 'image/png' ? 'png' : 'jpg';
 
         for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-            statusMessage.textContent = `Rendering page ${pageNum} of ${pdfDoc.numPages}...`;
-            
+            const percent = ((pageNum - 1) / pdfDoc.numPages) * 100;
+            updateProgress(percent, `Rendering page ${pageNum} of ${pdfDoc.numPages}...`, `Processing ${scale * 100} DPI rasterisation...`);
+
             const page = await pdfDoc.getPage(pageNum);
             const viewport = page.getViewport({ scale });
 
@@ -167,33 +221,34 @@ title: "Free PDF to JPG / PNG Converter"
             await page.render({ canvasContext: ctx, viewport }).promise;
 
             const blob = await new Promise(resolve => canvas.toBlob(resolve, mimeType, 0.92));
-            const fileName = `page_${pageNum}.${ext}`;
-            pageBlobs.push({ pageNum, blob, fileName });
+            const fileName = `bwtools_page_${pageNum}_${Date.now()}.${ext}`;
+            pageBlobs.push({ pageNum, blob, fileName, zipName: `page_${pageNum}.${ext}` });
 
             const card = document.createElement('div');
-            card.className = "bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex flex-col items-center shadow-sm";
-            
+            card.className = 'bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-3 flex flex-col items-center shadow-sm';
+
             const img = document.createElement('img');
             img.src = URL.createObjectURL(blob);
-            img.className = "max-h-64 w-auto object-contain rounded border border-gray-200 dark:border-gray-700 mb-3";
+            img.className = 'max-h-64 w-auto object-contain rounded border border-gray-200 dark:border-gray-700 mb-3';
 
             const info = document.createElement('div');
-            info.className = "flex justify-between items-center w-full mt-auto pt-2 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400 font-medium";
+            info.className = 'flex justify-between items-center w-full mt-auto pt-2 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400 font-medium';
             info.innerHTML = `<span>Page ${pageNum}</span>`;
 
             const dlBtn = document.createElement('button');
-            dlBtn.className = "bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold py-1 px-3 rounded border border-gray-300 dark:border-gray-600 transition-all shadow-sm";
-            dlBtn.textContent = "Download";
-            dlBtn.onclick = () => downloadSingleBlob(blob, fileName);
+            dlBtn.className = 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-bold py-1 px-3 rounded border border-gray-300 dark:border-gray-600 transition-all shadow-sm';
+            dlBtn.textContent = 'Download';
+            dlBtn.onclick = () => triggerDownload(blob, fileName);
 
             info.appendChild(dlBtn);
             card.appendChild(img);
             card.appendChild(info);
             pagesGrid.appendChild(card);
         }
+        updateProgress(100, 'Complete!', 'All pages rendered.');
     }
 
-    function downloadSingleBlob(blob, filename) {
+    function triggerDownload(blob, filename) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -207,28 +262,40 @@ title: "Free PDF to JPG / PNG Converter"
     downloadZipBtn.addEventListener('click', async () => {
         if (pageBlobs.length === 0) return;
         downloadZipBtn.disabled = true;
-        downloadZipBtn.textContent = "Creating ZIP...";
-
-        const zip = new JSZip();
-        pageBlobs.forEach(item => zip.file(item.fileName, item.blob));
-
-        const zipBlob = await zip.generateAsync({ type: 'blob' });
-        downloadSingleBlob(zipBlob, `pdf_pages_${Date.now()}.zip`);
-
-        downloadZipBtn.disabled = false;
         downloadZipBtn.innerHTML = `
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            Download All (.ZIP)
+            <div class="loading-spinner w-4 h-4 border-2 border-t-2 border-white"></div>
+            Packaging ZIP...
         `;
+
+        try {
+            const zip = new JSZip();
+            pageBlobs.forEach(item => zip.file(item.zipName, item.blob));
+
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            triggerDownload(zipBlob, `bwtools_pdf_images_${Date.now()}.zip`);
+        } catch (err) {
+            console.error('ZIP generation failed:', err);
+            alert('Failed to generate ZIP archive.');
+        } finally {
+            downloadZipBtn.disabled = false;
+            downloadZipBtn.innerHTML = `
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download All (.ZIP)
+            `;
+        }
     });
 
     resetBtn.addEventListener('click', resetUI);
+
     function resetUI() {
         uploadZone.classList.remove('hidden');
         processingZone.classList.add('hidden');
-        editorZone.classList.add('hidden');
+        resultZone.classList.add('hidden');
         fileInput.value = '';
         pdfDoc = null;
         pageBlobs = [];
+        updateProgress(0, 'Reading PDF document...', '');
     }
 </script>
