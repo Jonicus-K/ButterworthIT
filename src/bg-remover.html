@@ -43,16 +43,16 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
             </label>
         </div>
 
-        <!-- Step 2: Informative Two-Stage Loading Zone -->
+        <!-- Step 2: Informative Stage-Weighted Loading Zone -->
         <div id="processingZone" class="hidden text-center py-16 max-w-md mx-auto">
             <div class="flex flex-col items-center gap-4">
                 <div class="loading-spinner"></div>
                 <div>
                     <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Initialising AI Engine...</p>
-                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Downloading neural network assets (cached for future use)...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Preparing in-browser neural runtime...</p>
                 </div>
                 <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
-                    <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                    <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-150" style="width: 0%"></div>
                 </div>
                 <span id="progressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
             </div>
@@ -172,6 +172,37 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
     let baseDisplayWidth = 0;
     let baseDisplayHeight = 0;
 
+    let currentProgress = 0;
+    let inferenceTicker = null;
+
+    function setProgress(targetPercent, title, subtitle) {
+        if (targetPercent > currentProgress) {
+            currentProgress = Math.min(100, Math.round(targetPercent));
+            progressBar.style.width = `${currentProgress}%`;
+            progressPercent.textContent = `${currentProgress}%`;
+        }
+        if (title) statusMessage.textContent = title;
+        if (subtitle) subStatusMessage.textContent = subtitle;
+    }
+
+    function startInferenceAnimation() {
+        if (inferenceTicker) clearInterval(inferenceTicker);
+        setProgress(60, "Analysing & Segmenting Subject...", "Running neural network segmentation locally in your browser.");
+        
+        inferenceTicker = setInterval(() => {
+            if (currentProgress < 90) {
+                setProgress(currentProgress + 1);
+            }
+        }, 120);
+    }
+
+    function stopInferenceAnimation() {
+        if (inferenceTicker) {
+            clearInterval(inferenceTicker);
+            inferenceTicker = null;
+        }
+    }
+
     // Drag-and-drop bindings
     ['dragenter', 'dragover'].forEach(eventName => {
         uploadZone.addEventListener(eventName, (e) => {
@@ -206,12 +237,13 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
             return;
         }
 
+        stopInferenceAnimation();
+        currentProgress = 0;
+        setProgress(0, "Initialising AI Engine...", "Preparing in-browser neural runtime...");
+
         uploadZone.classList.add('hidden');
         processingZone.classList.remove('hidden');
         resultZone.classList.add('hidden');
-
-        progressBar.style.width = '0%';
-        progressPercent.textContent = '0%';
 
         const fileUrl = URL.createObjectURL(file);
         originalImg.src = fileUrl;
@@ -220,26 +252,32 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
             const rawBlob = await window.imglyRemoveBackground(file, {
                 model: 'isnet',
                 progress: (key, current, total) => {
-                    const percent = total > 0 ? Math.round((current / total) * 100) : 0;
-                    progressBar.style.width = `${percent}%`;
-                    progressPercent.textContent = `${percent}%`;
-
+                    const ratio = total > 0 ? (current / total) : 0;
+                    
                     if (key.includes('fetch')) {
-                        statusMessage.textContent = "Downloading AI Model Files...";
-                        subStatusMessage.textContent = `Fetching neural network binaries (${percent}%). Cached after initial run.`;
+                        const fetchPercent = Math.round(ratio * 55);
+                        setProgress(
+                            fetchPercent,
+                            "Downloading AI Model Files...",
+                            `Fetching neural network binaries (${Math.round(ratio * 100)}%). Cached after initial run.`
+                        );
                     } else if (key.includes('compute') || key.includes('inference')) {
-                        statusMessage.textContent = "Analysing & Segmenting Subject...";
-                        subStatusMessage.textContent = "Running neural network segmentation locally in your browser.";
+                        startInferenceAnimation();
                     } else {
-                        statusMessage.textContent = "Processing Cutout...";
-                        subStatusMessage.textContent = `Optimising edges (${percent}%)...`;
+                        const phasePercent = 60 + Math.round(ratio * 30);
+                        setProgress(phasePercent, "Processing Cutout...", "Optimising alpha edges and subject mask...");
                     }
                 }
             });
 
+            stopInferenceAnimation();
+            setProgress(94, "Finalising Cutout...", "Refining contours and preparing workspace...");
+
             const tempAiImg = new Image();
             tempAiImg.src = URL.createObjectURL(rawBlob);
             tempAiImg.onload = () => {
+                setProgress(100, "Complete", "Rendering image preview...");
+
                 editCanvas.width = tempAiImg.width;
                 editCanvas.height = tempAiImg.height;
                 rawCutoutCanvas.width = tempAiImg.width;
@@ -261,6 +299,7 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
             };
 
         } catch (error) {
+            stopInferenceAnimation();
             console.error(error);
             alert("Error processing image with AI engine. Please verify WebAssembly is enabled and try again.");
             resetUI();
@@ -411,7 +450,6 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
         updateCursorSize();
     }
 
-    // Standardised zero-upload trigger: bwtools_bg-remover_[timestamp].[png|jpg]
     downloadBtn.addEventListener('click', () => {
         const isTransparent = (activeBg === 'transparent');
         const mime = isTransparent ? 'image/png' : 'image/jpeg';
@@ -432,6 +470,8 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
     resetBtn.addEventListener('click', resetUI);
 
     function resetUI() {
+        stopInferenceAnimation();
+        currentProgress = 0;
         uploadZone.classList.remove('hidden');
         processingZone.classList.add('hidden');
         resultZone.classList.add('hidden');
