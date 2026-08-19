@@ -2,12 +2,22 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             
-            <!-- Brand Logo & Name -->
-            <div class="flex items-center gap-3">
-                <a href="/" class="flex items-center gap-2.5 text-xl font-extrabold tracking-tight text-gray-900 dark:text-white group">
-                    <img src="/assets/logo.png" alt="BWTools Logo" class="h-8 w-auto object-contain group-hover:scale-105 transition-transform" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');">
-                    <span class="hidden text-2xl group-hover:scale-110 transition-transform">🛠️</span>
-                    <span>BW<span class="text-blue-600 dark:text-blue-400">Tools</span></span>
+            <!-- Brand Logo (Automatic Light / Dark Mode Swap) -->
+            <div class="flex items-center">
+                <a href="/" class="flex items-center group focus:outline-none" aria-label="BWTools Homepage">
+                    <!-- 1. Light Mode Logo -->
+                    <img src="/assets/logo.png" 
+                         alt="BWTools" 
+                         class="h-8 w-auto object-contain block dark:hidden group-hover:scale-105 transition-transform">
+                    
+                    <!-- 2. Dark Mode Logo (White Version) -->
+                    <img src="/assets/logo-white.png" 
+                         alt="BWTools" 
+                         class="h-8 w-auto object-contain hidden dark:block group-hover:scale-105 transition-transform"
+                         onerror="this.src='/assets/logo.png'">
+
+                    <!-- Accessible Screen-Reader Text (Hidden visually to prevent duplicate text) -->
+                    <span class="sr-only">BWTools</span>
                 </a>
             </div>
 
@@ -22,7 +32,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper (top-full pt-2 eliminates mouseout gap) -->
+                    <!-- Seamless Bridge Wrapper (pt-2 eliminates mouseout gap) -->
                     <div class="absolute left-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
@@ -86,7 +96,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper (right-aligned to avoid screen overflow) -->
+                    <!-- Seamless Bridge Wrapper -->
                     <div class="absolute right-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
@@ -94,7 +104,7 @@
                                 <a href="{{ tool.url }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all group/item">
                                     <span class="text-xl group-hover/item:scale-110 transition-transform">{{ tool.data.icon or '🔒' }}</span>
                                     <div class="overflow-hidden">
-                                        <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors truncate">
+                                        <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover/item:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
                                             {{ tool.data.title }}
                                         </div>
                                         {% if tool.data.description %}
@@ -139,7 +149,7 @@
         </div>
     </div>
 
-    <!-- Mobile Drawer Menu (Automated via Collections) -->
+    <!-- Mobile Drawer Menu -->
     <div id="mobileDrawer" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 pt-3 pb-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
         
         <!-- Mobile Section 1: Image Tools -->
