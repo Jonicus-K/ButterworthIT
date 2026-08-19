@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bwtools-cache-v1.0.2';
+const CACHE_NAME = 'bwtools-cache-v1.0.3';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -17,7 +17,7 @@ self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
 
-// 2. Activate & Purge Stale Cache Versions
+// 2. Activate & Purge Stale Caches Immediately
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
@@ -32,15 +32,24 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// 3. Fetch Strategy: Network-First for Navigation, Cache-First for Local Static Assets
+// 3. Robust Fetch Handler
 self.addEventListener('fetch', (event) => {
     const request = event.request;
-    const url = new URL(request.url);
 
-    // Bypass cross-origin requests, analytics, AdSense, and non-GET requests
+    // Early bailout: Only handle same-origin GET requests
+    if (request.method !== 'GET') return;
+
+    let url;
+    try {
+        url = new URL(request.url);
+    } catch {
+        return;
+    }
+
+    // Ignore cross-origin scripts, Cloudflare insights, AdSense, and browser extensions
     if (
-        request.method !== 'GET' ||
         url.origin !== self.location.origin ||
+        !url.protocol.startsWith('http') ||
         url.hostname.includes('cloudflareinsights.com') ||
         url.hostname.includes('googlesyndication.com') ||
         url.hostname.includes('google-analytics.com')
@@ -48,7 +57,7 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // HTML Navigation Pages: Network-First (ensures instant homepage & tool template updates)
+    // HTML Navigation: Network-First with Cache Fallback
     if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
         event.respondWith(
             fetch(request)
@@ -59,16 +68,18 @@ self.addEventListener('fetch', (event) => {
                     }
                     return networkResponse;
                 })
-                .catch(() => {
-                    return caches.match(request).then((cachedResponse) => {
-                        return cachedResponse || caches.match('/index.html');
-                    });
+                .catch(async () => {
+                    const cachedResponse = await caches.match(request);
+                    if (cachedResponse) return cachedResponse;
+                    
+                    const fallback = await caches.match('/index.html');
+                    return fallback || new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
                 })
         );
         return;
     }
 
-    // Local Static Assets (CSS, Icons, Fonts): Stale-While-Revalidate
+    // Static Assets: Stale-While-Revalidate
     event.respondWith(
         caches.match(request).then((cachedResponse) => {
             const fetchPromise = fetch(request)
