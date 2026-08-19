@@ -1,27 +1,26 @@
 <nav class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md sticky top-0 z-40 border-b border-gray-200 dark:border-gray-700 transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
+        <div class="flex items-center justify-between h-16 gap-3">
             
             <!-- Brand Logo (Light & Dark Mode Auto-Swap) -->
-            <div class="flex items-center">
+            <div class="flex items-center shrink-0">
                 <a href="/" class="flex items-center py-1 group focus:outline-none" aria-label="BWTools Homepage">
                     <!-- Light Mode Logo -->
                     <img src="/assets/logo.png" 
                          alt="BWTools" 
-                         class="h-10 md:h-11 w-auto max-h-12 object-contain block dark:hidden group-hover:scale-105 transition-transform">
+                         class="h-9 md:h-10 w-auto max-h-12 object-contain block dark:hidden group-hover:scale-105 transition-transform">
                     
                     <!-- Dark Mode Logo (White Version) -->
                     <img src="/assets/logo-white.png" 
                          alt="BWTools" 
-                         class="h-10 md:h-11 w-auto max-h-12 object-contain hidden dark:block group-hover:scale-105 transition-transform">
+                         class="h-9 md:h-10 w-auto max-h-12 object-contain hidden dark:block group-hover:scale-105 transition-transform">
 
-                    <!-- Accessible Screen-Reader Text -->
                     <span class="sr-only">BWTools</span>
                 </a>
             </div>
 
             <!-- Desktop Navigation Dropdowns (Automated via Collections) -->
-            <div class="hidden md:flex items-center gap-1 lg:gap-2">
+            <div class="hidden lg:flex items-center gap-1">
                 
                 <!-- 1. Image Tools Dropdown -->
                 <div class="relative group">
@@ -31,7 +30,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper (left-0 aligned) -->
                     <div class="absolute left-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
@@ -63,7 +61,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper (left-0 aligned) -->
                     <div class="absolute left-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
@@ -95,7 +92,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper (Fixed left-0 alignment & neutral font tokens) -->
                     <div class="absolute left-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
@@ -121,9 +117,31 @@
 
             </div>
 
+            <!-- Compact Search Bar in Navbar -->
+            <div class="relative flex-1 max-w-xs md:max-w-sm hidden sm:block">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="navSearchInput" 
+                        placeholder="Search tools..." 
+                        autocomplete="off"
+                        class="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/80 text-gray-900 dark:text-gray-100 placeholder-gray-400 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        aria-label="Search tools"
+                    />
+                    <svg class="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+
+                <!-- Floating Live Search Results Popover -->
+                <div id="navSearchResults" class="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 p-1.5 hidden max-h-80 overflow-y-auto z-50">
+                    <div id="navResultsList" class="space-y-0.5"></div>
+                </div>
+            </div>
+
             <!-- Right Controls: Buy Me a Tea & Theme Toggle -->
-            <div class="flex items-center gap-3">
-                <a href="https://ko-fi.com/bwtools" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold py-2 px-3.5 rounded-xl border border-rose-200 dark:border-rose-800 transition-all shadow-xs">
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <a href="https://ko-fi.com/bwtools" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold py-1.5 px-3 rounded-xl border border-rose-200 dark:border-rose-800 transition-all shadow-xs">
                     <span>🫖</span> Buy Me a Tea
                 </a>
 
@@ -138,7 +156,7 @@
                 </button>
 
                 <!-- Mobile Hamburger Button -->
-                <button id="mobileMenuBtn" type="button" aria-label="Open Navigation Drawer" class="md:hidden p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <button id="mobileMenuBtn" type="button" aria-label="Open Navigation Drawer" class="lg:hidden p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -149,10 +167,26 @@
     </div>
 
     <!-- Mobile Drawer Menu -->
-    <div id="mobileDrawer" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 pt-3 pb-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
+    <div id="mobileDrawer" class="hidden lg:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 pt-3 pb-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
         
-        <!-- Mobile Section 1: Image Tools -->
+        <!-- Mobile Search Input -->
         <div class="mb-4">
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="mobileSearchInput" 
+                    placeholder="Search tools..." 
+                    class="w-full pl-8 pr-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+                <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <div id="mobileSearchResults" class="mt-2 space-y-1 hidden max-h-60 overflow-y-auto"></div>
+        </div>
+
+        <!-- Mobile Section 1: Image Tools -->
+        <div class="mobile-category-block mb-4">
             <div class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 px-2">
                 🖼️ Image Editing & Optimisation
             </div>
@@ -169,7 +203,7 @@
         </div>
 
         <!-- Mobile Section 2: PDF & Document Tools -->
-        <div class="mb-4">
+        <div class="mobile-category-block mb-4">
             <div class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 px-2">
                 📄 PDF & Document Tools
             </div>
@@ -186,7 +220,7 @@
         </div>
 
         <!-- Mobile Section 3: Privacy & Quick Utilities -->
-        <div class="mb-4">
+        <div class="mobile-category-block mb-4">
             <div class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 px-2">
                 🔒 Privacy & Quick Utilities
             </div>
@@ -212,27 +246,123 @@
     </div>
 </nav>
 
+<!-- Client-side Global Search Data Matrix -->
 <script>
-    // Mobile Drawer Toggle
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileDrawer = document.getElementById('mobileDrawer');
-    if (mobileMenuBtn && mobileDrawer) {
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileDrawer.classList.toggle('hidden');
-        });
-    }
+    const allToolsData = [
+        {% for tool in collections.tools %}
+        {
+            title: {{ tool.data.title | dump | safe }},
+            url: {{ tool.url | dump | safe }},
+            icon: {{ (tool.data.icon or '✨') | dump | safe }},
+            category: {{ tool.data.category | dump | safe }},
+            description: {{ (tool.data.description or '') | dump | safe }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
 
-    // Dark Mode LocalStorage Toggle
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-    if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', () => {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        });
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+        // Desktop Navbar Search Handler
+        const navInput = document.getElementById('navSearchInput');
+        const navDropdown = document.getElementById('navSearchResults');
+        const navResultsList = document.getElementById('navResultsList');
+
+        if (navInput && navDropdown && navResultsList) {
+            navInput.addEventListener('input', (e) => {
+                const q = e.target.value.trim().toLowerCase();
+                if (!q) {
+                    navDropdown.classList.add('hidden');
+                    navResultsList.innerHTML = '';
+                    return;
+                }
+
+                const matches = allToolsData.filter(t => 
+                    t.title.toLowerCase().includes(q) || 
+                    t.description.toLowerCase().includes(q)
+                );
+
+                if (matches.length === 0) {
+                    navResultsList.innerHTML = '<div class="p-3 text-xs text-gray-500 dark:text-gray-400 text-center">No tools found matching "' + q + '"</div>';
+                } else {
+                    navResultsList.innerHTML = matches.map(t => `
+                        <a href="${t.url}" class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70 transition-colors">
+                            <span class="text-lg">${t.icon}</span>
+                            <div class="overflow-hidden">
+                                <div class="text-xs font-bold text-gray-900 dark:text-white truncate">${t.title}</div>
+                                <div class="text-[11px] text-gray-500 dark:text-gray-400 truncate">${t.description}</div>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+                navDropdown.classList.remove('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!navInput.contains(e.target) && !navDropdown.contains(e.target)) {
+                    navDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // Mobile Drawer Search Handler
+        const mobInput = document.getElementById('mobileSearchInput');
+        const mobResults = document.getElementById('mobileSearchResults');
+        const categoryBlocks = document.querySelectorAll('.mobile-category-block');
+
+        if (mobInput && mobResults) {
+            mobInput.addEventListener('input', (e) => {
+                const q = e.target.value.trim().toLowerCase();
+                if (!q) {
+                    mobResults.classList.add('hidden');
+                    mobResults.innerHTML = '';
+                    categoryBlocks.forEach(b => b.classList.remove('hidden'));
+                    return;
+                }
+
+                categoryBlocks.forEach(b => b.classList.add('hidden'));
+
+                const matches = allToolsData.filter(t => 
+                    t.title.toLowerCase().includes(q) || 
+                    t.description.toLowerCase().includes(q)
+                );
+
+                if (matches.length === 0) {
+                    mobResults.innerHTML = '<div class="p-3 text-xs text-gray-500 dark:text-gray-400 text-center">No tools found</div>';
+                } else {
+                    mobResults.innerHTML = matches.map(t => `
+                        <a href="${t.url}" class="flex items-center gap-2.5 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <span class="text-lg">${t.icon}</span>
+                            <div class="overflow-hidden">
+                                <div class="text-xs font-bold text-gray-900 dark:text-white truncate">${t.title}</div>
+                                <div class="text-[11px] text-gray-500 dark:text-gray-400 truncate">${t.description}</div>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+                mobResults.classList.remove('hidden');
+            });
+        }
+
+        // Mobile Drawer Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        if (mobileMenuBtn && mobileDrawer) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileDrawer.classList.toggle('hidden');
+            });
+        }
+
+        // Dark Mode LocalStorage Toggle
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
+    });
 </script>
