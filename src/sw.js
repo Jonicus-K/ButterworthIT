@@ -1,67 +1,87 @@
-const CACHE_NAME = 'bwtools-v1-cache';
+const CACHE_NAME = 'bwtools-cache-v1.0.2';
 const STATIC_ASSETS = [
-  '/',
-  '/css/style.css',
-  '/manifest.json'
+    '/',
+    '/index.html',
+    '/css/style.css',
+    '/favicon.ico',
+    '/manifest.json'
 ];
 
-const VENDOR_CDN_ORIGINS = [
-  'https://cdn.jsdelivr.net',
-  'https://cdnjs.cloudflare.com',
-  'https://unpkg.com'
-];
-
+// 1. Install & Cache Shell Assets
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) return caches.delete(key);
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(STATIC_ASSETS);
         })
-      )
-    )
-  );
-  self.clients.claim();
+    );
+    self.skipWaiting();
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-
-  const url = new URL(event.request.url);
-
-  // Cache-First strategy for vendor CDN bundles
-  if (VENDOR_CDN_ORIGINS.some(origin => event.request.url.startsWith(origin))) {
-    event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) return cachedResponse;
-        return fetch(event.request).then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200) return networkResponse;
-          const cloned = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
-          return networkResponse;
-        });
-      })
+// 2. Activate & Purge Stale Cache Versions
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keys) => {
+            return Promise.all(
+                keys.map((key) => {
+                    if (key !== CACHE_NAME) {
+                        return caches.delete(key);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
     );
-    return;
-  }
+});
 
-  // Network-First with Cache Fallback for site pages
-  event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const cloned = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
-        }
-        return networkResponse;
-      })
-      .catch(() => caches.match(event.request))
-  );
+// 3. Fetch Strategy: Network-First for Navigation, Cache-First for Local Static Assets
+self.addEventListener('fetch', (event) => {
+    const request = event.request;
+    const url = new URL(request.url);
+
+    // Bypass cross-origin requests, analytics, AdSense, and non-GET requests
+    if (
+        request.method !== 'GET' ||
+        url.origin !== self.location.origin ||
+        url.hostname.includes('cloudflareinsights.com') ||
+        url.hostname.includes('googlesyndication.com') ||
+        url.hostname.includes('google-analytics.com')
+    ) {
+        return;
+    }
+
+    // HTML Navigation Pages: Network-First (ensures instant homepage & tool template updates)
+    if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
+        event.respondWith(
+            fetch(request)
+                .then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const responseClone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+                    }
+                    return networkResponse;
+                })
+                .catch(() => {
+                    return caches.match(request).then((cachedResponse) => {
+                        return cachedResponse || caches.match('/index.html');
+                    });
+                })
+        );
+        return;
+    }
+
+    // Local Static Assets (CSS, Icons, Fonts): Stale-While-Revalidate
+    event.respondWith(
+        caches.match(request).then((cachedResponse) => {
+            const fetchPromise = fetch(request)
+                .then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const responseClone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+                    }
+                    return networkResponse;
+                })
+                .catch(() => cachedResponse);
+
+            return cachedResponse || fetchPromise;
+        })
+    );
 });
