@@ -2,21 +2,20 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             
-            <!-- Brand Logo (Automatic Light / Dark Mode Swap) -->
+            <!-- Brand Logo (Maximized Size & Dark Mode Switcher) -->
             <div class="flex items-center">
-                <a href="/" class="flex items-center group focus:outline-none" aria-label="BWTools Homepage">
-                    <!-- 1. Light Mode Logo -->
+                <a href="/" class="flex items-center py-1 group focus:outline-none" aria-label="BWTools Homepage">
+                    <!-- Light Mode Logo -->
                     <img src="/assets/logo.png" 
                          alt="BWTools" 
-                         class="h-8 w-auto object-contain block dark:hidden group-hover:scale-105 transition-transform">
+                         class="h-10 md:h-11 w-auto max-h-12 object-contain block dark:hidden group-hover:scale-105 transition-transform">
                     
-                    <!-- 2. Dark Mode Logo (White Version) -->
+                    <!-- Dark Mode Logo (White Version) -->
                     <img src="/assets/logo-white.png" 
                          alt="BWTools" 
-                         class="h-8 w-auto object-contain hidden dark:block group-hover:scale-105 transition-transform"
-                         onerror="this.src='/assets/logo.png'">
+                         class="h-10 md:h-11 w-auto max-h-12 object-contain hidden dark:block group-hover:scale-105 transition-transform">
 
-                    <!-- Accessible Screen-Reader Text (Hidden visually to prevent duplicate text) -->
+                    <!-- Accessible Screen-Reader Text -->
                     <span class="sr-only">BWTools</span>
                 </a>
             </div>
@@ -32,7 +31,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper (pt-2 eliminates mouseout gap) -->
+                    <!-- Seamless Bridge Wrapper -->
                     <div class="absolute left-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
