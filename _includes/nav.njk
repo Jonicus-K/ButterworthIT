@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             
-            <!-- Brand Logo (Maximized Size & Dark Mode Switcher) -->
+            <!-- Brand Logo (Light & Dark Mode Auto-Swap) -->
             <div class="flex items-center">
                 <a href="/" class="flex items-center py-1 group focus:outline-none" aria-label="BWTools Homepage">
                     <!-- Light Mode Logo -->
@@ -31,7 +31,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper -->
+                    <!-- Seamless Bridge Wrapper (left-0 aligned) -->
                     <div class="absolute left-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
@@ -63,7 +63,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper -->
+                    <!-- Seamless Bridge Wrapper (left-0 aligned) -->
                     <div class="absolute left-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
@@ -95,15 +95,15 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Seamless Bridge Wrapper -->
-                    <div class="absolute right-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
+                    <!-- Seamless Bridge Wrapper (Fixed left-0 alignment & neutral font tokens) -->
+                    <div class="absolute left-0 top-full pt-2 w-80 hidden group-hover:block transition-all z-50">
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2">
                             {% for tool in collections.tools %}
                                 {% if tool.data.category == "privacy" %}
                                 <a href="{{ tool.url }}" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all group/item">
                                     <span class="text-xl group-hover/item:scale-110 transition-transform">{{ tool.data.icon or '🔒' }}</span>
                                     <div class="overflow-hidden">
-                                        <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover/item:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+                                        <div class="text-sm font-semibold text-gray-900 dark:text-white group-hover/item:text-blue-600 dark:group-hover/item:text-blue-400 transition-colors truncate">
                                             {{ tool.data.title }}
                                         </div>
                                         {% if tool.data.description %}
