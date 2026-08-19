@@ -1,47 +1,76 @@
 ---
 layout: layout.njk
 title: "Free SVG to PNG & Favicon Converter"
+category: "privacy"
+icon: "📐"
+badgeColor: "teal"
+order: 4
+description: "Render vector SVGs to high-resolution PNGs or generate a complete multi-size favicon pack (.ZIP)."
 ---
 
+<!-- JSZip CDN for Favicon Archive Packaging -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">SVG to <span class="text-blue-600 dark:text-blue-400">PNG & Favicon</span> Converter</h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Convert vector SVGs into high-res PNG, WebP, or a full multi-size favicon package.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            SVG to <span class="text-blue-600 dark:text-blue-400">PNG & Favicon</span> Converter
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Convert scalable vector SVGs into crisp, high-resolution PNG, WebP, or a complete multi-size favicon pack directly in your browser.
+        </p>
     </header>
 
+    <!-- Primary Tool Card -->
     <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
-        <!-- Upload Zone -->
+        <!-- Step 1: Upload Zone -->
         <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
             <input type="file" id="svgInput" accept=".svg,image/svg+xml" class="hidden">
             <label for="svgInput" class="cursor-pointer">
-                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
                 <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop SVG File or Click to Upload</p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports vector .svg files</p>
             </label>
         </div>
 
-        <!-- Editor Zone -->
-        <div id="editorZone" class="hidden">
+        <!-- Step 2: Processing Progress Zone -->
+        <div id="processingZone" class="hidden text-center py-16 max-w-md mx-auto">
+            <div class="flex flex-col items-center gap-4">
+                <div class="loading-spinner"></div>
+                <div>
+                    <p id="statusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Rasterising Vector Elements...</p>
+                    <p id="subStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Rendering high-DPI canvas in browser memory...</p>
+                </div>
+                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                    <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                </div>
+                <span id="progressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+            </div>
+        </div>
+
+        <!-- Step 3: Editor & Result Zone -->
+        <div id="resultZone" class="hidden">
             
             <div class="grid md:grid-cols-12 gap-8">
                 
-                <!-- Left: Controls & Presets -->
+                <!-- Left Column: Controls & Presets (7 cols) -->
                 <div class="md:col-span-7 space-y-6">
                     
                     <!-- Preset Resolutions -->
                     <div>
                         <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Preset Resolutions</label>
                         <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                            <button type="button" data-w="16" data-h="16" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">16x16 (Favicon)</button>
-                            <button type="button" data-w="32" data-h="32" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">32x32 (Browser)</button>
-                            <button type="button" data-w="180" data-h="180" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">180x180 (Apple)</button>
-                            <button type="button" data-w="512" data-h="512" class="size-btn bg-blue-600 text-white font-bold py-1.5 px-2 rounded-lg text-xs shadow-sm transition-all text-center">512x512 (App)</button>
-                            <button type="button" data-w="1024" data-h="1024" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">1024x1024 (HD)</button>
-                            <button type="button" data-w="2048" data-h="2048" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">2048x2048 (4K)</button>
+                            <button type="button" data-w="16" data-h="16" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">16×16 (Favicon)</button>
+                            <button type="button" data-w="32" data-h="32" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">32×32 (Browser)</button>
+                            <button type="button" data-w="180" data-h="180" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">180×180 (Apple)</button>
+                            <button type="button" data-w="512" data-h="512" class="size-btn bg-blue-600 text-white font-bold py-1.5 px-2 rounded-lg text-xs shadow-sm transition-all text-center">512×512 (App)</button>
+                            <button type="button" data-w="1024" data-h="1024" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">1024×1024 (HD)</button>
+                            <button type="button" data-w="2048" data-h="2048" class="size-btn bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-1.5 px-2 rounded-lg text-xs transition-all text-center">2048×2048 (4K)</button>
                         </div>
                     </div>
 
@@ -58,30 +87,30 @@ title: "Free SVG to PNG & Favicon Converter"
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label for="customWidth" class="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-semibold">Width (px)</label>
-                                <input type="number" id="customWidth" value="512" min="1" max="8192" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <input type="number" id="customWidth" value="512" min="1" max="8192" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                             </div>
                             <div>
                                 <label for="customHeight" class="block text-xs text-gray-500 dark:text-gray-400 mb-1 font-semibold">Height (px)</label>
-                                <input type="number" id="customHeight" value="512" min="1" max="8192" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <input type="number" id="customHeight" value="512" min="1" max="8192" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Output Format & Background -->
+                    <!-- Output Format & Background Colour -->
                     <div class="grid sm:grid-cols-2 gap-4">
                         <div>
                             <label for="exportFormat" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Export Format</label>
-                            <select id="exportFormat" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <select id="exportFormat" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                                 <option value="image/png" selected>PNG (Transparent)</option>
-                                <option value="image/webp">WebP (Compressed)</option>
-                                <option value="image/jpeg">JPEG (Solid)</option>
+                                <option value="image/webp">WebP (Optimised)</option>
+                                <option value="image/jpeg">JPEG (Solid Background)</option>
                             </select>
                         </div>
 
                         <div>
                             <label for="bgColor" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Fill Background</label>
                             <div class="flex items-center gap-2">
-                                <button id="bgNoneBtn" class="bg-blue-600 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition-all">Transparent</button>
+                                <button id="bgNoneBtn" type="button" class="bg-blue-600 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-sm transition-all">Transparent</button>
                                 <div class="flex items-center bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 gap-2 flex-grow">
                                     <input type="color" id="bgColor" value="#ffffff" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent">
                                     <span id="bgColorVal" class="text-xs font-mono text-gray-600 dark:text-gray-300">Custom</span>
@@ -92,7 +121,7 @@ title: "Free SVG to PNG & Favicon Converter"
 
                 </div>
 
-                <!-- Right: Preview & Download Actions -->
+                <!-- Right Column: Preview & Download Actions (5 cols) -->
                 <div class="md:col-span-5 flex flex-col items-center justify-between border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 pt-6 md:pt-0 md:pl-8">
                     
                     <div class="flex flex-col items-center w-full">
@@ -105,16 +134,18 @@ title: "Free SVG to PNG & Favicon Converter"
                     </div>
 
                     <div class="w-full space-y-2.5 mt-6">
-                        <button id="downloadBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-all text-sm flex items-center justify-center gap-2">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <button id="downloadBtn" type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all text-sm flex items-center justify-center gap-2">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
                             Download Converted Image
                         </button>
                         
-                        <button id="downloadFaviconPackBtn" class="w-full bg-gray-800 dark:bg-gray-700 hover:bg-gray-900 dark:hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-xs flex items-center justify-center gap-1.5">
-                            📦 Download Complete Favicon Pack (.ZIP)
+                        <button id="downloadFaviconPackBtn" type="button" class="w-full bg-gray-800 dark:bg-gray-700 hover:bg-gray-900 dark:hover:bg-gray-600 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm transition-all text-xs flex items-center justify-center gap-1.5">
+                            📦 Download Favicon Pack (.ZIP)
                         </button>
                         
-                        <button id="resetBtn" class="w-full text-center text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline pt-1">
+                        <button id="resetBtn" type="button" class="w-full text-center text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline pt-1">
                             Choose Another File
                         </button>
                     </div>
@@ -127,15 +158,15 @@ title: "Free SVG to PNG & Favicon Converter"
 
     </div>
 
-<!-- SEO / Informational Section -->
+    <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">📐 Crisp High-Resolution Rasterisation</h3>
-            <p>Render infinite-resolution vector SVGs into standard PNG or WebP files at any dimension up to 4K (2048x2048) with preserved transparency.</p>
+            <p>Render infinite-resolution vector SVGs into standard PNG or WebP graphics at custom dimensions up to 4K (2048×2048) with complete transparency preservation and antialiased edges.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">📦 Complete Web Favicon Package</h3>
-            <p>Generate all standard icon sizes in one click: 16x16, 32x32 browser favicons, 180x180 Apple Touch icons, and 512x512 Android PWA icons bundled into a ZIP file.</p>
+            <p>Generate all standard icon specifications with a single click: 16×16 and 32×32 browser tab favicons, 180×180 Apple Touch icons, and 192×192 / 512×512 Android PWA icons bundled into an organised ZIP archive.</p>
         </div>
     </div>
 
@@ -144,7 +175,13 @@ title: "Free SVG to PNG & Favicon Converter"
 <script>
     const svgInput = document.getElementById('svgInput');
     const uploadZone = document.getElementById('uploadZone');
-    const editorZone = document.getElementById('editorZone');
+    const processingZone = document.getElementById('processingZone');
+    const resultZone = document.getElementById('resultZone');
+    const statusMessage = document.getElementById('statusMessage');
+    const subStatusMessage = document.getElementById('subStatusMessage');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
+
     const svgPreview = document.getElementById('svgPreview');
     const aspectInfo = document.getElementById('aspectInfo');
     const sizeBtns = document.querySelectorAll('.size-btn');
@@ -164,23 +201,48 @@ title: "Free SVG to PNG & Favicon Converter"
     let originalSvgHeight = 512;
     let activeBg = 'transparent';
 
-    svgInput.addEventListener('change', (e) => {
-        if (e.target.files[0]) loadSvgFile(e.target.files[0]);
+    // Drag-and-Drop Event Bindings
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
     });
 
-    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        }, false);
+    });
+
     uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files[0]) loadSvgFile(e.dataTransfer.files[0]);
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files[0]) {
+            loadSvgFile(dt.files[0]);
+        }
+    });
+
+    svgInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+            loadSvgFile(e.target.files[0]);
+        }
     });
 
     function loadSvgFile(file) {
         if (!file.name.toLowerCase().endsWith('.svg') && file.type !== 'image/svg+xml') {
-            alert("Please select a valid .svg file.");
+            alert("Please select a valid .svg vector file.");
             return;
         }
+
+        uploadZone.classList.add('hidden');
+        processingZone.classList.remove('hidden');
+        resultZone.classList.add('hidden');
+
+        progressBar.style.width = '30%';
+        progressPercent.textContent = '30%';
+        statusMessage.textContent = 'Parsing Vector Data...';
+        subStatusMessage.textContent = file.name;
 
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -195,15 +257,20 @@ title: "Free SVG to PNG & Favicon Converter"
                 aspectInfo.textContent = `Original: ${originalSvgWidth} × ${originalSvgHeight} px`;
 
                 svgPreview.src = currentSvgDataUrl;
-                uploadZone.classList.add('hidden');
-                editorZone.classList.remove('hidden');
+                progressBar.style.width = '100%';
+                progressPercent.textContent = '100%';
+
+                setTimeout(() => {
+                    processingZone.classList.add('hidden');
+                    resultZone.classList.remove('hidden');
+                }, 150);
             };
             img.src = currentSvgDataUrl;
         };
         reader.readAsDataURL(file);
     }
 
-    // Size Preset Buttons
+    // Size Preset Selection
     sizeBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             sizeBtns.forEach(b => {
@@ -254,6 +321,8 @@ title: "Free SVG to PNG & Favicon Converter"
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
 
                 if (activeBg !== 'transparent' || exportFormat.value === 'image/jpeg') {
                     ctx.fillStyle = activeBg === 'transparent' ? '#ffffff' : activeBg;
@@ -267,7 +336,7 @@ title: "Free SVG to PNG & Favicon Converter"
         });
     }
 
-    // Single Converted Image Download
+    // Standardised Single Converted Image Download: bwtools_svg-converter_[timestamp].[ext]
     downloadBtn.addEventListener('click', async () => {
         const w = parseInt(customWidth.value, 10) || 512;
         const h = parseInt(customHeight.value, 10) || 512;
@@ -275,31 +344,36 @@ title: "Free SVG to PNG & Favicon Converter"
         const ext = format === 'image/png' ? 'png' : (format === 'image/webp' ? 'webp' : 'jpg');
 
         downloadBtn.disabled = true;
-        downloadBtn.textContent = "Rendering...";
+        const originalText = downloadBtn.innerHTML;
+        downloadBtn.innerHTML = `
+            <div class="loading-spinner w-4 h-4 border-2 border-white border-t-transparent inline-block mr-2"></div>
+            Rendering...
+        `;
 
         const canvas = await renderRaster(w, h);
         canvas.toBlob((blob) => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `bwtools_${w}x${h}_${Date.now()}.${ext}`;
+            a.download = `bwtools_svg-converter_${w}x${h}_${Date.now()}.${ext}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
 
             downloadBtn.disabled = false;
-            downloadBtn.innerHTML = `
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                Download Converted Image
-            `;
+            downloadBtn.innerHTML = originalText;
         }, format, 0.95);
     });
 
     // Complete Favicon Pack (.ZIP)
     downloadFaviconPackBtn.addEventListener('click', async () => {
         downloadFaviconPackBtn.disabled = true;
-        downloadFaviconPackBtn.textContent = "Generating Pack (.ZIP)...";
+        const originalText = downloadFaviconPackBtn.innerHTML;
+        downloadFaviconPackBtn.innerHTML = `
+            <div class="loading-spinner w-4 h-4 border-2 border-white border-t-transparent inline-block mr-2"></div>
+            Generating Pack (.ZIP)...
+        `;
 
         const zip = new JSZip();
         const sizes = [
@@ -312,7 +386,7 @@ title: "Free SVG to PNG & Favicon Converter"
 
         for (const item of sizes) {
             const canvas = await renderRaster(item.size, item.size);
-            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
             zip.file(item.name, blob);
         }
 
@@ -320,20 +394,23 @@ title: "Free SVG to PNG & Favicon Converter"
         const url = URL.createObjectURL(zipBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `favicon_package_${Date.now()}.zip`;
+        a.download = `bwtools_svg-converter_favicon_pack_${Date.now()}.zip`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
 
         downloadFaviconPackBtn.disabled = false;
-        downloadFaviconPackBtn.textContent = "📦 Download Complete Favicon Pack (.ZIP)";
+        downloadFaviconPackBtn.innerHTML = originalText;
     });
 
     resetBtn.addEventListener('click', () => {
         uploadZone.classList.remove('hidden');
-        editorZone.classList.add('hidden');
+        processingZone.classList.add('hidden');
+        resultZone.classList.add('hidden');
         svgInput.value = '';
         currentSvgDataUrl = null;
+        progressBar.style.width = '0%';
+        progressPercent.textContent = '0%';
     });
 </script>
