@@ -5,7 +5,7 @@ category: "image"
 icon: "✨"
 badgeColor: "blue"
 order: 1
-description: "Automatically isolate subjects, erase backdrops, and touch up edges with precision brush controls."
+description: "Automatically isolate subjects, erase backdrops, trim transparent borders, and touch up edges with precision brush controls."
 ---
 
 <!-- ES Module Loader for @imgly/background-removal -->
@@ -15,7 +15,7 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
 </script>
 
 <!-- Precision Dynamic Brush Cursor -->
-<div id="brushCursor" class="pointer-events-none fixed rounded-full border-2 border-blue-500 bg-blue-500/20 transform -translate-x-1/2 -translate-y-1/2 hidden z-50"></div>
+<div id="brushCursor" class="pointer-events-none fixed rounded-full border-2 border-blue-500 bg-blue-500/20 transform -translate-x-1/2 -translate-y-1/2 hidden z-50 transition-[width,height] duration-75"></div>
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
@@ -25,7 +25,7 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
             Remove Backgrounds <span class="text-blue-600 dark:text-blue-400">Instantly</span>
         </h2>
         <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
-            Neural network subject segmentation, instant marketplace white backdrops, edge sensitivity tuning, and precision brush tools.
+            Neural network subject segmentation, studio marketplace backdrops, auto-trim, brush touch-ups, and instant clipboard export.
         </p>
     </header>
 
@@ -34,16 +34,16 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
         <!-- Step 1: Upload Zone -->
         <div id="uploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
             <input type="file" id="imageInput" accept="image/png, image/jpeg, image/webp" class="hidden">
-            <label for="imageInput" class="cursor-pointer">
+            <label for="imageInput" class="cursor-pointer block">
                 <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image or Click to Upload</p>
+                <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Image, Click to Browse, or Paste (Ctrl+V)</p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Supports PNG, JPG, and WebP (Up to 4K)</p>
             </label>
         </div>
 
-        <!-- Step 2: Informative Stage-Weighted Loading Zone -->
+        <!-- Step 2: Stage-Weighted Loading Zone -->
         <div id="processingZone" class="hidden text-center py-16 max-w-md mx-auto">
             <div class="flex flex-col items-center gap-4">
                 <div class="loading-spinner"></div>
@@ -61,57 +61,76 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
         <!-- Step 3: Result & Studio Editor Zone -->
         <div id="resultZone" class="hidden">
             
+            <!-- Controls Toolbar Well -->
             <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-4 border border-gray-200 dark:border-gray-700 text-sm">
                 
-                <!-- Backdrop Selection -->
-                <div class="flex items-center gap-2">
-                    <span class="font-bold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wider">Backdrop:</span>
+                <!-- Backdrop Selection Presets -->
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="font-bold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wider mr-1">Backdrop:</span>
                     <button id="bgTransparent" class="bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all">Transparent</button>
-                    <button id="bgWhite" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all">White (eBay)</button>
+                    <button id="bgWhite" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all">White</button>
+                    <button id="bgOffWhite" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all">Studio Grey</button>
+                    <button id="bgDark" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all">Charcoal</button>
                     <div class="flex items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 gap-1">
-                        <input type="color" id="bgColorPicker" value="#2563eb" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent">
+                        <input type="color" id="bgColorPicker" value="#2563eb" class="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent" title="Choose custom background colour">
                         <span class="text-xs font-semibold text-gray-600 dark:text-gray-300">Custom</span>
                     </div>
                 </div>
 
                 <!-- Sensitivity Slider -->
                 <div class="flex items-center gap-2 border-l border-gray-300 dark:border-gray-700 pl-3">
-                    <label for="sensitivitySlider" class="font-bold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wider">Sensitivity:</label>
-                    <input type="range" id="sensitivitySlider" min="1" max="200" value="70" class="w-24 accent-blue-600 cursor-pointer">
-                    <span id="sensitivityVal" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300 w-8">70</span>
+                    <label for="sensitivitySlider" class="font-bold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wider">Edge Cut:</label>
+                    <input type="range" id="sensitivitySlider" min="1" max="200" value="70" class="w-20 accent-blue-600 cursor-pointer">
+                    <span id="sensitivityVal" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300 w-7">70</span>
                 </div>
 
-                <!-- Precision Touch-Up Brushes -->
-                <div class="flex items-center gap-2 border-l border-gray-300 dark:border-gray-700 pl-3">
-                    <span class="font-bold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wider">Brush:</span>
+                <!-- Touch-Up Brushes & History -->
+                <div class="flex items-center gap-1.5 border-l border-gray-300 dark:border-gray-700 pl-3">
+                    <span class="font-bold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wider mr-1">Brush:</span>
                     <button id="modeErase" class="bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all">🧹 Erase</button>
                     <button id="modeRestore" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all">🖌️ Restore</button>
-                    <input type="range" id="brushSize" min="5" max="150" value="35" class="w-20 accent-blue-600 cursor-pointer ml-1">
-                    <span id="brushSizeVal" class="text-xs font-mono text-gray-600 dark:text-gray-300 w-8">35px</span>
+                    <input type="range" id="brushSize" min="5" max="150" value="35" class="w-16 accent-blue-600 cursor-pointer ml-1" title="Brush Size">
+                    <span id="brushSizeVal" class="text-xs font-mono text-gray-600 dark:text-gray-300 w-10">35px</span>
+                    <button id="undoBtn" disabled class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ml-1 cursor-not-allowed" title="Undo stroke">↩️ Undo</button>
                 </div>
 
-                <!-- Zoom Controls -->
-                <div class="flex items-center gap-1 border-l border-gray-300 dark:border-gray-700 pl-3">
+                <!-- Quick Utility Tools -->
+                <div class="flex items-center gap-1.5 border-l border-gray-300 dark:border-gray-700 pl-3">
+                    <button id="autoCropBtn" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all" title="Auto crop transparent borders">✂️ Auto-Trim</button>
                     <button id="zoomOut" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded text-xs font-bold shadow-sm text-gray-700 dark:text-gray-200">-</button>
-                    <span id="zoomVal" class="text-xs font-mono w-10 text-center font-bold text-gray-700 dark:text-gray-200">100%</span>
+                    <span id="zoomVal" class="text-xs font-mono w-9 text-center font-bold text-gray-700 dark:text-gray-200">100%</span>
                     <button id="zoomIn" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded text-xs font-bold shadow-sm text-gray-700 dark:text-gray-200">+</button>
                     <button id="zoomReset" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 px-2 py-1 rounded text-xs text-gray-500 dark:text-gray-400 shadow-sm ml-1">Reset</button>
                 </div>
             </div>
 
+            <!-- Resolution / Dimension Meta Bar -->
+            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 px-1 mb-2">
+                <span id="dimensionMeta">Dimensions: 0 × 0 px</span>
+                <span id="clipboardToast" class="hidden text-emerald-600 dark:text-emerald-400 font-bold transition-all">✨ Copied to clipboard!</span>
+            </div>
+
             <!-- Viewport Canvas Container -->
-            <div id="viewport" class="relative overflow-auto max-h-[550px] checkerboard rounded-xl p-4 border border-gray-200 dark:border-gray-700 text-center">
+            <div id="viewport" class="relative overflow-auto max-h-[550px] checkerboard rounded-xl p-4 border border-gray-200 dark:border-gray-700 text-center touch-none">
                 <canvas id="editCanvas" class="inline-block shadow-lg rounded-lg cursor-none align-top"></canvas>
             </div>
 
             <!-- Action Buttons -->
             <div class="text-center flex flex-col items-center gap-3 mt-6">
-                <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md transition-all flex items-center gap-2">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Download HD Image
-                </button>
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-base md:text-lg shadow-md transition-all flex items-center gap-2">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download HD Image
+                    </button>
+                    <button id="copyClipboardBtn" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-3 px-6 rounded-lg text-base shadow-sm transition-all flex items-center gap-2">
+                        <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        Copy to Clipboard
+                    </button>
+                </div>
                 <button id="resetBtn" class="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 underline">Upload Another Image</button>
             </div>
         </div>
@@ -121,11 +140,11 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🎯 In-Browser Subject Segmentation</h3>
-            <p>Our background remover runs browser-native WebAssembly machine learning models to detect subjects, hair, and complex contours locally without sending a single pixel over the network.</p>
+            <p>Our background remover executes browser-native WebAssembly machine learning models to detect subjects, hair, and complex contours locally without sending a single pixel over the network.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
             <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🛍️ Marketplace-Optimised Export</h3>
-            <p>Easily switch to pure white backgrounds to comply with eBay, Amazon, and Etsy product photo requirements, or export transparent high-definition PNGs with custom edge thresholding.</p>
+            <p>Easily switch to pure white backgrounds to comply with eBay, Amazon, and Etsy product photo requirements, auto-trim transparent outer padding, or export transparent high-definition PNGs.</p>
         </div>
     </div>
 
@@ -143,22 +162,31 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
     const editCanvas = document.getElementById('editCanvas');
     const viewport = document.getElementById('viewport');
     const brushCursor = document.getElementById('brushCursor');
+    const dimensionMeta = document.getElementById('dimensionMeta');
+    const clipboardToast = document.getElementById('clipboardToast');
     const ctx = editCanvas.getContext('2d');
 
     const bgTransparent = document.getElementById('bgTransparent');
     const bgWhite = document.getElementById('bgWhite');
+    const bgOffWhite = document.getElementById('bgOffWhite');
+    const bgDark = document.getElementById('bgDark');
     const bgColorPicker = document.getElementById('bgColorPicker');
+    
     const sensitivitySlider = document.getElementById('sensitivitySlider');
     const sensitivityVal = document.getElementById('sensitivityVal');
     const modeErase = document.getElementById('modeErase');
     const modeRestore = document.getElementById('modeRestore');
     const brushSize = document.getElementById('brushSize');
     const brushSizeVal = document.getElementById('brushSizeVal');
+    const undoBtn = document.getElementById('undoBtn');
+    const autoCropBtn = document.getElementById('autoCropBtn');
+
     const zoomIn = document.getElementById('zoomIn');
     const zoomOut = document.getElementById('zoomOut');
     const zoomReset = document.getElementById('zoomReset');
     const zoomVal = document.getElementById('zoomVal');
     const downloadBtn = document.getElementById('downloadBtn');
+    const copyClipboardBtn = document.getElementById('copyClipboardBtn');
     const resetBtn = document.getElementById('resetBtn');
 
     let originalImg = new Image();
@@ -174,6 +202,8 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
 
     let currentProgress = 0;
     let inferenceTicker = null;
+    let historyStack = [];
+    const MAX_HISTORY = 10;
 
     function setProgress(targetPercent, title, subtitle) {
         if (targetPercent > currentProgress) {
@@ -202,6 +232,57 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
             inferenceTicker = null;
         }
     }
+
+    function saveHistoryState() {
+        const stateCanvas = document.createElement('canvas');
+        stateCanvas.width = rawCutoutCanvas.width;
+        stateCanvas.height = rawCutoutCanvas.height;
+        const stateCtx = stateCanvas.getContext('2d');
+        stateCtx.drawImage(rawCutoutCanvas, 0, 0);
+
+        historyStack.push(stateCanvas);
+        if (historyStack.length > MAX_HISTORY) historyStack.shift();
+        updateUndoButton();
+    }
+
+    function updateUndoButton() {
+        if (historyStack.length > 0) {
+            undoBtn.disabled = false;
+            undoBtn.className = "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all ml-1 cursor-pointer";
+        } else {
+            undoBtn.disabled = true;
+            undoBtn.className = "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ml-1 cursor-not-allowed";
+        }
+    }
+
+    undoBtn.addEventListener('click', () => {
+        if (historyStack.length === 0) return;
+        const prevState = historyStack.pop();
+        
+        rawCutoutCanvas.width = prevState.width;
+        rawCutoutCanvas.height = prevState.height;
+        rawCutoutCtx.clearRect(0, 0, rawCutoutCanvas.width, rawCutoutCanvas.height);
+        rawCutoutCtx.drawImage(prevState, 0, 0);
+
+        editCanvas.width = prevState.width;
+        editCanvas.height = prevState.height;
+        
+        updateDimensionsMeta();
+        updateUndoButton();
+        renderCanvas();
+    });
+
+    // Clipboard Paste Listener
+    window.addEventListener('paste', (e) => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let item of items) {
+            if (item.type.indexOf('image') !== -1) {
+                const blob = item.getAsFile();
+                processImage(blob);
+                break;
+            }
+        }
+    });
 
     // Drag-and-drop bindings
     ['dragenter', 'dragover'].forEach(eventName => {
@@ -239,6 +320,8 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
 
         stopInferenceAnimation();
         currentProgress = 0;
+        historyStack = [];
+        updateUndoButton();
         setProgress(0, "Initialising AI Engine...", "Preparing in-browser neural runtime...");
 
         uploadZone.classList.add('hidden');
@@ -295,6 +378,7 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
 
                 zoomLevel = 1.0;
                 applyZoom();
+                updateDimensionsMeta();
                 renderCanvas();
             };
 
@@ -306,11 +390,21 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
         }
     }
 
+    function updateDimensionsMeta() {
+        dimensionMeta.textContent = `Dimensions: ${editCanvas.width} × ${editCanvas.height} px`;
+    }
+
     function renderCanvas() {
         ctx.clearRect(0, 0, editCanvas.width, editCanvas.height);
 
         if (activeBg === 'white') {
             ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, editCanvas.width, editCanvas.height);
+        } else if (activeBg === 'offwhite') {
+            ctx.fillStyle = '#F8F9FA';
+            ctx.fillRect(0, 0, editCanvas.width, editCanvas.height);
+        } else if (activeBg === 'dark') {
+            ctx.fillStyle = '#1E293B';
             ctx.fillRect(0, 0, editCanvas.width, editCanvas.height);
         } else if (activeBg.startsWith('#')) {
             ctx.fillStyle = activeBg;
@@ -336,29 +430,102 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
         ctx.drawImage(tempCanvas, 0, 0);
     }
 
+    // Auto-Trim Transparent Margins
+    autoCropBtn.addEventListener('click', () => {
+        saveHistoryState();
+        const imgData = rawCutoutCtx.getImageData(0, 0, rawCutoutCanvas.width, rawCutoutCanvas.height);
+        const d = imgData.data;
+        const w = rawCutoutCanvas.width;
+        const h = rawCutoutCanvas.height;
+        const threshold = parseInt(sensitivitySlider.value, 10);
+
+        let minX = w, minY = h, maxX = 0, maxY = 0;
+        let found = false;
+
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const alpha = d[(y * w + x) * 4 + 3];
+                if (alpha >= threshold) {
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) return;
+
+        const padding = 12;
+        minX = Math.max(0, minX - padding);
+        minY = Math.max(0, minY - padding);
+        maxX = Math.min(w, maxX + padding);
+        maxY = Math.min(h, maxY + padding);
+
+        const cropW = maxX - minX;
+        const cropH = maxY - minY;
+
+        const croppedData = rawCutoutCtx.getImageData(minX, minY, cropW, cropH);
+
+        rawCutoutCanvas.width = cropW;
+        rawCutoutCanvas.height = cropH;
+        rawCutoutCtx.putImageData(croppedData, 0, 0);
+
+        editCanvas.width = cropW;
+        editCanvas.height = cropH;
+
+        const maxAllowedWidth = Math.max(300, viewport.clientWidth - 48);
+        const aspect = editCanvas.height / editCanvas.width;
+        baseDisplayWidth = Math.min(maxAllowedWidth, editCanvas.width);
+        baseDisplayHeight = baseDisplayWidth * aspect;
+
+        applyZoom();
+        updateDimensionsMeta();
+        renderCanvas();
+    });
+
     sensitivitySlider.addEventListener('input', () => {
         sensitivityVal.textContent = sensitivitySlider.value;
         renderCanvas();
     });
 
+    function setBackdropButton(activeBtn) {
+        [bgTransparent, bgWhite, bgOffWhite, bgDark].forEach(btn => {
+            btn.className = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all";
+        });
+        if (activeBtn) {
+            activeBtn.className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all";
+        }
+    }
+
     bgTransparent.addEventListener('click', () => {
         activeBg = 'transparent';
-        bgTransparent.className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all";
-        bgWhite.className = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all";
+        setBackdropButton(bgTransparent);
         renderCanvas();
     });
 
     bgWhite.addEventListener('click', () => {
         activeBg = 'white';
-        bgWhite.className = "bg-blue-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all";
-        bgTransparent.className = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all";
+        setBackdropButton(bgWhite);
+        renderCanvas();
+    });
+
+    bgOffWhite.addEventListener('click', () => {
+        activeBg = 'offwhite';
+        setBackdropButton(bgOffWhite);
+        renderCanvas();
+    });
+
+    bgDark.addEventListener('click', () => {
+        activeBg = 'dark';
+        setBackdropButton(bgDark);
         renderCanvas();
     });
 
     bgColorPicker.addEventListener('input', (e) => {
         activeBg = e.target.value;
-        bgTransparent.className = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all";
-        bgWhite.className = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all";
+        setBackdropButton(null);
         renderCanvas();
     });
 
@@ -400,17 +567,38 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
 
     function getCanvasCoordinates(e) {
         const rect = editCanvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         const scaleX = editCanvas.width / rect.width;
         const scaleY = editCanvas.height / rect.height;
         return {
-            x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top) * scaleY
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
         };
     }
 
-    editCanvas.addEventListener('mousedown', (e) => { isDrawing = true; paint(e); });
-    editCanvas.addEventListener('mousemove', (e) => { if (isDrawing) paint(e); });
-    window.addEventListener('mouseup', () => isDrawing = false);
+    function handleDrawStart(e) {
+        saveHistoryState();
+        isDrawing = true;
+        paint(e);
+    }
+
+    function handleDrawMove(e) {
+        if (!isDrawing) return;
+        paint(e);
+    }
+
+    function handleDrawEnd() {
+        isDrawing = false;
+    }
+
+    editCanvas.addEventListener('mousedown', handleDrawStart);
+    editCanvas.addEventListener('mousemove', handleDrawMove);
+    window.addEventListener('mouseup', handleDrawEnd);
+
+    editCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleDrawStart(e); });
+    editCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); handleDrawMove(e); });
+    window.addEventListener('touchend', handleDrawEnd);
 
     function paint(e) {
         const pos = getCanvasCoordinates(e);
@@ -426,7 +614,7 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
         } else if (activeTool === 'restore') {
             rawCutoutCtx.globalCompositeOperation = 'source-over';
             rawCutoutCtx.clip();
-            rawCutoutCtx.drawImage(originalImg, 0, 0);
+            rawCutoutCtx.drawImage(originalImg, 0, 0, rawCutoutCanvas.width, rawCutoutCanvas.height);
         }
         rawCutoutCtx.restore();
         renderCanvas();
@@ -450,6 +638,22 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
         updateCursorSize();
     }
 
+    // Direct Clipboard Copy
+    copyClipboardBtn.addEventListener('click', async () => {
+        try {
+            editCanvas.toBlob(async (blob) => {
+                const item = new ClipboardItem({ 'image/png': blob });
+                await navigator.clipboard.write([item]);
+                clipboardToast.classList.remove('hidden');
+                setTimeout(() => clipboardToast.classList.add('hidden'), 3000);
+            }, 'image/png');
+        } catch (err) {
+            console.error('Clipboard copy failed:', err);
+            alert('Direct clipboard copy is not permitted by your browser security settings.');
+        }
+    });
+
+    // Zero-upload download trigger: bwtools_bg-remover_[timestamp].[png|jpg]
     downloadBtn.addEventListener('click', () => {
         const isTransparent = (activeBg === 'transparent');
         const mime = isTransparent ? 'image/png' : 'image/jpeg';
@@ -472,6 +676,8 @@ description: "Automatically isolate subjects, erase backdrops, and touch up edge
     function resetUI() {
         stopInferenceAnimation();
         currentProgress = 0;
+        historyStack = [];
+        updateUndoButton();
         uploadZone.classList.remove('hidden');
         processingZone.classList.add('hidden');
         resultZone.classList.add('hidden');
