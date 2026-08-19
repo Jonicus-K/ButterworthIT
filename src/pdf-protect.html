@@ -1,48 +1,76 @@
 ---
 layout: layout.njk
 title: "Free PDF Password Protect & Unlock Tool"
+category: "pdf"
+icon: "🔒"
+badgeColor: "emerald"
+order: 5
+description: "Encrypt confidential documents with strong passwords or remove passwords from protected PDFs."
 ---
 
-<!-- pdf.js & jsPDF CDNs -->
+<!-- PDF.js, jsPDF & pdf-lib CDN Dependencies -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
 <main class="max-w-5xl mx-auto px-4 py-8">
     
+    <!-- Page Header -->
     <header class="text-center mb-6">
-        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">PDF Password <span class="text-blue-600 dark:text-blue-400">Protect & Unlock</span></h2>
-        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">Encrypt PDF files with strong passwords or remove passwords from protected documents. 100% private & client-side.</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-2 tracking-tight text-gray-900 dark:text-white">
+            PDF Password <span class="text-blue-600 dark:text-blue-400">Protect & Unlock</span>
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300 max-w-xl mx-auto text-sm">
+            Encrypt PDF files with strong passwords or remove passwords from protected documents. 100% private and processed locally in your browser.
+        </p>
     </header>
 
-    <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
+    <!-- Primary Tool Card -->
+    <div id="toolZone" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 transition-colors">
         
         <!-- Mode Switcher Tabs -->
         <div class="flex justify-center mb-6">
             <div class="inline-flex p-1 bg-gray-100 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
-                <button id="tabLock" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm transition-all flex items-center gap-2">
+                <button id="tabLock" type="button" class="px-6 py-2.5 rounded-lg font-bold text-sm bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm transition-all flex items-center gap-2">
                     🔒 Protect with Password
                 </button>
-                <button id="tabUnlock" class="px-6 py-2.5 rounded-lg font-bold text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all flex items-center gap-2">
+                <button id="tabUnlock" type="button" class="px-6 py-2.5 rounded-lg font-bold text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all flex items-center gap-2">
                     🔓 Remove Password
                 </button>
             </div>
         </div>
 
-        <!-- ================= LOCK / ENCRYPT SECTION ================= -->
+        <!-- ================= SECTION 1: PROTECT / LOCK ================= -->
         <div id="sectionLock">
             
-            <!-- Upload Area -->
+            <!-- Step 1: Lock Upload Area -->
             <div id="lockUploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
                 <input type="file" id="lockFileInput" accept="application/pdf" class="hidden">
                 <label for="lockFileInput" class="cursor-pointer">
-                    <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                    <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
                     <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop PDF or Click to Upload</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select the PDF file you want to password protect</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select the PDF document you wish to password protect</p>
                 </label>
             </div>
 
-            <!-- Lock Workspace -->
+            <!-- Step 2: Lock Processing Zone -->
+            <div id="lockProcessingZone" class="hidden text-center py-16 max-w-md mx-auto">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="loading-spinner"></div>
+                    <div>
+                        <p id="lockStatusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Encrypting Document...</p>
+                        <p id="lockSubStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Applying cryptographic security dictionary in browser...</p>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                        <div id="lockProgressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                    </div>
+                    <span id="lockProgressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+                </div>
+            </div>
+
+            <!-- Step 3: Lock Configuration / Result Workspace -->
             <div id="lockWorkspace" class="hidden space-y-6">
                 
                 <div class="bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -50,44 +78,46 @@ title: "Free PDF Password Protect & Unlock Tool"
                         <h4 id="lockFileName" class="font-bold text-gray-800 dark:text-gray-200 text-sm">-</h4>
                         <p id="lockFileInfo" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">-</p>
                     </div>
-                    <button id="lockChangeFileBtn" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">Choose Different File</button>
+                    <button id="lockChangeFileBtn" type="button" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">Choose Different File</button>
                 </div>
 
-                <!-- Password Configuration -->
+                <!-- Password Settings Box -->
                 <div class="grid md:grid-cols-2 gap-6 bg-gray-50 dark:bg-gray-900/60 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
                     
                     <div class="space-y-4">
                         <div>
                             <label for="userPassword" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Set Document Password:</label>
                             <div class="relative">
-                                <input type="password" id="userPassword" placeholder="Enter secure password" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10">
-                                <button type="button" id="togglePassBtn" class="absolute right-3 top-2.5 text-xs text-gray-400 hover:text-gray-600">👁️</button>
+                                <input type="password" id="userPassword" placeholder="Enter secure password" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10 transition-colors">
+                                <button type="button" id="togglePassBtn" class="absolute right-3 top-2.5 text-xs text-gray-400 hover:text-gray-600 focus:outline-none" title="Toggle password visibility">👁️</button>
                             </div>
                         </div>
 
                         <div>
                             <label for="confirmPassword" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Confirm Password:</label>
-                            <input type="password" id="confirmPassword" placeholder="Re-type password" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <input type="password" id="confirmPassword" placeholder="Re-type password" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                         </div>
                     </div>
 
                     <div class="flex flex-col justify-between space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Encryption Settings:</label>
+                            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-2">Encryption Permissions:</label>
                             <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300">
-                                <label class="flex items-center gap-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" id="allowPrinting" checked class="accent-blue-600 rounded">
                                     Allow printing with password
                                 </label>
-                                <label class="flex items-center gap-2">
+                                <label class="flex items-center gap-2 cursor-pointer">
                                     <input type="checkbox" id="allowCopying" checked class="accent-blue-600 rounded">
-                                    Allow content copying / extraction
+                                    Allow content copying and text extraction
                                 </label>
                             </div>
                         </div>
 
-                        <button id="encryptBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-base shadow-md transition-all flex items-center justify-center gap-2">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        <button id="encryptBtn" type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl text-base shadow-md transition-all flex items-center justify-center gap-2">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
                             Encrypt & Download PDF
                         </button>
                     </div>
@@ -98,20 +128,37 @@ title: "Free PDF Password Protect & Unlock Tool"
 
         </div>
 
-        <!-- ================= UNLOCK SECTION ================= -->
+        <!-- ================= SECTION 2: UNLOCK / DECRYPT ================= -->
         <div id="sectionUnlock" class="hidden">
             
-            <!-- Upload Area -->
+            <!-- Step 1: Unlock Upload Area -->
             <div id="unlockUploadZone" class="text-center py-16 border-4 border-dashed border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900/60 cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-900 transition-all">
                 <input type="file" id="unlockFileInput" accept="application/pdf" class="hidden">
                 <label for="unlockFileInput" class="cursor-pointer">
-                    <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>
+                    <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                    </svg>
                     <p class="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">Drag & Drop Locked PDF or Click to Upload</p>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Select a password-protected PDF to unlock permanently</p>
                 </label>
             </div>
 
-            <!-- Unlock Workspace -->
+            <!-- Step 2: Unlock Processing Zone -->
+            <div id="unlockProcessingZone" class="hidden text-center py-16 max-w-md mx-auto">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="loading-spinner"></div>
+                    <div>
+                        <p id="unlockStatusMessage" class="text-lg font-bold text-gray-800 dark:text-gray-200">Decrypting Document...</p>
+                        <p id="unlockSubStatusMessage" class="text-xs text-gray-500 dark:text-gray-400 mt-1">Rebuilding unencrypted PDF structure in memory...</p>
+                    </div>
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2 overflow-hidden">
+                        <div id="unlockProgressBar" class="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full transition-all duration-200" style="width: 0%"></div>
+                    </div>
+                    <span id="unlockProgressPercent" class="text-xs font-mono font-semibold text-gray-600 dark:text-gray-300">0%</span>
+                </div>
+            </div>
+
+            <!-- Step 3: Unlock Workspace -->
             <div id="unlockWorkspace" class="hidden space-y-6">
                 
                 <div class="bg-gray-50 dark:bg-gray-900/60 border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -119,17 +166,19 @@ title: "Free PDF Password Protect & Unlock Tool"
                         <h4 id="unlockFileName" class="font-bold text-gray-800 dark:text-gray-200 text-sm">-</h4>
                         <p id="unlockFileInfo" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">-</p>
                     </div>
-                    <button id="unlockChangeFileBtn" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">Choose Different File</button>
+                    <button id="unlockChangeFileBtn" type="button" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">Choose Different File</button>
                 </div>
 
                 <div class="bg-gray-50 dark:bg-gray-900/60 p-6 rounded-xl border border-gray-200 dark:border-gray-700 max-w-lg mx-auto space-y-4">
                     <div>
                         <label for="currentPdfPassword" class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">Enter Current PDF Password:</label>
-                        <input type="password" id="currentPdfPassword" placeholder="Enter PDF password" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="password" id="currentPdfPassword" placeholder="Enter PDF password" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors">
                     </div>
 
-                    <button id="decryptBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-base shadow-md transition-all flex items-center justify-center gap-2">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>
+                    <button id="decryptBtn" type="button" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-xl text-base shadow-md transition-all flex items-center justify-center gap-2">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                        </svg>
                         Unlock & Download Clean PDF
                     </button>
                 </div>
@@ -143,12 +192,12 @@ title: "Free PDF Password Protect & Unlock Tool"
     <!-- SEO / Informational Section -->
     <div class="mt-12 grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-300">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🔒 How PDF Encryption Works</h3>
-            <p>PDF encryption restricts access so that anyone opening the file must supply the correct password. Standard document permissions also allow you to prevent unauthorized printing or text extraction.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">🔒 Standard Cryptographic Protection</h3>
+            <p>PDF encryption restricts access so that anyone opening the file must supply the correct password. Standard document permissions also allow you to prevent unauthorised printing or text extraction.</p>
         </div>
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ 100% Client-Side Privacy</h3>
-            <p>Unlike other online tools that require uploading confidential bank statements or contracts to remote servers, all encryption and decryption runs entirely inside your browser's local memory.</p>
+            <h3 class="font-bold text-gray-900 dark:text-white text-base mb-2">⚡ 100% In-Browser Privacy</h3>
+            <p>Unlike third-party conversion portals that require uploading sensitive financial statements or legal contracts to remote cloud servers, all encryption and decryption routines run entirely inside your browser's local memory.</p>
         </div>
     </div>
 
@@ -168,6 +217,7 @@ title: "Free PDF Password Protect & Unlock Tool"
     // Lock Elements
     const lockFileInput = document.getElementById('lockFileInput');
     const lockUploadZone = document.getElementById('lockUploadZone');
+    const lockProcessingZone = document.getElementById('lockProcessingZone');
     const lockWorkspace = document.getElementById('lockWorkspace');
     const lockFileName = document.getElementById('lockFileName');
     const lockFileInfo = document.getElementById('lockFileInfo');
@@ -178,16 +228,25 @@ title: "Free PDF Password Protect & Unlock Tool"
     const allowPrinting = document.getElementById('allowPrinting');
     const allowCopying = document.getElementById('allowCopying');
     const encryptBtn = document.getElementById('encryptBtn');
+    const lockProgressBar = document.getElementById('lockProgressBar');
+    const lockProgressPercent = document.getElementById('lockProgressPercent');
+    const lockStatusMessage = document.getElementById('lockStatusMessage');
+    const lockSubStatusMessage = document.getElementById('lockSubStatusMessage');
 
     // Unlock Elements
     const unlockFileInput = document.getElementById('unlockFileInput');
     const unlockUploadZone = document.getElementById('unlockUploadZone');
+    const unlockProcessingZone = document.getElementById('unlockProcessingZone');
     const unlockWorkspace = document.getElementById('unlockWorkspace');
     const unlockFileName = document.getElementById('unlockFileName');
     const unlockFileInfo = document.getElementById('unlockFileInfo');
     const unlockChangeFileBtn = document.getElementById('unlockChangeFileBtn');
     const currentPdfPassword = document.getElementById('currentPdfPassword');
     const decryptBtn = document.getElementById('decryptBtn');
+    const unlockProgressBar = document.getElementById('unlockProgressBar');
+    const unlockProgressPercent = document.getElementById('unlockProgressPercent');
+    const unlockStatusMessage = document.getElementById('unlockStatusMessage');
+    const unlockSubStatusMessage = document.getElementById('unlockSubStatusMessage');
 
     let lockPdfDoc = null;
     let lockArrayBuffer = null;
@@ -215,20 +274,38 @@ title: "Free PDF Password Protect & Unlock Tool"
     });
 
     // ================= LOCK HANDLER =================
-    lockFileInput.addEventListener('change', (e) => {
-        if (e.target.files[0]) loadLockFile(e.target.files[0]);
+    ['dragenter', 'dragover'].forEach(evt => {
+        lockUploadZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            lockUploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        });
     });
 
-    lockUploadZone.addEventListener('dragover', (e) => { e.preventDefault(); lockUploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    lockUploadZone.addEventListener('dragleave', () => lockUploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragleave', 'drop'].forEach(evt => {
+        lockUploadZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            lockUploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        });
+    });
+
     lockUploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        lockUploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files[0]) loadLockFile(e.dataTransfer.files[0]);
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files[0]) {
+            loadLockFile(dt.files[0]);
+        }
+    });
+
+    lockFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+            loadLockFile(e.target.files[0]);
+        }
     });
 
     async function loadLockFile(file) {
-        if (file.type !== 'application/pdf') return;
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            alert('Please select a valid PDF file.');
+            return;
+        }
 
         try {
             lockArrayBuffer = await file.arrayBuffer();
@@ -238,6 +315,7 @@ title: "Free PDF Password Protect & Unlock Tool"
             lockFileInfo.textContent = `${formatBytes(file.size)} • ${lockPdfDoc.numPages} page(s)`;
 
             lockUploadZone.classList.add('hidden');
+            lockProcessingZone.classList.add('hidden');
             lockWorkspace.classList.remove('hidden');
         } catch (err) {
             console.error(err);
@@ -258,8 +336,12 @@ title: "Free PDF Password Protect & Unlock Tool"
             return;
         }
 
-        encryptBtn.disabled = true;
-        encryptBtn.textContent = "Encrypting PDF...";
+        lockWorkspace.classList.add('hidden');
+        lockProcessingZone.classList.remove('hidden');
+        lockProgressBar.style.width = '0%';
+        lockProgressPercent.textContent = '0%';
+        lockStatusMessage.textContent = "Encrypting Document...";
+        lockSubStatusMessage.textContent = `Processing pages with 128-bit encryption...`;
 
         setTimeout(async () => {
             try {
@@ -268,7 +350,9 @@ title: "Free PDF Password Protect & Unlock Tool"
                 if (allowPrinting.checked) permissions.push('print');
                 if (allowCopying.checked) permissions.push('copy');
 
-                for (let i = 1; i <= lockPdfDoc.numPages; i++) {
+                const totalPages = lockPdfDoc.numPages;
+
+                for (let i = 1; i <= totalPages; i++) {
                     const page = await lockPdfDoc.getPage(i);
                     const viewport = page.getViewport({ scale: 2.0 });
 
@@ -302,51 +386,79 @@ title: "Free PDF Password Protect & Unlock Tool"
                         outDoc.addPage([ptWidth, ptHeight], orientation);
                         outDoc.addImage(imgData, 'JPEG', 0, 0, ptWidth, ptHeight);
                     }
+
+                    const pct = Math.round((i / totalPages) * 100);
+                    lockProgressBar.style.width = `${pct}%`;
+                    lockProgressPercent.textContent = `${pct}%`;
                 }
 
-                outDoc.save(`protected_${Date.now()}.pdf`);
+                outDoc.save(`bwtools_pdf-protect_encrypted_${Date.now()}.pdf`);
+
+                setTimeout(() => {
+                    lockProcessingZone.classList.add('hidden');
+                    lockWorkspace.classList.remove('hidden');
+                }, 300);
+
             } catch (err) {
                 console.error("Encryption Error:", err);
                 alert("Error encrypting PDF.");
-            } finally {
-                encryptBtn.disabled = false;
-                encryptBtn.innerHTML = `
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                    Encrypt & Download PDF
-                `;
+                lockProcessingZone.classList.add('hidden');
+                lockWorkspace.classList.remove('hidden');
             }
         }, 100);
     });
 
     lockChangeFileBtn.addEventListener('click', () => {
         lockUploadZone.classList.remove('hidden');
+        lockProcessingZone.classList.add('hidden');
         lockWorkspace.classList.add('hidden');
         lockFileInput.value = '';
         userPassword.value = '';
         confirmPassword.value = '';
+        lockPdfDoc = null;
+        lockArrayBuffer = null;
     });
 
     // ================= UNLOCK HANDLER =================
-    unlockFileInput.addEventListener('change', (e) => {
-        if (e.target.files[0]) loadUnlockFile(e.target.files[0]);
+    ['dragenter', 'dragover'].forEach(evt => {
+        unlockUploadZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            unlockUploadZone.classList.add('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        });
     });
 
-    unlockUploadZone.addEventListener('dragover', (e) => { e.preventDefault(); unlockUploadZone.classList.add('border-blue-400', 'bg-blue-50'); });
-    unlockUploadZone.addEventListener('dragleave', () => unlockUploadZone.classList.remove('border-blue-400', 'bg-blue-50'));
+    ['dragleave', 'drop'].forEach(evt => {
+        unlockUploadZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            unlockUploadZone.classList.remove('border-blue-400', 'bg-blue-50', 'dark:bg-gray-800');
+        });
+    });
+
     unlockUploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        unlockUploadZone.classList.remove('border-blue-400', 'bg-blue-50');
-        if (e.dataTransfer.files[0]) loadUnlockFile(e.dataTransfer.files[0]);
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files[0]) {
+            loadUnlockFile(dt.files[0]);
+        }
+    });
+
+    unlockFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+            loadUnlockFile(e.target.files[0]);
+        }
     });
 
     async function loadUnlockFile(file) {
-        if (file.type !== 'application/pdf') return;
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            alert('Please select a valid PDF file.');
+            return;
+        }
 
         unlockArrayBuffer = await file.arrayBuffer();
         unlockFileName.textContent = file.name;
-        unlockFileInfo.textContent = `${formatBytes(file.size)} (Protected Document)`;
+        unlockFileInfo.textContent = `${formatBytes(file.size)} • Protected Document`;
 
         unlockUploadZone.classList.add('hidden');
+        unlockProcessingZone.classList.add('hidden');
         unlockWorkspace.classList.remove('hidden');
     }
 
@@ -357,8 +469,12 @@ title: "Free PDF Password Protect & Unlock Tool"
             return;
         }
 
-        decryptBtn.disabled = true;
-        decryptBtn.textContent = "Decrypting PDF...";
+        unlockWorkspace.classList.add('hidden');
+        unlockProcessingZone.classList.remove('hidden');
+        unlockProgressBar.style.width = '0%';
+        unlockProgressPercent.textContent = '0%';
+        unlockStatusMessage.textContent = "Decrypting PDF...";
+        unlockSubStatusMessage.textContent = "Verifying password and rebuilding clean pages...";
 
         setTimeout(async () => {
             try {
@@ -369,8 +485,9 @@ title: "Free PDF Password Protect & Unlock Tool"
 
                 const loadedPdf = await loadingTask.promise;
                 let cleanDoc = null;
+                const totalPages = loadedPdf.numPages;
 
-                for (let i = 1; i <= loadedPdf.numPages; i++) {
+                for (let i = 1; i <= totalPages; i++) {
                     const page = await loadedPdf.getPage(i);
                     const viewport = page.getViewport({ scale: 2.0 });
 
@@ -395,27 +512,35 @@ title: "Free PDF Password Protect & Unlock Tool"
                         cleanDoc.addPage([ptWidth, ptHeight], orientation);
                         cleanDoc.addImage(imgData, 'JPEG', 0, 0, ptWidth, ptHeight);
                     }
+
+                    const pct = Math.round((i / totalPages) * 100);
+                    unlockProgressBar.style.width = `${pct}%`;
+                    unlockProgressPercent.textContent = `${pct}%`;
                 }
 
-                cleanDoc.save(`unlocked_${Date.now()}.pdf`);
+                cleanDoc.save(`bwtools_pdf-protect_unlocked_${Date.now()}.pdf`);
+
+                setTimeout(() => {
+                    unlockProcessingZone.classList.add('hidden');
+                    unlockWorkspace.classList.remove('hidden');
+                }, 300);
+
             } catch (err) {
                 console.error("Unlock Error:", err);
-                alert("Incorrect password or damaged PDF.");
-            } finally {
-                decryptBtn.disabled = false;
-                decryptBtn.innerHTML = `
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>
-                    Unlock & Download Clean PDF
-                `;
+                alert("Incorrect password or damaged PDF file.");
+                unlockProcessingZone.classList.add('hidden');
+                unlockWorkspace.classList.remove('hidden');
             }
         }, 100);
     });
 
     unlockChangeFileBtn.addEventListener('click', () => {
         unlockUploadZone.classList.remove('hidden');
+        unlockProcessingZone.classList.add('hidden');
         unlockWorkspace.classList.add('hidden');
         unlockFileInput.value = '';
         currentPdfPassword.value = '';
+        unlockArrayBuffer = null;
     });
 
     function formatBytes(bytes) {
