@@ -2,7 +2,6 @@ const CACHE_NAME = 'bwtools-v1-cache';
 const STATIC_ASSETS = [
   '/',
   '/css/style.css',
-  '/assets/js/bw-core.js',
   '/manifest.json'
 ];
 
@@ -33,9 +32,11 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
   const url = new URL(event.request.url);
 
-  // Cache-First strategy for external CDN libraries
+  // Cache-First strategy for vendor CDN bundles
   if (VENDOR_CDN_ORIGINS.some(origin => event.request.url.startsWith(origin))) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
@@ -51,11 +52,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-First with Stale Cache Fallback for site pages
+  // Network-First with Cache Fallback for site pages
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        if (event.request.method === 'GET' && networkResponse.status === 200) {
+        if (networkResponse && networkResponse.status === 200) {
           const cloned = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
         }
